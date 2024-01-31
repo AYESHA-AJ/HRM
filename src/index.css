@@ -23,10 +23,6 @@ body,
 ::-webkit-scrollbar-thumb{
   background:#888 ;
 }
-body {
-  max-height: calc(100vh - 9rem);
-      overflow-y: auto;
-}
 
 /*Handle on hover */
 ::-webkit-scrollbar-track:hover{
