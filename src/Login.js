@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import './Login.css';
 import Logo from './src assets/codistanlogo.png';
-import LoginPic from './Pic.png';
+import LoginPic from './src assets/Pic.png';
  
-import EyeIcon from './eye icon.png';
+import EyeIcon from './src assets/eye icon.png';
  
  
 const Login = ({ onLoginClick }) => {
