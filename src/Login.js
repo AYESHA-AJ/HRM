@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import '.src assets/Login.css';
-import Logo from './codistanlogo.png';
+import './Login.css';
+import Logo from './src assets/codistanlogo.png';
 import LoginPic from './Pic.png';
  
 import EyeIcon from './eye icon.png';
