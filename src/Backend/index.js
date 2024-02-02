@@ -6,7 +6,10 @@ const routes = require('./Routes'); // Corrected path to routes
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000',  // Replace with your frontend's URL
+    credentials: true,  // Include credentials (e.g., cookies) in the requests
+  }));
 app.use(express.json());
 
 mongoose.connect('mongodb://localhost:27017/Employee_DB', { useNewUrlParser: true, useUnifiedTopology: true });

@@ -14,9 +14,9 @@ const addEmployee = async (req, res) => {
       password,
       designation,
       department,
-      dateOfBirth,
       education,
       address,
+      dateOfBirth,
       joiningDate,
       leaving,
     } = req.body;
@@ -36,9 +36,9 @@ const addEmployee = async (req, res) => {
       password,
       designation,
       department,
-      dateOfBirth,
       education,
       address,
+      dateOfBirth,
       joiningDate,
       leaving,
       // uploadImage: uploadImage.data, // Assuming uploadImage is a buffer
