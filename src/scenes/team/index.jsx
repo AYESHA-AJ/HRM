@@ -1,4 +1,11 @@
-import { Box, Typography, useTheme } from "@mui/material";
+import React, { useState } from "react";
+import {
+  Box,
+  Typography,
+  useTheme,
+  Tab,
+  Tabs,
+} from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import { mockDataTeam } from "../../data/mockData";
@@ -67,11 +74,37 @@ const Team = () => {
       },
     },
   ];
+  const [activeTab, setActiveTab] = useState("viewAllEmployees");
+
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
+  };
 
   return (
     <Box m="20px">
       <Header title="EMPLOYEES" subtitle="Managing the Employees " />
-      {/* <Box
+      <Tabs value={activeTab} onChange={handleTabChange}>
+        <Tab label="Add Employee" value="addEmployee" />
+        <Tab label="Delete Employee" value="deleteEmployee" />
+        <Tab label="View All Employees" value="viewAllEmployees" />
+      </Tabs>
+      
+      {activeTab === "addEmployee" && (
+        <Box m="20px">
+          {/* Add Employee content goes here */}
+          <Typography>Add Employee Content</Typography>
+        </Box>
+      )}
+
+      {activeTab === "deleteEmployee" && (
+        <Box m="20px">
+          {/* Delete Employee content goes here */}
+          <Typography>Delete Employee Content</Typography>
+        </Box>
+      )}
+
+      {activeTab === "viewAllEmployees" && (
+        <Box
         m="40px 0 0 0"
         height="75vh"
         sx={{
@@ -101,7 +134,9 @@ const Team = () => {
         }}
       >
         <DataGrid checkboxSelection rows={mockDataTeam} columns={columns} />
-      </Box> */}
+      </Box>
+      )}
+     
     </Box>
   );
 };
