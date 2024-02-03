@@ -1,7 +1,13 @@
 
 
-import React, { useState } from "react";
-import DatePicker from "@mui/lab/DatePicker";
+import React, { useState ,useEffect} from "react";
+// import DatePicker from "@mui/lab/DatePicker";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { KeyboardDatePicker } from "@mui/lab";
+import EditIcon from "@mui/icons-material/Edit";
+import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 
 
 
@@ -21,7 +27,7 @@ import IconButton from "@mui/material/IconButton";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import * as yup from "yup";
-import { Formik } from "formik";
+import { Formik,Field,ErrorMessage, useField } from "formik";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import { mockDataTeam } from "../../data/mockData";
@@ -48,7 +54,7 @@ const initialValues = {
   department: "",
   education: "",  
   address: "",   // New field
-  dateOfBirth: "",
+  date:"",
   uploadImage: "", // New field
   uploadCv: "", // New field
   joiningDate: "", // New field
@@ -69,7 +75,7 @@ const userSchema = yup.object().shape({
   password: yup.string().required("required"), // New field
   designation: yup.string().required("required"), // New field
   department: yup.string().required("required"), // New field
-  dateOfBirth: yup.string().required("required"), // New field
+  date: yup.string().required("required"), // New field
   education: yup.string().required("required"), // New field
   uploadImage: yup.string().required("required"), // New field
   uploadCv: yup.string().required("required"), // New field
@@ -77,97 +83,77 @@ const userSchema = yup.object().shape({
   joiningDate: yup.string().required("required"), // New field
   leaving: yup.string(), // New field (optional)
 });
-const DateField = ({ label, value, onChange }) => (
-  <DatePicker
-    value={value}
-    onChange={onChange}
-    renderInput={(params) => (
-      <TextField
-        {...params}
-        fullWidth
-        variant="filled"
-        type="text"
-        label={label}
-        sx={{ gridColumn: "span 4" }}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">
-              <IconButton>
-                <CalendarTodayIcon />
-              </IconButton>
-            </InputAdornment>
-          ),
-        }}
-      />
-    )}
-  />
-);
+
 const Team = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const handleEdit = (id) => {
+    console.log(`Edit action clicked for ID: ${id}`);
+    // Add your logic for handling edit action here
+  };
+
+  // Temporary function for handling delete action
+  const handleDelete = (id) => {
+    console.log(`Delete action clicked for ID: ${id}`);
+    // Add your logic for handling delete action here
+  };
   const columns = [
-    { field: "id", headerName: "ID" },
-    {
-      field: "name",
-      headerName: "Name",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
-    {
-      field: "age",
-      headerName: "Age",
-      type: "number",
-      headerAlign: "left",
-      align: "left",
-    },
-    {
-      field: "phone",
-      headerName: "Phone Number",
-      flex: 1,
-    },
-    {
-      field: "email",
-      headerName: "Email",
-      flex: 1,
-    },
-    {
-      field: "accessLevel",
-      headerName: "Access Level",
-      flex: 1,
-      renderCell: ({ row: { access } }) => {
-        return (
-          <Box
-            width="60%"
-            m="0 auto"
-            p="5px"
-            display="flex"
-            justifyContent="center"
-            backgroundColor={
-              access === "admin"
-                ? colors.greenAccent[600]
-                : access === "manager"
-                ? colors.greenAccent[700]
-                : colors.greenAccent[700]
-            }
-            borderRadius="4px"
-          >
-            {access === "admin" && <AdminPanelSettingsOutlinedIcon />}
-            {access === "manager" && <SecurityOutlinedIcon />}
-            {access === "user" && <LockOpenOutlinedIcon />}
-            <Typography color={colors.grey[100]} sx={{ ml: "5px" }}>
-              {access}
-            </Typography>
-          </Box>
-        );
-      },
-    },
+    { field: "_id", headerName: "ID", flex: 1 }, // Assuming MongoDB uses _id as the identifier
+  { field: "firstName", headerName: "First Name", flex: 1 },
+  { field: "lastName", headerName: "Last Name", flex: 1 },
+  { field: "email", headerName: "Email", flex: 1 },
+  { field: "contact", headerName: "Contact", flex: 1 },
+  { field: "designation", headerName: "Designation", flex: 1 },
+  { field: "department", headerName: "Department", flex: 1 },
+
+  {
+    
+    renderCell: ({ row }) => (
+      <Box display="flex" alignItems="center">
+        {/* Edit icon */}
+        <IconButton onClick={() => handleEdit(row._id)}>
+          <ModeEditOutlineOutlinedIcon style={{ color: '#784B84',fontSize: 26 }} />
+        </IconButton>
+        {/* Delete icon */}
+        <IconButton onClick={() => handleDelete(row._id)}>
+        <DeleteOutlinedIcon style={{ color: '#D21F3C',fontSize: 20} }/>
+        </IconButton>
+      </Box>
+    ),
+  },
+    
+  
+  
   ];
   const [activeTab, setActiveTab] = useState("viewAllEmployees");
 
   
+  const [employeeData, setEmployeeData] = useState([]);
 
-  const handleTabChange = (event, newValue) => {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/get_employees");
+        setEmployeeData(response.data);
+      } catch (error) {
+        console.error("Error fetching employee data:", error);
+      }
+    };
+
+    fetchData(); // Call the function when the component mounts
+  }, []);
+
+  const handleTabChange = async (event, newValue) => {
     setActiveTab(newValue);
+  
+    if (newValue === "viewAllEmployees") {
+      try {
+        const response = await axios.get("http://localhost:5000/api/get_employees");
+        setEmployeeData(response.data);
+      } catch (error) {
+        console.error("Error fetching employee data:", error);
+      }
+    }
   };
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
@@ -227,7 +213,7 @@ const [values, setValues] = useState({
   address: "", // New field
   uploadImage: "", // New field
   uploadCv: "", 
-  dateOfBirth: "",
+  date: "",
   joiningDate: "", // New field
   leaving: "", // New field (optional)
 });
@@ -246,24 +232,30 @@ const [test, setTest] = useState("")
 
 // };
 
-const handleChange = (e) => {
+const handlechange = (e) => {
   setValues((prev) => {
     return { ...prev, [e.target.name]: e.target.value };
+    
   });
 }
 
 // Function to handle onBlur
 
 
+
 // Function to handle form submission or any other action
 const handleSubmit = async (e) => {
   e.preventDefault();
+  console.log(values)
   try {
     await axios.post("http://localhost:5000/api/add_employee", {
       ...values,
+      
+     
     })
   } catch (error) {
     console.log(error)
+    
   }
   // You can perform any other actions like API requests here
 };
@@ -281,14 +273,12 @@ const [designation, setDesignation] = useState("");
 const [department, setDepartment] = useState("");
 const [education, setEducation] = useState("");
 const [address, setAddress] = useState("");
-const [dateOfBirth, setDateOfBirth] = useState("");
+const [date, setDate] = useState("");
 const [joiningDate, setJoiningDate] = useState("");
 const [leaving, setLeaving] = useState("");
 
 
   const handleTest = async () => {
-    console.log("API request successful");
-    console.log("Data sent:", education);
     try {
       await axios.post('http://localhost:5000/api/add_employee', {
         firstName: fname,
@@ -303,7 +293,7 @@ const [leaving, setLeaving] = useState("");
       department: department,
       education: education,
       address: address,
-       // dateOfBirth: dateOfBirth,
+       date: date,
       // joiningDate: joiningDate,
       // leaving: leaving,
       });
@@ -317,6 +307,26 @@ const [leaving, setLeaving] = useState("");
       console.error("Error during API request:", error);
     }
   };
+
+  const MyDatePicker = ({ name = "", onDateChange }) => {
+    const [field, meta, helpers] = useField(name);
+    const { value } = meta;
+    const { setValue } = helpers;
+  
+    const handleDateChange = (date) => {
+      setValue(date);
+      onDateChange && onDateChange(date); // Call the onDateChange prop if provided
+    };
+  
+    return (
+      <DatePicker
+        {...field}
+        selected={value}
+        onChange={handleDateChange}
+      />
+    );
+  };
+  
 
   return (
     <Box m="20px">
@@ -335,7 +345,7 @@ const [leaving, setLeaving] = useState("");
           validationSchema={userSchema}
           onSubmit={(values) => handleSubmit(values)}
         >
-          {({ values, errors, touched}) => (
+          {({ values, errors, touched,handleBlur,handleChange}) => (
             <form onSubmit={handleSubmit}>
               <Box
                 display="grid"
@@ -350,8 +360,8 @@ const [leaving, setLeaving] = useState("");
                   variant="filled"
                   type="text"
                   label="First Name"
-                  // onBlur={handleBlur}
-                  onChange={handleChange}
+                  //  onBlur={handleBlur}
+                  onChange={handlechange}
                   // value={values.firstName}
                   name="firstName"
                   error={!!touched.firstName && !!errors.firstName}
@@ -364,7 +374,7 @@ const [leaving, setLeaving] = useState("");
                   type="text"
                   label="Last Name"
                   // onBlur={handleBlur}
-                  onChange={handleChange}
+                  onChange={handlechange}
                   // value={values.lastName}
                   name="lastName"
                   error={!!touched.lastName && !!errors.lastName}
@@ -376,8 +386,8 @@ const [leaving, setLeaving] = useState("");
                   variant="filled"
                   type="text"
                   label="Email"
-                  // onBlur={handleBlur}
-                  onChange={handleChange}
+                    // onBlur={handleBlur}
+                  onChange={handlechange}
                   // value={values.email}
                   name="email"
                   error={!!touched.email && !!errors.email}
@@ -390,7 +400,7 @@ const [leaving, setLeaving] = useState("");
                   type="text"
                   label="Contact Number"
                   // onBlur={handleBlur}
-                  onChange={handleChange}
+                  onChange={handlechange}
                   // value={values.contact}
                   name="contact"
                   error={!!touched.contact && !!errors.contact}
@@ -402,8 +412,8 @@ const [leaving, setLeaving] = useState("");
                   variant="filled"
                   type="text"
                   label="Address 1"
-                  // onBlur={handleBlur}
-                  onChange={handleChange}
+                  //  onBlur={handleBlur}
+                  onChange={handlechange}
                   // value={values.address1}
                   name="address1"
                   error={!!touched.address1 && !!errors.address1}
@@ -415,8 +425,8 @@ const [leaving, setLeaving] = useState("");
                   variant="filled"
                   type="text"
                   label="Address 2"
-                  // onBlur={handleBlur}
-                  onChange={handleChange}
+                  //  onBlur={handleBlur}
+                  onChange={handlechange}
                   // value={values.address2}
                   name="address2"
                   error={!!touched.address2 && !!errors.address2}
@@ -428,8 +438,8 @@ const [leaving, setLeaving] = useState("");
                   variant="filled"
                   select
                   label="Gender"
-                  // onBlur={handleBlur}
-                  onChange={handleChange}
+                  //  onBlur={handleBlur}
+                  onChange={handlechange}
                   // value={values.gender}
                   name="gender"
                   error={!!touched.gender && !!errors.gender}
@@ -444,8 +454,8 @@ const [leaving, setLeaving] = useState("");
                   variant="filled"
                   type="password"
                   label="Password"
-                  // onBlur={handleBlur}
-                  onChange={handleChange}
+                  //  onBlur={handleBlur}
+                  onChange={handlechange}
                   // value={values.password}
                   name="password"
                   error={!!touched.password && !!errors.password}
@@ -457,8 +467,8 @@ const [leaving, setLeaving] = useState("");
                   variant="filled"
                   type="text"
                   label="Designation"
-                  // onBlur={handleBlur}
-                  onChange={handleChange}
+                  //  onBlur={handleBlur}
+                  onChange={handlechange}
                   // value={values.designation}
                   name="designation"
                   error={!!touched.designation && !!errors.designation}
@@ -471,7 +481,7 @@ const [leaving, setLeaving] = useState("");
                   select
                   label="Department"
                   // onBlur={handleBlur}
-                  onChange={handleChange}
+                  onChange={handlechange}
                   // value={values.department}
                   name="department"
                   error={!!touched.department && !!errors.department}
@@ -489,8 +499,8 @@ const [leaving, setLeaving] = useState("");
                   variant="filled"
                   type="text"
                   label="Education"
-                  // onBlur={handleBlur}
-                  onChange={handleChange}
+                  //  onBlur={handleBlur}
+                  onChange={handlechange}
                   // value={values.education}
                   name="education"
                   error={!!touched.education && !!errors.education}
@@ -498,22 +508,16 @@ const [leaving, setLeaving] = useState("");
                   sx={{ gridColumn: "span 4" }}
                 />
                 
-                <TextField
-                  fullWidth
-                  variant="filled"
-                  type="text"
-                  label="Date of Birth"
-                  // onBlur={handleBlur}
-                  sx={{ gridColumn: "span 4" }}
-                >
-                  <DateField
-          label="Date of Birth"
-          value={values.dateOfBirth}
-          onChange={(date) => handleChange({ target: { name: "dateOfBirth", value: date } })}
-        />
-                </TextField>
-               
-        
+                {/* <div class="form-group" sx={{"margin-bottom":"1rem"}}>
+                <MyDatePicker
+  name="date"
+  
+
+/>
+
+              
+            </div>
+         */}
                 
                 {/* <InputLabel htmlFor="uploadImage">Upload Image (PNG or JPEG)</InputLabel>
                   <Input
@@ -554,15 +558,34 @@ const [leaving, setLeaving] = useState("");
                   variant="filled"
                   type="text"
                   label="Address"
-                  // onBlur={handleBlur}
-                  onChange={handleChange}
+                  //  onBlur={handleBlur}
+                  onChange={handlechange}
                   // value={values.address}
                   name="address"
                   error={!!touched.address && !!errors.address}
                   helperText={touched.address && errors.address}
                   sx={{ gridColumn: "span 4" }}
                 />
-                <TextField
+
+                 <TextField
+                  fullWidth
+                  variant="filled"
+                  type="text"
+                  label="DateOfBirth"
+                  //  onBlur={handleBlur}
+                  onChange={handlechange}
+                  // value={values.address}
+                  name="date"
+                  error={!!touched.date && !!errors.date}
+                  helperText={touched.date && errors.date}
+                  sx={{ gridColumn: "span 4" }}
+                 
+               >  <MyDatePicker
+               name="date"
+               
+             
+             /></TextField>             
+                {/* <TextField
                     fullWidth
                     variant="filled"
                     type="text"
@@ -605,7 +628,7 @@ const [leaving, setLeaving] = useState("");
                       ),
                     }}
                     sx={{ gridColumn: "span 4" }}
-                  />
+                  /> */}
               </Box>
               <Box display="flex" justifyContent="end" mt="20px">
                 <Button color="secondary" variant="contained" type="submit">
@@ -613,6 +636,7 @@ const [leaving, setLeaving] = useState("");
                 </Button>
                 {/* <button onClick={handleTest}>Testing</button> */}
               </Box>
+             
             </form>)}
           {/* )} */}
           
@@ -644,6 +668,7 @@ const [leaving, setLeaving] = useState("");
           },
           "& .MuiDataGrid-cell": {
             borderBottom: "none",
+            fontSize: "0.9rem",
           },
           "& .name-column--cell": {
             color: colors.greenAccent[300],
@@ -651,6 +676,7 @@ const [leaving, setLeaving] = useState("");
           "& .MuiDataGrid-columnHeaders": {
             backgroundColor: colors.blueAccent[700],
             borderBottom: "none",
+            fontSize: "1rem"
           },
           "& .MuiDataGrid-virtualScroller": {
             backgroundColor: colors.primary[400],
@@ -664,7 +690,12 @@ const [leaving, setLeaving] = useState("");
           },
         }}
       >
-        <DataGrid checkboxSelection rows={mockDataTeam} columns={columns} />
+       <DataGrid
+  checkboxSelection
+  rows={employeeData}
+  columns={columns}
+  getRowId={(row) => row._id} // Specify the field to be used as the row id
+/>
       </Box>
       )}
      

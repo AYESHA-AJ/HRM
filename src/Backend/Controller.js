@@ -16,7 +16,7 @@ const addEmployee = async (req, res) => {
       department,
       education,
       address,
-      dateOfBirth,
+      date,
       joiningDate,
       leaving,
     } = req.body;
@@ -38,7 +38,7 @@ const addEmployee = async (req, res) => {
       department,
       education,
       address,
-      dateOfBirth,
+      date,
       joiningDate,
       leaving,
       // uploadImage: uploadImage.data, // Assuming uploadImage is a buffer
@@ -55,6 +55,31 @@ const addEmployee = async (req, res) => {
   }
 };
 
+const getAllEmployees = async (req, res) => {
+  try {
+    // Fetch all employees from the database
+    const employees = await Employee.find();
+
+    // Sending the list of employees as a response
+    res.status(200).json(employees);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const deleteEmployees = async (req, res) => {
+
+};
+
+const editEmployees = async (req, res) => {
+
+};
+
+
 module.exports = {
   addEmployee,
+  getAllEmployees,
+  deleteEmployees,
+  editEmployees
+
 };

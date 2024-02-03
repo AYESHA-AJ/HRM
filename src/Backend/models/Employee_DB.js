@@ -51,10 +51,10 @@ const employeeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  // dateOfBirth: {
-  //   type: String,
-  //   required: true,
-  // },
+  date: {
+    type: String,
+    required: true,
+  },
   
   // joiningDate: {
   //   type: String,

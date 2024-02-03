@@ -5,5 +5,6 @@ const controller = require('./Controller');
 
 
 router.post('/add_employee', controller.addEmployee);
+router.get('/get_employees', controller.getAllEmployees);
 
 module.exports = router;
