@@ -1,16 +1,11 @@
-
-
 import React, { useState ,useEffect} from "react";
 // import DatePicker from "@mui/lab/DatePicker";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { KeyboardDatePicker } from "@mui/lab";
-import EditIcon from "@mui/icons-material/Edit";
-import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-
-
-
+import ConfirmationModal from '../../components/ConfirmationModal';
+ 
+ 
 import {
   Box,
   Typography,
@@ -20,27 +15,18 @@ import {
   Tabs,
   Button,
 } from "@mui/material";
-import { DesktopDatePicker, MobileDatePicker } from "@mui/lab";
-import FormControl from "@mui/material/FormControl";
-import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import * as yup from "yup";
 import { Formik,Field,ErrorMessage, useField } from "formik";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
-import { mockDataTeam } from "../../data/mockData";
-import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
-import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
-import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
-import InputLabel from "@mui/material/InputLabel";
-import Input from "@mui/material/Input";
+import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 
 import Header from "../../components/Header";
 import MenuItem from "@mui/material/MenuItem";
 import axios from "axios";
-
+ 
 const initialValues = {
   firstName: "",
   lastName: "",
@@ -54,10 +40,10 @@ const initialValues = {
   department: "",
   education: "",  
   address: "",   // New field
-date:"",
+  date:"",
   uploadImage: "", // New field
   uploadCv: "", // New field
-    joiningDate: "", // New field
+  joiningDate: "", // New field
   leaving: "", // New field (optional)
 };
 const phoneRegExp = /^((\+92)|(0092))-{0,1}\d{3}-{0,1}\d{7}$|^\d{11}$|^\d{4}-\d{7}$/;
@@ -75,7 +61,7 @@ const userSchema = yup.object().shape({
   password: yup.string().required("required"), // New field
   designation: yup.string().required("required"), // New field
   department: yup.string().required("required"), // New field
-  dateOfBirth: yup.string().required("required"), // New field
+  date: yup.string().required("required"), // New field
   education: yup.string().required("required"), // New field
   uploadImage: yup.string().required("required"), // New field
   uploadCv: yup.string().required("required"), // New field
@@ -83,101 +69,292 @@ const userSchema = yup.object().shape({
   joiningDate: yup.string().required("required"), // New field
   leaving: yup.string(), // New field (optional)
 });
-const DateField = ({ label, value, onChange }) => (
-  <DatePicker
-    value={value}
-    onChange={onChange}
-    renderInput={(params) => (
-      <TextField
-        {...params}
-        fullWidth
-        variant="filled"
-        type="text"
-        label={label}
-        sx={{ gridColumn: "span 4" }}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">
-              <IconButton>
-                <CalendarTodayIcon />
-              </IconButton>
-            </InputAdornment>
-          ),
-        }}
-      />
-    )}
-  />
-);
+ 
 const Team = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const handleEdit = (id) => {
+    console.log(`Edit action clicked for ID: ${id}`);
+    // Add your logic for handling edit action here
+  };
+ 
+  const [deleteConfirmation, setDeleteConfirmation] = useState({
+    open: false,
+    employeeInfo: {},
+  });
+
+  const handleDelete = (id, fullName, email, department, contact) => {
+    setDeleteConfirmation({
+      open: true,
+      employeeInfo: { id, fullName, email, department, contact },
+    });
+  };
+
+  const handleConfirmDelete = () => {
+    const { id, fullName } = deleteConfirmation.employeeInfo;
+    console.log(`Deleting employee with ID: ${id}`);
+  
+    // Example using axios to send a delete request to the backend
+    axios
+      .delete(`http://localhost:5000/api/delete_employee/${id}`)
+      .then((response) => {
+        console.log('Employee deleted successfully');
+  
+        // Update state to remove the deleted employee
+        setEmployeeData((prevEmployeeData) =>
+          prevEmployeeData.filter((employee) => employee._id !== id)
+        );
+  
+        setDeleteConfirmation({ open: false, employeeInfo: {} });
+      })
+      .catch((error) => {
+        console.error('Error deleting employee:', error);
+        setDeleteConfirmation({ open: false, employeeInfo: {} });
+      });
+  };
+  const handleCloseDeleteConfirmation = () => {
+    setDeleteConfirmation({ open: false, employeeInfo: {} });
+  };
   const columns = [
-    { field: "id", headerName: "ID" },
-    {
-      field: "name",
-      headerName: "Name",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
-    {
-      field: "age",
-      headerName: "Age",
-      type: "number",
-      headerAlign: "left",
-      align: "left",
-    },
-    {
-      field: "phone",
-      headerName: "Phone Number",
-      flex: 1,
-    },
-    {
-      field: "email",
-      headerName: "Email",
-      flex: 1,
-    },
-    {
-      
-      headerName: "Actions",
-      flex: 1,
-      
-    },
+    { field: "_id", headerName: "ID", flex: 1 }, // Assuming MongoDB uses _id as the identifier
+  { field: "firstName", headerName: "First Name", flex: 1 },
+  { field: "lastName", headerName: "Last Name", flex: 1 },
+  { field: "email", headerName: "Email", flex: 1 },
+  { field: "contact", headerName: "Contact", flex: 1 },
+  { field: "designation", headerName: "Designation", flex: 1 },
+  { field: "department", headerName: "Department", flex: 1 },
+ 
+  {
+    renderCell: ({ row }) => (
+     
+        
+        <Box display="flex" alignItems="center">
+        <IconButton onClick={() => handleEdit(row._id)}>
+          <ModeEditOutlineOutlinedIcon style={{ color: '#784B84',fontSize: 26 }} />
+        </IconButton>
+        <IconButton
+          onClick={() =>
+            handleDelete(
+              row._id,
+              `${row.firstName} ${row.lastName}`,
+              row.email,
+              row.department,
+              row.contact
+            )
+          }
+        >
+          <DeleteOutlinedIcon style={{ color: '#D21F3C', fontSize: 20 }} />
+        </IconButton>
+      </Box>
+    ),
+  },
+   
+ 
+ 
   ];
   const [activeTab, setActiveTab] = useState("viewAllEmployees");
-
-  const handleTabChange = (event, newValue) => {
-    setActiveTab(newValue);
-  };
-  const isNonMobile = useMediaQuery("(min-width:600px)");
-
-  const handleFormSubmit = async (values) => {
-    const formData = new FormData();
-
-    Object.keys(values).forEach((key) => {
-      formData.append(key, values[key]);
-    });
-
-    try {
-      // Use axios for better handling of form data
-      const response = await fetch('http://localhost:5000/api/add_employee', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(values),
-      });
-
-      if (response.status === 201) {
-        console.log('Employee added successfully!');
-      } else {
-        console.error('Error adding employee:', response.status, response.statusText);
-        console.error('Response body:', response.data);
+ 
+ 
+  const [employeeData, setEmployeeData] = useState([]);
+ 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/get_employees");
+        setEmployeeData(response.data);
+      } catch (error) {
+        console.error("Error fetching employee data:", error);
       }
-    } catch (error) {
-      console.error('Network error:', error.message);
+    };
+ 
+    fetchData(); // Call the function when the component mounts
+  }, []);
+ 
+  const handleTabChange = async (event, newValue) => {
+    setActiveTab(newValue);
+ 
+    if (newValue === "viewAllEmployees") {
+      try {
+        const response = await axios.get("http://localhost:5000/api/get_employees");
+        setEmployeeData(response.data);
+      } catch (error) {
+        console.error("Error fetching employee data:", error);
+      }
     }
   };
-  
+  const isNonMobile = useMediaQuery("(min-width:600px)");
+ 
+//   const handleFormSubmit = async (values) => {
+//     const formData = new FormData();
+ 
+//     Object.keys(values).forEach((key) => {
+//       formData.append(key, values[key]);
+//     });
+ 
+//     console.log("lets see! :",formData)
+ 
+//   //   try {
+//   //     // Use axios for better handling of form data
+//   //     const response = await fetch('http://localhost:5000/api/add_employee', {
+//   //       method: 'POST',
+//   //       headers: {
+//   //         'Content-Type': 'application/json',
+//   //       },
+//   //       body: JSON.stringify(values),
+//   //     });
+ 
+//   //     if (response.status === 201) {
+//   //       console.log('Employee added successfully!');
+//   //     } else {
+//   //       console.error('Error adding employee:', response.status, response.statusText);
+//   //       console.error('Response body:', response.data);
+//   //     }
+//   //   } catch (error) {
+//   //     console.error('Network error:', error.message);
+//   //   }
+//   // };
+ 
+//   try {
+//     await axios.post('http://localhost:5000/api/add_employee', {
+//       ...values,
+//     })
+//   } catch (error) {
+//     console.log(error)
+//   };
+// }
+ 
+//////////////////////////////////////////////////////
+ 
+const [values, setValues] = useState({
+  firstName: "",
+  lastName: "",
+  email: "",
+  contact: "",
+  address1: "",
+  address2: "",
+  gender: "", // New field
+  password: "", // New field
+  designation: "", // New field
+  department: "", // New field
+  education: "", // New field
+  address: "", // New field
+  uploadImage: "", // New field
+  uploadCv: "",
+  date: "",
+  joiningDate: "", // New field
+  leaving: "", // New field (optional)
+});
+ 
+const [test, setTest] = useState("")
+ 
+// Function to handle input changes
+// const handleChange = (event) => {
+//   // const { name, value } = event.target;
+//   // setValues((prevValues) => ({
+//   //   ...prevValues,
+//   //   [name]: value,
+//   // }));
+//   // setTest(event.firstName)
+ 
+ 
+// };
+ 
+const handlechange = (e) => {
+  setValues((prev) => {
+    return { ...prev, [e.target.name]: e.target.value };
+   
+  });
+}
+ 
+// Function to handle onBlur
+ 
+ 
+ 
+// Function to handle form submission or any other action
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  console.log(values)
+  try {
+    await axios.post("http://localhost:5000/api/add_employee", {
+      ...values,
+     
+     
+    })
+  } catch (error) {
+    console.log(error)
+   
+  }
+  // You can perform any other actions like API requests here
+};
+ 
+/////////////////////////////
+const [fname, setFname] = useState("");
+const [lname, setLname] = useState("");
+ const [email, setEmail] = useState("");
+const [contact, setContact] = useState("");
+const [address1, setAddress1] = useState("");
+const [address2, setAddress2] = useState("");
+const [gender, setGender] = useState("");
+const [password, setPassword] = useState("");
+const [designation, setDesignation] = useState("");
+const [department, setDepartment] = useState("");
+const [education, setEducation] = useState("");
+const [address, setAddress] = useState("");
+const [date, setDate] = useState("");
+const [joiningDate, setJoiningDate] = useState("");
+const [leaving, setLeaving] = useState("");
+ 
+ 
+  const handleTest = async () => {
+    try {
+      await axios.post('http://localhost:5000/api/add_employee', {
+        firstName: fname,
+      lastName: lname,
+       Email: email,
+      contact: contact,
+      address1: address1,
+      address2: address2,
+      gender: gender,
+       password: password,
+      designation: designation,
+      department: department,
+      education: education,
+      address: address,
+       date: date,
+      // joiningDate: joiningDate,
+      // leaving: leaving,
+      });
+ 
+      console.log("API request successful");
+      console.log("Data sent:", fname);
+ 
+     
+ 
+    } catch (error) {
+      console.error("Error during API request:", error);
+    }
+  };
+ 
+  const MyDatePicker = ({ name = "", onDateChange }) => {
+    const [field, meta, helpers] = useField(name);
+    const { value } = meta;
+    const { setValue } = helpers;
+ 
+    const handleDateChange = (date) => {
+      setValue(date);
+      onDateChange && onDateChange(date); // Call the onDateChange prop if provided
+    };
+ 
+    return (
+      <DatePicker
+        {...field}
+        selected={value}
+        onChange={handleDateChange}
+      />
+    );
+  };
+ 
+ 
   return (
     <Box m="20px">
     <Header title="EMPLOYEES" subtitle="Managing the Employees " />
@@ -186,16 +363,16 @@ const Team = () => {
       <Tab label="Delete Employee" value="deleteEmployee" />
       <Tab label="View All Employees" value="viewAllEmployees" />
     </Tabs>
-
+ 
     {activeTab === "addEmployee" && (
       <Box m="20px">
         <Header title="EDIT DETAILS" subtitle="make changes in your profile" />
         <Formik
-          onSubmit={handleFormSubmit}
-          initialValues={initialValues}
+          initialValues={values}
           validationSchema={userSchema}
+          onSubmit={(values) => handleSubmit(values)}
         >
-          {({ values, errors, touched, handleBlur, handleChange, handleSubmit }) => (
+          {({ values, errors, touched,handleBlur,handleChange}) => (
             <form onSubmit={handleSubmit}>
               <Box
                 display="grid"
@@ -210,9 +387,9 @@ const Team = () => {
                   variant="filled"
                   type="text"
                   label="First Name"
-                 // onBlur={handleBlur}
-                  //onChange={handleChange}
-                  value={values.firstName}
+                  //  onBlur={handleBlur}
+                  onChange={handlechange}
+                  // value={values.firstName}
                   name="firstName"
                   error={!!touched.firstName && !!errors.firstName}
                   helperText={touched.firstName && errors.firstName}
@@ -223,9 +400,9 @@ const Team = () => {
                   variant="filled"
                   type="text"
                   label="Last Name"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.lastName}
+                  // onBlur={handleBlur}
+                  onChange={handlechange}
+                  // value={values.lastName}
                   name="lastName"
                   error={!!touched.lastName && !!errors.lastName}
                   helperText={touched.lastName && errors.lastName}
@@ -236,9 +413,9 @@ const Team = () => {
                   variant="filled"
                   type="text"
                   label="Email"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.email}
+                    // onBlur={handleBlur}
+                  onChange={handlechange}
+                  // value={values.email}
                   name="email"
                   error={!!touched.email && !!errors.email}
                   helperText={touched.email && errors.email}
@@ -249,9 +426,9 @@ const Team = () => {
                   variant="filled"
                   type="text"
                   label="Contact Number"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.contact}
+                  // onBlur={handleBlur}
+                  onChange={handlechange}
+                  // value={values.contact}
                   name="contact"
                   error={!!touched.contact && !!errors.contact}
                   helperText={touched.contact && errors.contact}
@@ -262,9 +439,9 @@ const Team = () => {
                   variant="filled"
                   type="text"
                   label="Address 1"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.address1}
+                  //  onBlur={handleBlur}
+                  onChange={handlechange}
+                  // value={values.address1}
                   name="address1"
                   error={!!touched.address1 && !!errors.address1}
                   helperText={touched.address1 && errors.address1}
@@ -275,9 +452,9 @@ const Team = () => {
                   variant="filled"
                   type="text"
                   label="Address 2"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.address2}
+                  //  onBlur={handleBlur}
+                  onChange={handlechange}
+                  // value={values.address2}
                   name="address2"
                   error={!!touched.address2 && !!errors.address2}
                   helperText={touched.address2 && errors.address2}
@@ -288,9 +465,9 @@ const Team = () => {
                   variant="filled"
                   select
                   label="Gender"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.gender}
+                  //  onBlur={handleBlur}
+                  onChange={handlechange}
+                  // value={values.gender}
                   name="gender"
                   error={!!touched.gender && !!errors.gender}
                   helperText={touched.gender && errors.gender}
@@ -304,9 +481,9 @@ const Team = () => {
                   variant="filled"
                   type="password"
                   label="Password"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.password}
+                  //  onBlur={handleBlur}
+                  onChange={handlechange}
+                  // value={values.password}
                   name="password"
                   error={!!touched.password && !!errors.password}
                   helperText={touched.password && errors.password}
@@ -317,9 +494,9 @@ const Team = () => {
                   variant="filled"
                   type="text"
                   label="Designation"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.designation}
+                  //  onBlur={handleBlur}
+                  onChange={handlechange}
+                  // value={values.designation}
                   name="designation"
                   error={!!touched.designation && !!errors.designation}
                   helperText={touched.designation && errors.designation}
@@ -330,9 +507,9 @@ const Team = () => {
                   variant="filled"
                   select
                   label="Department"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.department}
+                  // onBlur={handleBlur}
+                  onChange={handlechange}
+                  // value={values.department}
                   name="department"
                   error={!!touched.department && !!errors.department}
                   helperText={touched.department && errors.department}
@@ -343,36 +520,32 @@ const Team = () => {
                   <MenuItem value="Testing">Testing</MenuItem>
                   {/* Add more departments as needed */}
                 </TextField>
-
-                <TextField
-                  fullWidth
-                  variant="filled"
-                  type="text"
-                  label="Date of Birth"
-                  onBlur={handleBlur}
-                  sx={{ gridColumn: "span 4" }}
-                >
-                  <DateField
-          label="Date of Birth"
-          value={values.dateOfBirth}
-          onChange={(date) => handleChange({ target: { name: "dateOfBirth", value: date } })}
-        />
-                </TextField>
-               
-        
+ 
                 <TextField
                   fullWidth
                   variant="filled"
                   type="text"
                   label="Education"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.education}
+                  //  onBlur={handleBlur}
+                  onChange={handlechange}
+                  // value={values.education}
                   name="education"
                   error={!!touched.education && !!errors.education}
                   helperText={touched.education && errors.education}
                   sx={{ gridColumn: "span 4" }}
                 />
+               
+                {/* <div class="form-group" sx={{"margin-bottom":"1rem"}}>
+                <MyDatePicker
+  name="date"
+ 
+ 
+/>
+ 
+             
+            </div>
+         */}
+               
                 {/* <InputLabel htmlFor="uploadImage">Upload Image (PNG or JPEG)</InputLabel>
                   <Input
                     fullWidth
@@ -412,22 +585,41 @@ const Team = () => {
                   variant="filled"
                   type="text"
                   label="Address"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.address}
+                  //  onBlur={handleBlur}
+                  onChange={handlechange}
+                  // value={values.address}
                   name="address"
                   error={!!touched.address && !!errors.address}
                   helperText={touched.address && errors.address}
                   sx={{ gridColumn: "span 4" }}
                 />
-                <TextField
+ 
+                 <TextField
+                  fullWidth
+                  variant="filled"
+                  type="text"
+                  label="DateOfBirth"
+                  //  onBlur={handleBlur}
+                  onChange={handlechange}
+                  // value={values.address}
+                  name="date"
+                  error={!!touched.date && !!errors.date}
+                  helperText={touched.date && errors.date}
+                  sx={{ gridColumn: "span 4" }}
+                 
+               >  <MyDatePicker
+               name="date"
+               
+             
+             /></TextField>            
+                {/* <TextField
                     fullWidth
                     variant="filled"
                     type="text"
                     label="Joining Date"
-                    onBlur={handleBlur}
+                    // onBlur={handleBlur}
                     onChange={handleChange}
-                    value={values.joiningDate}
+                    // value={values.joiningDate}
                     name="joiningDate"
                     error={!!touched.joiningDate && !!errors.joiningDate}
                     helperText={touched.joiningDate && errors.joiningDate}
@@ -447,9 +639,9 @@ const Team = () => {
                     variant="filled"
                     type="text"
                     label="Leaving (Optional)"
-                    onBlur={handleBlur}
+                    // onBlur={handleBlur}
                     onChange={handleChange}
-                    value={values.leaving}
+                    // value={values.leaving}
                     name="leaving"
                     error={!!touched.leaving && !!errors.leaving}
                     helperText={touched.leaving && errors.leaving}
@@ -463,28 +655,36 @@ const Team = () => {
                       ),
                     }}
                     sx={{ gridColumn: "span 4" }}
-                  />
+                  /> */}
               </Box>
               <Box display="flex" justifyContent="end" mt="20px">
-                <Button type="submit" color="secondary" variant="contained" >
+                <Button color="secondary" variant="contained" type="submit">
                   Add Employee
                 </Button>
+                {/* <button onClick={handleTest}>Testing</button> */}
               </Box>
-            </form>
-          )}
+             
+            </form>)}
+          {/* )} */}
+         
         </Formik>
+       
       </Box>
-        
+       
        
       )}
-
+ 
       {activeTab === "deleteEmployee" && (
-        <Box m="20px">
+         <Box m="20px">
+         
+         
           {/* Delete Employee content goes here */}
-          <Typography>Delete Employee Content</Typography>
-        </Box>
+           <Typography>Delete Employee Content</Typography>
+         </Box>
+       
+       
       )}
-
+ 
       {activeTab === "viewAllEmployees" && (
         <Box
         m="40px 0 0 0"
@@ -495,6 +695,7 @@ const Team = () => {
           },
           "& .MuiDataGrid-cell": {
             borderBottom: "none",
+            fontSize: "0.9rem",
           },
           "& .name-column--cell": {
             color: colors.greenAccent[300],
@@ -502,6 +703,7 @@ const Team = () => {
           "& .MuiDataGrid-columnHeaders": {
             backgroundColor: colors.blueAccent[700],
             borderBottom: "none",
+            fontSize: "1rem"
           },
           "& .MuiDataGrid-virtualScroller": {
             backgroundColor: colors.primary[400],
@@ -515,12 +717,46 @@ const Team = () => {
           },
         }}
       >
-        <DataGrid checkboxSelection rows={mockDataTeam} columns={columns} />
+       <DataGrid
+  checkboxSelection
+  rows={employeeData}
+  columns={columns}
+            getRowId={(row) => row._id} // Specify the field to be used as the row id
+            
+          />
+          <ConfirmationModal
+  open={deleteConfirmation.open}
+  onClose={handleCloseDeleteConfirmation}
+  onConfirm={handleConfirmDelete}
+  title="Delete Confirmation"
+  content={
+    <div>
+      <Typography variant="h5" style={{ fontWeight: 'bold', marginBottom: '10px' }}>
+        Are you sure?
+      </Typography>
+      <div style={{ marginLeft: '20px' }}>
+        <Typography variant="body1" style={{ fontWeight: 'bold', color: 'grey' }}>
+          Full name: {deleteConfirmation.employeeInfo.fullName}
+        </Typography>
+        <Typography variant="body1" style={{ fontWeight: 'bold', color: 'grey' }}>
+          Email: {deleteConfirmation.employeeInfo.email}
+        </Typography>
+        <Typography variant="body1" style={{ fontWeight: 'bold', color: 'grey' }}>
+          Contact: {deleteConfirmation.employeeInfo.contact}
+        </Typography>
+        <Typography variant="body1" style={{ fontWeight: 'bold', color: 'grey' }}>
+          Department: {deleteConfirmation.employeeInfo.department}
+        </Typography>
+      </div>
+    </div>
+  }
+/>
+
       </Box>
       )}
      
     </Box>
   );
 };
-
+ 
 export default Team;

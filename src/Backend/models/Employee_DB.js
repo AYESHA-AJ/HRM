@@ -1,6 +1,6 @@
 // backend/models/EmployeeDb.js
 const mongoose = require('mongoose');
-
+ 
 const employeeSchema = new mongoose.Schema({
   firstName: {
     type: String,
@@ -42,35 +42,32 @@ const employeeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  dateOfBirth: {
-    type: Date,
-    required: true,
-  },
   education: {
     type: String,
     required: true,
   },
-  uploadImage: {
-    type: Buffer, // Storing as Buffer in MongoDB for image files
-    required: true,
-  },
-  uploadCv: {
-    type: Buffer, // Storing as Buffer in MongoDB for PDF files
-    required: true,
-  },
+ 
   address: {
     type: String,
     required: true,
   },
-  joiningDate: {
-    type: Date,
+  date: {
+    type: String,
     required: true,
   },
-  leaving: {
-    type: Date, // Optional, can be null
-  },
+ 
+  // joiningDate: {
+  //   type: String,
+  //   required: true,
+  // },
+  // leaving: {
+  //   type: String,
+  // },
+ 
+ 
+ 
 });
-
+ 
 const Employee = mongoose.model('Employee', employeeSchema);
-
+ 
 module.exports = Employee;
