@@ -1,22 +1,15 @@
-
-
 import React, { useState ,useEffect} from "react";
 // import DatePicker from "@mui/lab/DatePicker";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { KeyboardDatePicker } from "@mui/lab";
-import EditIcon from "@mui/icons-material/Edit";
-import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-
-
-
-
+import ConfirmationModal from '../../components/ConfirmationModal';
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-
+ 
+ 
 import {
   Box,
   Typography,
@@ -26,29 +19,18 @@ import {
   Tabs,
   Button,
 } from "@mui/material";
-import { DesktopDatePicker, MobileDatePicker } from "@mui/lab";
-import FormControl from "@mui/material/FormControl";
-import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import * as yup from "yup";
 import { Formik,Field,ErrorMessage, useField } from "formik";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
-import { mockDataTeam } from "../../data/mockData";
-import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
-import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
-import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
-import InputLabel from "@mui/material/InputLabel";
-import Input from "@mui/material/Input";
-import {  Select } from '@mui/material';
-
+import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 
 import Header from "../../components/Header";
 import MenuItem from "@mui/material/MenuItem";
 import axios from "axios";
-
+ 
 const initialValues = {
   firstName: "",
   lastName: "",
@@ -91,56 +73,76 @@ const userSchema = yup.object().shape({
   joiningDate: yup.string().required("required"), // New field
   leaving: yup.string(), // New field (optional)
 });
-
-
-
-
+ 
 const Team = () => {
-
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [editedEmployee, setEditedEmployee] = useState({});
-  const [employeeData, setEmployeeData] = useState([]);
-  
-  
-
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const handleEdit = async (id) => {
-    try {
-      const response = await axios.get(`http://localhost:5000/api/get_employee/${id}`);
-      const existingEmployee = response.data;
-      setEditedEmployee(existingEmployee);
-      setEditDialogOpen(true);
-    } catch (error) {
-      console.error("Error fetching employee data:", error);
-    }
-  };
-
-  const handleDialogClose = () => {
-    setEditDialogOpen(false);
-    setEditedEmployee({});
-  };
-
-  const handleDialogSubmit = async () => {
-    try {
-      await axios.put(`http://localhost:5000/api/edit_employee/${editedEmployee._id}`, editedEmployee);
-      // Refresh employee data after editing
-      const response = await axios.get("http://localhost:5000/api/get_employees");
-      setEmployeeData(response.data);
+  const [deleteConfirmation, setDeleteConfirmation] = useState({
+    open: false,
+    employeeInfo: {},
+  });
+   const [editDialogOpen, setEditDialogOpen] = useState(false);
+    const [editedEmployee, setEditedEmployee] = useState({});
+   
+   const handleEdit = async (id) => {
+      try {
+        const response = await axios.get(`http://localhost:5000/api/get_employee/${id}`);
+        const existingEmployee = response.data;
+        setEditedEmployee(existingEmployee);
+        setEditDialogOpen(true);
+      } catch (error) {
+        console.error("Error fetching employee data:", error);
+      }
+    };
+   
+    const handleDialogClose = () => {
       setEditDialogOpen(false);
       setEditedEmployee({});
-    } catch (error) {
-      console.error("Error updating employee data:", error);
-    }
+    };
+   
+    const handleDialogSubmit = async () => {
+      try {
+        await axios.put(`http://localhost:5000/api/edit_employee/${editedEmployee._id}`, editedEmployee);
+        // Refresh employee data after editing
+        const response = await axios.get("http://localhost:5000/api/get_employees");
+        setEmployeeData(response.data);
+        setEditDialogOpen(false);
+        setEditedEmployee({});
+      } catch (error) {
+        console.error("Error updating employee data:", error);
+      }
+    };
+  const handleDelete = (id, fullName, email, department, contact) => {
+    setDeleteConfirmation({
+      open: true,
+      employeeInfo: { id, fullName, email, department, contact },
+    });
   };
 
- 
-
-
-  // Temporary function for handling delete action
-  const handleDelete = (id) => {
-    console.log(`Delete action clicked for ID: ${id}`);
-    // Add your logic for handling delete action here
+  const handleConfirmDelete = () => {
+    const { id, fullName } = deleteConfirmation.employeeInfo;
+    console.log(`Deleting employee with ID: ${id}`);
+  
+    // Example using axios to send a delete request to the backend
+    axios
+      .delete(`http://localhost:5000/api/delete_employee/${id}`)
+      .then((response) => {
+        console.log('Employee deleted successfully');
+  
+        // Update state to remove the deleted employee
+        setEmployeeData((prevEmployeeData) =>
+          prevEmployeeData.filter((employee) => employee._id !== id)
+        );
+  
+        setDeleteConfirmation({ open: false, employeeInfo: {} });
+      })
+      .catch((error) => {
+        console.error('Error deleting employee:', error);
+        setDeleteConfirmation({ open: false, employeeInfo: {} });
+      });
+  };
+  const handleCloseDeleteConfirmation = () => {
+    setDeleteConfirmation({ open: false, employeeInfo: {} });
   };
   const columns = [
     { field: "_id", headerName: "ID", flex: 1 }, // Assuming MongoDB uses _id as the identifier
@@ -150,31 +152,40 @@ const Team = () => {
   { field: "contact", headerName: "Contact", flex: 1 },
   { field: "designation", headerName: "Designation", flex: 1 },
   { field: "department", headerName: "Department", flex: 1 },
-
+ 
   {
-    
     renderCell: ({ row }) => (
-      <Box display="flex" alignItems="center">
-        {/* Edit icon */}
+     
+        
+        <Box display="flex" alignItems="center">
         <IconButton onClick={() => handleEdit(row._id)}>
           <ModeEditOutlineOutlinedIcon style={{ color: '#784B84',fontSize: 26 }} />
         </IconButton>
-        {/* Delete icon */}
-        <IconButton onClick={() => handleDelete(row._id)}>
-        <DeleteOutlinedIcon style={{ color: '#D21F3C',fontSize: 20} }/>
+        <IconButton
+          onClick={() =>
+            handleDelete(
+              row._id,
+              `${row.firstName} ${row.lastName}`,
+              row.email,
+              row.department,
+              row.contact
+            )
+          }
+        >
+          <DeleteOutlinedIcon style={{ color: '#D21F3C', fontSize: 20 }} />
         </IconButton>
       </Box>
     ),
   },
-    
-  
-  
+   
+ 
+ 
   ];
   const [activeTab, setActiveTab] = useState("viewAllEmployees");
-
-  
-  
-
+ 
+ 
+  const [employeeData, setEmployeeData] = useState([]);
+ 
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -184,13 +195,13 @@ const Team = () => {
         console.error("Error fetching employee data:", error);
       }
     };
-
+ 
     fetchData(); // Call the function when the component mounts
   }, []);
-
+ 
   const handleTabChange = async (event, newValue) => {
     setActiveTab(newValue);
-  
+ 
     if (newValue === "viewAllEmployees") {
       try {
         const response = await axios.get("http://localhost:5000/api/get_employees");
@@ -201,16 +212,16 @@ const Team = () => {
     }
   };
   const isNonMobile = useMediaQuery("(min-width:600px)");
-
+ 
 //   const handleFormSubmit = async (values) => {
 //     const formData = new FormData();
-
+ 
 //     Object.keys(values).forEach((key) => {
 //       formData.append(key, values[key]);
 //     });
-
+ 
 //     console.log("lets see! :",formData)
-
+ 
 //   //   try {
 //   //     // Use axios for better handling of form data
 //   //     const response = await fetch('http://localhost:5000/api/add_employee', {
@@ -220,7 +231,7 @@ const Team = () => {
 //   //       },
 //   //       body: JSON.stringify(values),
 //   //     });
-
+ 
 //   //     if (response.status === 201) {
 //   //       console.log('Employee added successfully!');
 //   //     } else {
@@ -231,7 +242,7 @@ const Team = () => {
 //   //     console.error('Network error:', error.message);
 //   //   }
 //   // };
-
+ 
 //   try {
 //     await axios.post('http://localhost:5000/api/add_employee', {
 //       ...values,
@@ -240,9 +251,9 @@ const Team = () => {
 //     console.log(error)
 //   };
 // }
-
+ 
 //////////////////////////////////////////////////////
-
+ 
 const [values, setValues] = useState({
   firstName: "",
   lastName: "",
@@ -257,14 +268,14 @@ const [values, setValues] = useState({
   education: "", // New field
   address: "", // New field
   uploadImage: "", // New field
-  uploadCv: "", 
+  uploadCv: "",
   date: "",
   joiningDate: "", // New field
   leaving: "", // New field (optional)
 });
-
+ 
 const [test, setTest] = useState("")
-
+ 
 // Function to handle input changes
 // const handleChange = (event) => {
 //   // const { name, value } = event.target;
@@ -273,21 +284,21 @@ const [test, setTest] = useState("")
 //   //   [name]: value,
 //   // }));
 //   // setTest(event.firstName)
-  
-
+ 
+ 
 // };
-
+ 
 const handlechange = (e) => {
   setValues((prev) => {
     return { ...prev, [e.target.name]: e.target.value };
-    
+   
   });
 }
-
+ 
 // Function to handle onBlur
-
-
-
+ 
+ 
+ 
 // Function to handle form submission or any other action
 const handleSubmit = async (e) => {
   e.preventDefault();
@@ -295,16 +306,16 @@ const handleSubmit = async (e) => {
   try {
     await axios.post("http://localhost:5000/api/add_employee", {
       ...values,
-      
+     
      
     })
   } catch (error) {
     console.log(error)
-    
+   
   }
   // You can perform any other actions like API requests here
 };
-
+ 
 /////////////////////////////
 const [fname, setFname] = useState("");
 const [lname, setLname] = useState("");
@@ -321,8 +332,8 @@ const [address, setAddress] = useState("");
 const [date, setDate] = useState("");
 const [joiningDate, setJoiningDate] = useState("");
 const [leaving, setLeaving] = useState("");
-
-
+ 
+ 
   const handleTest = async () => {
     try {
       await axios.post('http://localhost:5000/api/add_employee', {
@@ -342,27 +353,27 @@ const [leaving, setLeaving] = useState("");
       // joiningDate: joiningDate,
       // leaving: leaving,
       });
-
+ 
       console.log("API request successful");
       console.log("Data sent:", fname);
-
+ 
      
-
+ 
     } catch (error) {
       console.error("Error during API request:", error);
     }
   };
-
+ 
   const MyDatePicker = ({ name = "", onDateChange }) => {
     const [field, meta, helpers] = useField(name);
     const { value } = meta;
     const { setValue } = helpers;
-  
+ 
     const handleDateChange = (date) => {
       setValue(date);
       onDateChange && onDateChange(date); // Call the onDateChange prop if provided
     };
-  
+ 
     return (
       <DatePicker
         {...field}
@@ -370,14 +381,9 @@ const [leaving, setLeaving] = useState("");
         onChange={handleDateChange}
       />
     );
-
-
-    
-    
-
   };
-  
-
+ 
+ 
   return (
     <Box m="20px">
     <Header title="EMPLOYEES" subtitle="Managing the Employees " />
@@ -386,7 +392,7 @@ const [leaving, setLeaving] = useState("");
       <Tab label="Delete Employee" value="deleteEmployee" />
       <Tab label="View All Employees" value="viewAllEmployees" />
     </Tabs>
-
+ 
     {activeTab === "addEmployee" && (
       <Box m="20px">
         <Header title="EDIT DETAILS" subtitle="make changes in your profile" />
@@ -543,7 +549,7 @@ const [leaving, setLeaving] = useState("");
                   <MenuItem value="Testing">Testing</MenuItem>
                   {/* Add more departments as needed */}
                 </TextField>
-
+ 
                 <TextField
                   fullWidth
                   variant="filled"
@@ -557,18 +563,18 @@ const [leaving, setLeaving] = useState("");
                   helperText={touched.education && errors.education}
                   sx={{ gridColumn: "span 4" }}
                 />
-                
+               
                 {/* <div class="form-group" sx={{"margin-bottom":"1rem"}}>
                 <MyDatePicker
   name="date"
-  
-
+ 
+ 
 />
-
-              
+ 
+             
             </div>
          */}
-                
+               
                 {/* <InputLabel htmlFor="uploadImage">Upload Image (PNG or JPEG)</InputLabel>
                   <Input
                     fullWidth
@@ -616,7 +622,7 @@ const [leaving, setLeaving] = useState("");
                   helperText={touched.address && errors.address}
                   sx={{ gridColumn: "span 4" }}
                 />
-
+ 
                  <TextField
                   fullWidth
                   variant="filled"
@@ -634,7 +640,7 @@ const [leaving, setLeaving] = useState("");
                name="date"
                
              
-             /></TextField>             
+             /></TextField>            
                 {/* <TextField
                     fullWidth
                     variant="filled"
@@ -689,25 +695,25 @@ const [leaving, setLeaving] = useState("");
              
             </form>)}
           {/* )} */}
-          
+         
         </Formik>
-        
+       
       </Box>
-        
+       
        
       )}
-
-      {activeTab === "deleteEmployee" && (
+ 
+      {activeTab === "Employee Profile" && (
          <Box m="20px">
          
-          
+         
           {/* Delete Employee content goes here */}
-           <Typography>Delete Employee Content</Typography>
+           <Typography>View Employee</Typography>
          </Box>
        
-        
+       
       )}
-
+ 
       {activeTab === "viewAllEmployees" && (
         <Box
         m="40px 0 0 0"
@@ -744,9 +750,37 @@ const [leaving, setLeaving] = useState("");
   checkboxSelection
   rows={employeeData}
   columns={columns}
-  getRowId={(row) => row._id} // Specify the field to be used as the row id
-/>
-<Dialog open={editDialogOpen} onClose={handleDialogClose}>
+            getRowId={(row) => row._id} // Specify the field to be used as the row id
+            
+          />
+          <ConfirmationModal
+  open={deleteConfirmation.open}
+  onClose={handleCloseDeleteConfirmation}
+  onConfirm={handleConfirmDelete}
+  title="Delete Confirmation"
+  content={
+    <div>
+      <Typography variant="h5" style={{ fontWeight: 'bold', marginBottom: '10px' }}>
+        Are you sure?
+      </Typography>
+      <div style={{ marginLeft: '20px' }}>
+        <Typography variant="body1" style={{ fontWeight: 'bold', color: 'grey' }}>
+          Full name: {deleteConfirmation.employeeInfo.fullName}
+        </Typography>
+        <Typography variant="body1" style={{ fontWeight: 'bold', color: 'grey' }}>
+          Email: {deleteConfirmation.employeeInfo.email}
+        </Typography>
+        <Typography variant="body1" style={{ fontWeight: 'bold', color: 'grey' }}>
+          Contact: {deleteConfirmation.employeeInfo.contact}
+        </Typography>
+        <Typography variant="body1" style={{ fontWeight: 'bold', color: 'grey' }}>
+          Department: {deleteConfirmation.employeeInfo.department}
+        </Typography>
+      </div>
+    </div>
+  }
+          />
+          <Dialog open={editDialogOpen} onClose={handleDialogClose}>
             <DialogTitle>Edit Employee</DialogTitle>
             <DialogContent sx={{ padding: '20px' }}>
   <TextField
@@ -781,9 +815,9 @@ const [leaving, setLeaving] = useState("");
     onChange={(e) => setEditedEmployee({ ...editedEmployee, contact: e.target.value })}
     sx={{ marginBottom: '16px' }}
   />
-  
-  
-  
+ 
+ 
+ 
   <TextField
     fullWidth
     variant="filled"
@@ -806,17 +840,17 @@ const [leaving, setLeaving] = useState("");
       <MenuItem value="Testing">Testing</MenuItem>
       {/* Add more departments as needed */}
     </TextField>
-  
-  
-    
-
+ 
+ 
+   
+ 
 </DialogContent>
             <DialogActions>
-            <Button 
-    onClick={handleDialogClose} 
+            <Button
+    onClick={handleDialogClose}
     sx={{
       marginRight: '8px',
-      
+     
       backgroundColor: '#C0392B',
       fontWeight: 'bold',
       color: '#FFFFFF',
@@ -827,10 +861,10 @@ const [leaving, setLeaving] = useState("");
   >
     Cancel
   </Button>
-  <Button 
-    onClick={handleDialogSubmit} 
+  <Button
+    onClick={handleDialogSubmit}
     sx={{
-      backgroundColor: '#33852e', 
+      backgroundColor: '#33852e',
       fontWeight: 'bold',
       color: '#FFFFFF',
       '&:hover': {
@@ -849,5 +883,5 @@ const [leaving, setLeaving] = useState("");
     </Box>
   );
 };
-
+ 
 export default Team;
