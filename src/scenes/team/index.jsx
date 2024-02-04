@@ -11,6 +11,12 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 
 
 
+
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+
 import {
   Box,
   Typography,
@@ -36,6 +42,8 @@ import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
 import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
 import InputLabel from "@mui/material/InputLabel";
 import Input from "@mui/material/Input";
+import {  Select } from '@mui/material';
+
 
 import Header from "../../components/Header";
 import MenuItem from "@mui/material/MenuItem";
@@ -84,13 +92,50 @@ const userSchema = yup.object().shape({
   leaving: yup.string(), // New field (optional)
 });
 
+
+
+
 const Team = () => {
+
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editedEmployee, setEditedEmployee] = useState({});
+  const [employeeData, setEmployeeData] = useState([]);
+  
+  
+
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const handleEdit = (id) => {
-    console.log(`Edit action clicked for ID: ${id}`);
-    // Add your logic for handling edit action here
+  const handleEdit = async (id) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/get_employee/${id}`);
+      const existingEmployee = response.data;
+      setEditedEmployee(existingEmployee);
+      setEditDialogOpen(true);
+    } catch (error) {
+      console.error("Error fetching employee data:", error);
+    }
   };
+
+  const handleDialogClose = () => {
+    setEditDialogOpen(false);
+    setEditedEmployee({});
+  };
+
+  const handleDialogSubmit = async () => {
+    try {
+      await axios.put(`http://localhost:5000/api/edit_employee/${editedEmployee._id}`, editedEmployee);
+      // Refresh employee data after editing
+      const response = await axios.get("http://localhost:5000/api/get_employees");
+      setEmployeeData(response.data);
+      setEditDialogOpen(false);
+      setEditedEmployee({});
+    } catch (error) {
+      console.error("Error updating employee data:", error);
+    }
+  };
+
+ 
+
 
   // Temporary function for handling delete action
   const handleDelete = (id) => {
@@ -128,7 +173,7 @@ const Team = () => {
   const [activeTab, setActiveTab] = useState("viewAllEmployees");
 
   
-  const [employeeData, setEmployeeData] = useState([]);
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -325,6 +370,11 @@ const [leaving, setLeaving] = useState("");
         onChange={handleDateChange}
       />
     );
+
+
+    
+    
+
   };
   
 
@@ -696,6 +746,103 @@ const [leaving, setLeaving] = useState("");
   columns={columns}
   getRowId={(row) => row._id} // Specify the field to be used as the row id
 />
+<Dialog open={editDialogOpen} onClose={handleDialogClose}>
+            <DialogTitle>Edit Employee</DialogTitle>
+            <DialogContent sx={{ padding: '20px' }}>
+  <TextField
+    fullWidth
+    variant="filled"
+    label="First Name"
+    value={editedEmployee.firstName}
+    onChange={(e) => setEditedEmployee({ ...editedEmployee, firstName: e.target.value })}
+    sx={{ marginBottom: '16px' }}
+  />
+  <TextField
+    fullWidth
+    variant="filled"
+    label="Last Name"
+    value={editedEmployee.lastName}
+    onChange={(e) => setEditedEmployee({ ...editedEmployee, lastName: e.target.value })}
+    sx={{ marginBottom: '16px' }}
+  />
+  <TextField
+    fullWidth
+    variant="filled"
+    label="Email"
+    value={editedEmployee.email}
+    onChange={(e) => setEditedEmployee({ ...editedEmployee, email: e.target.value })}
+    sx={{ marginBottom: '16px' }}
+  />
+  <TextField
+    fullWidth
+    variant="filled"
+    label="Contact"
+    value={editedEmployee.contact}
+    onChange={(e) => setEditedEmployee({ ...editedEmployee, contact: e.target.value })}
+    sx={{ marginBottom: '16px' }}
+  />
+  
+  
+  
+  <TextField
+    fullWidth
+    variant="filled"
+    label="Designation"
+    value={editedEmployee.designation}
+    onChange={(e) => setEditedEmployee({ ...editedEmployee, designation: e.target.value })}
+    sx={{ marginBottom: '16px' }}
+  />
+  <TextField
+      fullWidth
+      variant="filled"
+      label="Department"
+      select
+      value={editedEmployee.department}
+      onChange={(e) => setEditedEmployee({ ...editedEmployee, department: e.target.value })}
+      sx={{ marginBottom: '16px' }}
+    >
+      <MenuItem value="Designing">Designing</MenuItem>
+      <MenuItem value="Development">Development</MenuItem>
+      <MenuItem value="Testing">Testing</MenuItem>
+      {/* Add more departments as needed */}
+    </TextField>
+  
+  
+    
+
+</DialogContent>
+            <DialogActions>
+            <Button 
+    onClick={handleDialogClose} 
+    sx={{
+      marginRight: '8px',
+      
+      backgroundColor: '#C0392B',
+      fontWeight: 'bold',
+      color: '#FFFFFF',
+      '&:hover': {
+        backgroundColor: '#E74C32', // Lighter coral red on hover
+      },
+    }}
+  >
+    Cancel
+  </Button>
+  <Button 
+    onClick={handleDialogSubmit} 
+    sx={{
+      backgroundColor: '#33852e', 
+      fontWeight: 'bold',
+      color: '#FFFFFF',
+      '&:hover': {
+        backgroundColor: '#62a540', // Lighter warm yellow on hover
+      },
+    }}
+  >
+    Save Changes
+  </Button>
+            </DialogActions>
+          </Dialog>
+
       </Box>
       )}
      

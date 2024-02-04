@@ -71,8 +71,41 @@ const deleteEmployees = async (req, res) => {
 
 };
 
-const editEmployees = async (req, res) => {
+const editEmployee = async (req, res) => {
+  const { id } = req.params;
+  const updatedData = req.body;
 
+  try {
+    const updatedEmployee = await Employee.findByIdAndUpdate(id, updatedData, { new: true });
+    if (!updatedEmployee) {
+      return res.status(404).json({ error: 'Employee not found' });
+    }
+
+    res.status(200).json(updatedEmployee);
+  } catch (error) {
+    console.error('Error updating employee:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+const getEmployeeById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Fetch the employee from the database using the provided ID
+    const employee = await Employee.findById(id);
+
+    // Check if the employee with the specified ID exists
+    if (!employee) {
+      return res.status(404).json({ error: 'Employee not found' });
+    }
+
+    // Sending the employee data as a response
+    res.status(200).json(employee);
+  } catch (error) {
+    console.error('Error fetching employee by ID:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 };
 
 
@@ -80,6 +113,7 @@ module.exports = {
   addEmployee,
   getAllEmployees,
   deleteEmployees,
-  editEmployees
+  editEmployee,
+  getEmployeeById,
 
 };
