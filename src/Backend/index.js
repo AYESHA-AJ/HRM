@@ -1,18 +1,17 @@
-// backend/index.js
+// backend/server.js or backend/index.js
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const routes = require('./Routes'); // Corrected path to routes
+const routes = require('./Routes');
+
+
 
 const app = express();
 
-app.use(cors({
-    origin: 'http://localhost:3000',  // Replace with your frontend's URL
-    credentials: true,  // Include credentials (e.g., cookies) in the requests
-  }));
+app.use(cors());
 app.use(express.json());
 
-mongoose.connect('mongodb://localhost:27017/Employee_DB', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb://localhost:27017/Employee_Db', { useNewUrlParser: true, useUnifiedTopology: true });
 
 app.use('/api', routes);
 

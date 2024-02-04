@@ -54,10 +54,10 @@ const initialValues = {
   department: "",
   education: "",  
   address: "",   // New field
-  date:"",
+date:"",
   uploadImage: "", // New field
   uploadCv: "", // New field
-  joiningDate: "", // New field
+    joiningDate: "", // New field
   leaving: "", // New field (optional)
 };
 const phoneRegExp = /^((\+92)|(0092))-{0,1}\d{3}-{0,1}\d{7}$|^\d{11}$|^\d{4}-\d{7}$/;
@@ -75,7 +75,7 @@ const userSchema = yup.object().shape({
   password: yup.string().required("required"), // New field
   designation: yup.string().required("required"), // New field
   department: yup.string().required("required"), // New field
-  date: yup.string().required("required"), // New field
+  dateOfBirth: yup.string().required("required"), // New field
   education: yup.string().required("required"), // New field
   uploadImage: yup.string().required("required"), // New field
   uploadCv: yup.string().required("required"), // New field
@@ -83,251 +83,101 @@ const userSchema = yup.object().shape({
   joiningDate: yup.string().required("required"), // New field
   leaving: yup.string(), // New field (optional)
 });
-
+const DateField = ({ label, value, onChange }) => (
+  <DatePicker
+    value={value}
+    onChange={onChange}
+    renderInput={(params) => (
+      <TextField
+        {...params}
+        fullWidth
+        variant="filled"
+        type="text"
+        label={label}
+        sx={{ gridColumn: "span 4" }}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton>
+                <CalendarTodayIcon />
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
+    )}
+  />
+);
 const Team = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const handleEdit = (id) => {
-    console.log(`Edit action clicked for ID: ${id}`);
-    // Add your logic for handling edit action here
-  };
-
-  // Temporary function for handling delete action
-  const handleDelete = (id) => {
-    console.log(`Delete action clicked for ID: ${id}`);
-    // Add your logic for handling delete action here
-  };
   const columns = [
-    { field: "_id", headerName: "ID", flex: 1 }, // Assuming MongoDB uses _id as the identifier
-  { field: "firstName", headerName: "First Name", flex: 1 },
-  { field: "lastName", headerName: "Last Name", flex: 1 },
-  { field: "email", headerName: "Email", flex: 1 },
-  { field: "contact", headerName: "Contact", flex: 1 },
-  { field: "designation", headerName: "Designation", flex: 1 },
-  { field: "department", headerName: "Department", flex: 1 },
-
-  {
-    
-    renderCell: ({ row }) => (
-      <Box display="flex" alignItems="center">
-        {/* Edit icon */}
-        <IconButton onClick={() => handleEdit(row._id)}>
-          <ModeEditOutlineOutlinedIcon style={{ color: '#784B84',fontSize: 26 }} />
-        </IconButton>
-        {/* Delete icon */}
-        <IconButton onClick={() => handleDelete(row._id)}>
-        <DeleteOutlinedIcon style={{ color: '#D21F3C',fontSize: 20} }/>
-        </IconButton>
-      </Box>
-    ),
-  },
-    
-  
-  
+    { field: "id", headerName: "ID" },
+    {
+      field: "name",
+      headerName: "Name",
+      flex: 1,
+      cellClassName: "name-column--cell",
+    },
+    {
+      field: "age",
+      headerName: "Age",
+      type: "number",
+      headerAlign: "left",
+      align: "left",
+    },
+    {
+      field: "phone",
+      headerName: "Phone Number",
+      flex: 1,
+    },
+    {
+      field: "email",
+      headerName: "Email",
+      flex: 1,
+    },
+    {
+      
+      headerName: "Actions",
+      flex: 1,
+      
+    },
   ];
   const [activeTab, setActiveTab] = useState("viewAllEmployees");
 
-  
-  const [employeeData, setEmployeeData] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/api/get_employees");
-        setEmployeeData(response.data);
-      } catch (error) {
-        console.error("Error fetching employee data:", error);
-      }
-    };
-
-    fetchData(); // Call the function when the component mounts
-  }, []);
-
-  const handleTabChange = async (event, newValue) => {
+  const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
-  
-    if (newValue === "viewAllEmployees") {
-      try {
-        const response = await axios.get("http://localhost:5000/api/get_employees");
-        setEmployeeData(response.data);
-      } catch (error) {
-        console.error("Error fetching employee data:", error);
-      }
-    }
   };
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
-//   const handleFormSubmit = async (values) => {
-//     const formData = new FormData();
+  const handleFormSubmit = async (values) => {
+    const formData = new FormData();
 
-//     Object.keys(values).forEach((key) => {
-//       formData.append(key, values[key]);
-//     });
+    Object.keys(values).forEach((key) => {
+      formData.append(key, values[key]);
+    });
 
-//     console.log("lets see! :",formData)
-
-//   //   try {
-//   //     // Use axios for better handling of form data
-//   //     const response = await fetch('http://localhost:5000/api/add_employee', {
-//   //       method: 'POST',
-//   //       headers: {
-//   //         'Content-Type': 'application/json',
-//   //       },
-//   //       body: JSON.stringify(values),
-//   //     });
-
-//   //     if (response.status === 201) {
-//   //       console.log('Employee added successfully!');
-//   //     } else {
-//   //       console.error('Error adding employee:', response.status, response.statusText);
-//   //       console.error('Response body:', response.data);
-//   //     }
-//   //   } catch (error) {
-//   //     console.error('Network error:', error.message);
-//   //   }
-//   // };
-
-//   try {
-//     await axios.post('http://localhost:5000/api/add_employee', {
-//       ...values,
-//     })
-//   } catch (error) {
-//     console.log(error)
-//   };
-// }
-
-//////////////////////////////////////////////////////
-
-const [values, setValues] = useState({
-  firstName: "",
-  lastName: "",
-  email: "",
-  contact: "",
-  address1: "",
-  address2: "",
-  gender: "", // New field
-  password: "", // New field
-  designation: "", // New field
-  department: "", // New field
-  education: "", // New field
-  address: "", // New field
-  uploadImage: "", // New field
-  uploadCv: "", 
-  date: "",
-  joiningDate: "", // New field
-  leaving: "", // New field (optional)
-});
-
-const [test, setTest] = useState("")
-
-// Function to handle input changes
-// const handleChange = (event) => {
-//   // const { name, value } = event.target;
-//   // setValues((prevValues) => ({
-//   //   ...prevValues,
-//   //   [name]: value,
-//   // }));
-//   // setTest(event.firstName)
-  
-
-// };
-
-const handlechange = (e) => {
-  setValues((prev) => {
-    return { ...prev, [e.target.name]: e.target.value };
-    
-  });
-}
-
-// Function to handle onBlur
-
-
-
-// Function to handle form submission or any other action
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  console.log(values)
-  try {
-    await axios.post("http://localhost:5000/api/add_employee", {
-      ...values,
-      
-     
-    })
-  } catch (error) {
-    console.log(error)
-    
-  }
-  // You can perform any other actions like API requests here
-};
-
-/////////////////////////////
-const [fname, setFname] = useState("");
-const [lname, setLname] = useState("");
- const [email, setEmail] = useState("");
-const [contact, setContact] = useState("");
-const [address1, setAddress1] = useState("");
-const [address2, setAddress2] = useState("");
-const [gender, setGender] = useState("");
-const [password, setPassword] = useState("");
-const [designation, setDesignation] = useState("");
-const [department, setDepartment] = useState("");
-const [education, setEducation] = useState("");
-const [address, setAddress] = useState("");
-const [date, setDate] = useState("");
-const [joiningDate, setJoiningDate] = useState("");
-const [leaving, setLeaving] = useState("");
-
-
-  const handleTest = async () => {
     try {
-      await axios.post('http://localhost:5000/api/add_employee', {
-        firstName: fname,
-      lastName: lname,
-       Email: email,
-      contact: contact,
-      address1: address1,
-      address2: address2,
-      gender: gender,
-       password: password,
-      designation: designation,
-      department: department,
-      education: education,
-      address: address,
-       date: date,
-      // joiningDate: joiningDate,
-      // leaving: leaving,
+      // Use axios for better handling of form data
+      const response = await fetch('http://localhost:5000/api/add_employee', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
       });
 
-      console.log("API request successful");
-      console.log("Data sent:", fname);
-
-     
-
+      if (response.status === 201) {
+        console.log('Employee added successfully!');
+      } else {
+        console.error('Error adding employee:', response.status, response.statusText);
+        console.error('Response body:', response.data);
+      }
     } catch (error) {
-      console.error("Error during API request:", error);
+      console.error('Network error:', error.message);
     }
   };
-
-  const MyDatePicker = ({ name = "", onDateChange }) => {
-    const [field, meta, helpers] = useField(name);
-    const { value } = meta;
-    const { setValue } = helpers;
   
-    const handleDateChange = (date) => {
-      setValue(date);
-      onDateChange && onDateChange(date); // Call the onDateChange prop if provided
-    };
-  
-    return (
-      <DatePicker
-        {...field}
-        selected={value}
-        onChange={handleDateChange}
-      />
-    );
-  };
-  
-
   return (
     <Box m="20px">
     <Header title="EMPLOYEES" subtitle="Managing the Employees " />
@@ -341,11 +191,11 @@ const [leaving, setLeaving] = useState("");
       <Box m="20px">
         <Header title="EDIT DETAILS" subtitle="make changes in your profile" />
         <Formik
-          initialValues={values}
+          onSubmit={handleFormSubmit}
+          initialValues={initialValues}
           validationSchema={userSchema}
-          onSubmit={(values) => handleSubmit(values)}
         >
-          {({ values, errors, touched,handleBlur,handleChange}) => (
+          {({ values, errors, touched, handleBlur, handleChange, handleSubmit }) => (
             <form onSubmit={handleSubmit}>
               <Box
                 display="grid"
@@ -360,9 +210,9 @@ const [leaving, setLeaving] = useState("");
                   variant="filled"
                   type="text"
                   label="First Name"
-                  //  onBlur={handleBlur}
-                  onChange={handlechange}
-                  // value={values.firstName}
+                 // onBlur={handleBlur}
+                  //onChange={handleChange}
+                  value={values.firstName}
                   name="firstName"
                   error={!!touched.firstName && !!errors.firstName}
                   helperText={touched.firstName && errors.firstName}
@@ -373,9 +223,9 @@ const [leaving, setLeaving] = useState("");
                   variant="filled"
                   type="text"
                   label="Last Name"
-                  // onBlur={handleBlur}
-                  onChange={handlechange}
-                  // value={values.lastName}
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.lastName}
                   name="lastName"
                   error={!!touched.lastName && !!errors.lastName}
                   helperText={touched.lastName && errors.lastName}
@@ -386,9 +236,9 @@ const [leaving, setLeaving] = useState("");
                   variant="filled"
                   type="text"
                   label="Email"
-                    // onBlur={handleBlur}
-                  onChange={handlechange}
-                  // value={values.email}
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.email}
                   name="email"
                   error={!!touched.email && !!errors.email}
                   helperText={touched.email && errors.email}
@@ -399,9 +249,9 @@ const [leaving, setLeaving] = useState("");
                   variant="filled"
                   type="text"
                   label="Contact Number"
-                  // onBlur={handleBlur}
-                  onChange={handlechange}
-                  // value={values.contact}
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.contact}
                   name="contact"
                   error={!!touched.contact && !!errors.contact}
                   helperText={touched.contact && errors.contact}
@@ -412,9 +262,9 @@ const [leaving, setLeaving] = useState("");
                   variant="filled"
                   type="text"
                   label="Address 1"
-                  //  onBlur={handleBlur}
-                  onChange={handlechange}
-                  // value={values.address1}
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.address1}
                   name="address1"
                   error={!!touched.address1 && !!errors.address1}
                   helperText={touched.address1 && errors.address1}
@@ -425,9 +275,9 @@ const [leaving, setLeaving] = useState("");
                   variant="filled"
                   type="text"
                   label="Address 2"
-                  //  onBlur={handleBlur}
-                  onChange={handlechange}
-                  // value={values.address2}
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.address2}
                   name="address2"
                   error={!!touched.address2 && !!errors.address2}
                   helperText={touched.address2 && errors.address2}
@@ -438,9 +288,9 @@ const [leaving, setLeaving] = useState("");
                   variant="filled"
                   select
                   label="Gender"
-                  //  onBlur={handleBlur}
-                  onChange={handlechange}
-                  // value={values.gender}
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.gender}
                   name="gender"
                   error={!!touched.gender && !!errors.gender}
                   helperText={touched.gender && errors.gender}
@@ -454,9 +304,9 @@ const [leaving, setLeaving] = useState("");
                   variant="filled"
                   type="password"
                   label="Password"
-                  //  onBlur={handleBlur}
-                  onChange={handlechange}
-                  // value={values.password}
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.password}
                   name="password"
                   error={!!touched.password && !!errors.password}
                   helperText={touched.password && errors.password}
@@ -467,9 +317,9 @@ const [leaving, setLeaving] = useState("");
                   variant="filled"
                   type="text"
                   label="Designation"
-                  //  onBlur={handleBlur}
-                  onChange={handlechange}
-                  // value={values.designation}
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.designation}
                   name="designation"
                   error={!!touched.designation && !!errors.designation}
                   helperText={touched.designation && errors.designation}
@@ -480,9 +330,9 @@ const [leaving, setLeaving] = useState("");
                   variant="filled"
                   select
                   label="Department"
-                  // onBlur={handleBlur}
-                  onChange={handlechange}
-                  // value={values.department}
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.department}
                   name="department"
                   error={!!touched.department && !!errors.department}
                   helperText={touched.department && errors.department}
@@ -498,27 +348,31 @@ const [leaving, setLeaving] = useState("");
                   fullWidth
                   variant="filled"
                   type="text"
+                  label="Date of Birth"
+                  onBlur={handleBlur}
+                  sx={{ gridColumn: "span 4" }}
+                >
+                  <DateField
+          label="Date of Birth"
+          value={values.dateOfBirth}
+          onChange={(date) => handleChange({ target: { name: "dateOfBirth", value: date } })}
+        />
+                </TextField>
+               
+        
+                <TextField
+                  fullWidth
+                  variant="filled"
+                  type="text"
                   label="Education"
-                  //  onBlur={handleBlur}
-                  onChange={handlechange}
-                  // value={values.education}
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.education}
                   name="education"
                   error={!!touched.education && !!errors.education}
                   helperText={touched.education && errors.education}
                   sx={{ gridColumn: "span 4" }}
                 />
-                
-                {/* <div class="form-group" sx={{"margin-bottom":"1rem"}}>
-                <MyDatePicker
-  name="date"
-  
-
-/>
-
-              
-            </div>
-         */}
-                
                 {/* <InputLabel htmlFor="uploadImage">Upload Image (PNG or JPEG)</InputLabel>
                   <Input
                     fullWidth
@@ -558,41 +412,22 @@ const [leaving, setLeaving] = useState("");
                   variant="filled"
                   type="text"
                   label="Address"
-                  //  onBlur={handleBlur}
-                  onChange={handlechange}
-                  // value={values.address}
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.address}
                   name="address"
                   error={!!touched.address && !!errors.address}
                   helperText={touched.address && errors.address}
                   sx={{ gridColumn: "span 4" }}
                 />
-
-                 <TextField
-                  fullWidth
-                  variant="filled"
-                  type="text"
-                  label="DateOfBirth"
-                  //  onBlur={handleBlur}
-                  onChange={handlechange}
-                  // value={values.address}
-                  name="date"
-                  error={!!touched.date && !!errors.date}
-                  helperText={touched.date && errors.date}
-                  sx={{ gridColumn: "span 4" }}
-                 
-               >  <MyDatePicker
-               name="date"
-               
-             
-             /></TextField>             
-                {/* <TextField
+                <TextField
                     fullWidth
                     variant="filled"
                     type="text"
                     label="Joining Date"
-                    // onBlur={handleBlur}
+                    onBlur={handleBlur}
                     onChange={handleChange}
-                    // value={values.joiningDate}
+                    value={values.joiningDate}
                     name="joiningDate"
                     error={!!touched.joiningDate && !!errors.joiningDate}
                     helperText={touched.joiningDate && errors.joiningDate}
@@ -612,9 +447,9 @@ const [leaving, setLeaving] = useState("");
                     variant="filled"
                     type="text"
                     label="Leaving (Optional)"
-                    // onBlur={handleBlur}
+                    onBlur={handleBlur}
                     onChange={handleChange}
-                    // value={values.leaving}
+                    value={values.leaving}
                     name="leaving"
                     error={!!touched.leaving && !!errors.leaving}
                     helperText={touched.leaving && errors.leaving}
@@ -628,34 +463,26 @@ const [leaving, setLeaving] = useState("");
                       ),
                     }}
                     sx={{ gridColumn: "span 4" }}
-                  /> */}
+                  />
               </Box>
               <Box display="flex" justifyContent="end" mt="20px">
-                <Button color="secondary" variant="contained" type="submit">
+                <Button type="submit" color="secondary" variant="contained" >
                   Add Employee
                 </Button>
-                {/* <button onClick={handleTest}>Testing</button> */}
               </Box>
-             
-            </form>)}
-          {/* )} */}
-          
+            </form>
+          )}
         </Formik>
-        
       </Box>
         
        
       )}
 
       {activeTab === "deleteEmployee" && (
-         <Box m="20px">
-         
-          
+        <Box m="20px">
           {/* Delete Employee content goes here */}
-           <Typography>Delete Employee Content</Typography>
-         </Box>
-       
-        
+          <Typography>Delete Employee Content</Typography>
+        </Box>
       )}
 
       {activeTab === "viewAllEmployees" && (
@@ -668,7 +495,6 @@ const [leaving, setLeaving] = useState("");
           },
           "& .MuiDataGrid-cell": {
             borderBottom: "none",
-            fontSize: "0.9rem",
           },
           "& .name-column--cell": {
             color: colors.greenAccent[300],
@@ -676,7 +502,6 @@ const [leaving, setLeaving] = useState("");
           "& .MuiDataGrid-columnHeaders": {
             backgroundColor: colors.blueAccent[700],
             borderBottom: "none",
-            fontSize: "1rem"
           },
           "& .MuiDataGrid-virtualScroller": {
             backgroundColor: colors.primary[400],
@@ -690,12 +515,7 @@ const [leaving, setLeaving] = useState("");
           },
         }}
       >
-       <DataGrid
-  checkboxSelection
-  rows={employeeData}
-  columns={columns}
-  getRowId={(row) => row._id} // Specify the field to be used as the row id
-/>
+        <DataGrid checkboxSelection rows={mockDataTeam} columns={columns} />
       </Box>
       )}
      

@@ -42,30 +42,33 @@ const employeeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  dateOfBirth: {
+    type: Date,
+    required: true,
+  },
   education: {
     type: String,
     required: true,
   },
-  
+  uploadImage: {
+    type: Buffer, // Storing as Buffer in MongoDB for image files
+    required: true,
+  },
+  uploadCv: {
+    type: Buffer, // Storing as Buffer in MongoDB for PDF files
+    required: true,
+  },
   address: {
     type: String,
     required: true,
   },
-  date: {
-    type: String,
+  joiningDate: {
+    type: Date,
     required: true,
   },
-  
-  // joiningDate: {
-  //   type: String,
-  //   required: true,
-  // },
-  // leaving: {
-  //   type: String,
-  // },
-
-
-  
+  leaving: {
+    type: Date, // Optional, can be null
+  },
 });
 
 const Employee = mongoose.model('Employee', employeeSchema);
