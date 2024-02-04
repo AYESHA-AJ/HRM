@@ -347,7 +347,7 @@ const [leaving, setLeaving] = useState("");
  
     {activeTab === "addEmployee" && (
       <Box m="20px">
-        <Header title="EDIT DETAILS" subtitle="make changes in your profile" />
+        <Header title="" subtitle="ADD A NEW EMPLOYEE" />
         <Formik
           initialValues={values}
           validationSchema={userSchema}
