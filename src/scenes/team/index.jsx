@@ -360,7 +360,7 @@ const [leaving, setLeaving] = useState("");
     <Header title="EMPLOYEES" subtitle="Managing the Employees " />
     <Tabs value={activeTab} onChange={handleTabChange}>
       <Tab label="Add Employee" value="addEmployee" />
-      <Tab label="Delete Employee" value="deleteEmployee" />
+      <Tab label="View Employee Profile" value="deleteEmployee" />
       <Tab label="View All Employees" value="viewAllEmployees" />
     </Tabs>
  
@@ -674,12 +674,12 @@ const [leaving, setLeaving] = useState("");
        
       )}
  
-      {activeTab === "deleteEmployee" && (
+      {activeTab === "Employee Profile" && (
          <Box m="20px">
          
          
           {/* Delete Employee content goes here */}
-           <Typography>Delete Employee Content</Typography>
+           <Typography>View Employee Profile</Typography>
          </Box>
        
        
