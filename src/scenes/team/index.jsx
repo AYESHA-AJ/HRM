@@ -213,44 +213,7 @@ const Team = () => {
   };
   const isNonMobile = useMediaQuery("(min-width:600px)");
  
-//   const handleFormSubmit = async (values) => {
-//     const formData = new FormData();
- 
-//     Object.keys(values).forEach((key) => {
-//       formData.append(key, values[key]);
-//     });
- 
-//     console.log("lets see! :",formData)
- 
-//   //   try {
-//   //     // Use axios for better handling of form data
-//   //     const response = await fetch('http://localhost:5000/api/add_employee', {
-//   //       method: 'POST',
-//   //       headers: {
-//   //         'Content-Type': 'application/json',
-//   //       },
-//   //       body: JSON.stringify(values),
-//   //     });
- 
-//   //     if (response.status === 201) {
-//   //       console.log('Employee added successfully!');
-//   //     } else {
-//   //       console.error('Error adding employee:', response.status, response.statusText);
-//   //       console.error('Response body:', response.data);
-//   //     }
-//   //   } catch (error) {
-//   //     console.error('Network error:', error.message);
-//   //   }
-//   // };
- 
-//   try {
-//     await axios.post('http://localhost:5000/api/add_employee', {
-//       ...values,
-//     })
-//   } catch (error) {
-//     console.log(error)
-//   };
-// }
+
  
 //////////////////////////////////////////////////////
  
@@ -276,17 +239,6 @@ const [values, setValues] = useState({
  
 const [test, setTest] = useState("")
  
-// Function to handle input changes
-// const handleChange = (event) => {
-//   // const { name, value } = event.target;
-//   // setValues((prevValues) => ({
-//   //   ...prevValues,
-//   //   [name]: value,
-//   // }));
-//   // setTest(event.firstName)
- 
- 
-// };
  
 const handlechange = (e) => {
   setValues((prev) => {
@@ -389,7 +341,7 @@ const [leaving, setLeaving] = useState("");
     <Header title="EMPLOYEES" subtitle="Managing the Employees " />
     <Tabs value={activeTab} onChange={handleTabChange}>
       <Tab label="Add Employee" value="addEmployee" />
-      <Tab label="Delete Employee" value="deleteEmployee" />
+      <Tab label="View Employee Profile" value="deleteEmployee" />
       <Tab label="View All Employees" value="viewAllEmployees" />
     </Tabs>
  
@@ -564,51 +516,7 @@ const [leaving, setLeaving] = useState("");
                   sx={{ gridColumn: "span 4" }}
                 />
                
-                {/* <div class="form-group" sx={{"margin-bottom":"1rem"}}>
-                <MyDatePicker
-  name="date"
- 
- 
-/>
- 
-             
-            </div>
-         */}
-               
-                {/* <InputLabel htmlFor="uploadImage">Upload Image (PNG or JPEG)</InputLabel>
-                  <Input
-                    fullWidth
-                    type="file"
-                    accept="image/jpeg, image/png"
-                    id="uploadImage"
-                    onChange={(event) => {
-                      const file = event.target.files[0];
-                      if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
-                        handleChange({ target: { name: "uploadImage", value: file } });
-                      } else {
-                        handleChange({ target: { name: "uploadImage", value: null } });
-                        console.error("Unsupported file format for image");
-                      }
-                    }}
-                    sx={{ gridColumn: "span 4" }}
-                  />
-                  <InputLabel htmlFor="uploadCv">Upload CV (PDF)</InputLabel>
-                  <Input
-                    fullWidth
-                    type="file"
-                    accept="application/pdf"
-                    id="uploadCv"
-                    onChange={(event) => {
-                      const file = event.target.files[0];
-                      if (file && file.type === "application/pdf") {
-                        handleChange({ target: { name: "uploadCv", value: file } });
-                      } else {
-                        handleChange({ target: { name: "uploadCv", value: null } });
-                        console.error("Unsupported file format for CV");
-                      }
-                    }}
-                    sx={{ gridColumn: "span 4" }}
-                  /> */}
+                
                 <TextField
                   fullWidth
                   variant="filled"
@@ -641,50 +549,7 @@ const [leaving, setLeaving] = useState("");
                
              
              /></TextField>            
-                {/* <TextField
-                    fullWidth
-                    variant="filled"
-                    type="text"
-                    label="Joining Date"
-                    // onBlur={handleBlur}
-                    onChange={handleChange}
-                    // value={values.joiningDate}
-                    name="joiningDate"
-                    error={!!touched.joiningDate && !!errors.joiningDate}
-                    helperText={touched.joiningDate && errors.joiningDate}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton>
-                            <CalendarTodayIcon />
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                    sx={{ gridColumn: "span 4" }}
-                  />
-                <TextField
-                    fullWidth
-                    variant="filled"
-                    type="text"
-                    label="Leaving (Optional)"
-                    // onBlur={handleBlur}
-                    onChange={handleChange}
-                    // value={values.leaving}
-                    name="leaving"
-                    error={!!touched.leaving && !!errors.leaving}
-                    helperText={touched.leaving && errors.leaving}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton>
-                            <CalendarTodayIcon />
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                    sx={{ gridColumn: "span 4" }}
-                  /> */}
+                
               </Box>
               <Box display="flex" justifyContent="end" mt="20px">
                 <Button color="secondary" variant="contained" type="submit">
@@ -707,8 +572,8 @@ const [leaving, setLeaving] = useState("");
          <Box m="20px">
          
          
-          {/* Delete Employee content goes here */}
-           <Typography>View Employee</Typography>
+          {/* See Employee profile content goes here */}
+           <Typography>View Employee Profile</Typography>
          </Box>
        
        
