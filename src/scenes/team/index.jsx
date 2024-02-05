@@ -668,39 +668,48 @@ const [leaving, setLeaving] = useState("");
         }}
       >
           <Fade in={openModal}>
-          <Box
-            sx={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: 400,
-                  bgcolor: 'background.paper',
-              borderRadius:"20px",
-              boxShadow: 24,
-              p: 3,
-            }}
-          >
-            <IconButton
-              edge="end"
-              color="inherit"
-              onClick={handleCloseModal}
-              sx={{ position: 'absolute', top: 0, right: 10 }}
-            >
-              <CancelIcon />
-            </IconButton>
-            {selectedUser && (
-              <div>
-                <Typography variant="h5">
-                  {selectedUser.firstName} {selectedUser.lastName}
-                </Typography>
-                <Typography>Email: {selectedUser.email}</Typography>
-                <Typography>Contact: {selectedUser.contact}</Typography>
-                {/* Add more details as needed */}
-              </div>
-            )}
-          </Box>
-        </Fade>
+  <Box
+    sx={{
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: 400,
+      bgcolor: '#f9f9f9', // Light gray background color
+      borderRadius: '20px',
+      boxShadow: 24,
+      p: 3,
+      textAlign: 'left',
+    }}
+  >
+    <IconButton
+      edge="end"
+      color="inherit"
+      onClick={handleCloseModal}
+      sx={{ position: 'absolute', top: 0, right: 10 }}
+    >
+      <CancelIcon />
+    </IconButton>
+    {selectedUser && (
+      <div>
+        <Typography variant="h4" sx={{ mb: 2, color: '#5A5A5A' , fontWeight: 'bold' }}> {/* Blue header color */}
+          {selectedUser.firstName} {selectedUser.lastName}
+        </Typography>
+        <Typography variant="h5" sx={{mb: 2, color: '#3498db' }}>Email: {selectedUser.email}</Typography> {/* Green text color */}
+        <Typography variant="h5" sx={{mb: 2, color: '#e74c3c' }}>Contact: {selectedUser.contact}</Typography> {/* Red text color */}
+        <Typography variant="h5"sx={{mb: 2, color: '#3498db' }}>Address 1: {selectedUser.address1}</Typography> {/* Orange text color */}
+        <Typography variant="h5" sx={{mb: 2, color: '#3498db' }}>Address 2: {selectedUser.address2}</Typography> {/* Purple text color */}
+        <Typography variant="h5" sx={{mb: 2, color: '#3498db' }}>Date Of Birth: {selectedUser.date}</Typography> {/* Orange text color */}
+        <Typography variant="h5" sx={{ mb: 2,color: '#3498db' }}>Gender: {selectedUser.gender}</Typography> {/* Orange text color */}
+        <Typography variant="h5" sx={{ mb: 2,color: '#3498db' }}>Designation: {selectedUser.designation}</Typography> {/* Turquoise text color */}
+        <Typography variant="h5" sx={{ mb: 2,color: '#3498db' }}>Department: {selectedUser.department}</Typography> {/* Red text color */}
+        <Typography variant="h5" sx={{ mb: 2,color: '#3498db' }}>Education: {selectedUser.education}</Typography> {/* Yellow text color */}
+        {/* Add more details as needed */}
+      </div>
+    )}
+  </Box>
+</Fade>
+
       </Modal>
         </Box>
         
