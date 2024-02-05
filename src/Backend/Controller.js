@@ -123,13 +123,35 @@ const deleteEmployee = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+
 };
+const searchEmployee = async (req, res) => {
+  const { query } = req.params;
+
+  try {
+    // Use a case-insensitive regex to match the query in multiple fields
+    const employees = await Employee.find({
+      $or: [
+        { firstName: { $regex: new RegExp(query, 'i') } },
+        { lastName: { $regex: new RegExp(query, 'i') } },
+        // Add more fields as needed for searching
+      ],
+    });
+
+    res.status(200).json(employees);
+  } catch (error) {
+    console.error('Error searching employees:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+
 module.exports = {
   addEmployee,
   getAllEmployees,
   deleteEmployee,
   editEmployee,
   getEmployeeById,
- 
+  searchEmployee,
 };
  

@@ -8,7 +8,8 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
- 
+import SearchIcon from "@mui/icons-material/Search";
+import InputBase from "@mui/material/InputBase";
  
 import {
   Box,
@@ -51,6 +52,7 @@ const initialValues = {
   leaving: "", // New field (optional)
 };
 const phoneRegExp = /^((\+92)|(0092))-{0,1}\d{3}-{0,1}\d{7}$|^\d{11}$|^\d{4}-\d{7}$/;
+const emailRegExp=/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
 const userSchema = yup.object().shape({
   firstName: yup.string().required("required"),
   lastName: yup.string().required("required"),
@@ -73,7 +75,17 @@ const userSchema = yup.object().shape({
   joiningDate: yup.string().required("required"), // New field
   leaving: yup.string(), // New field (optional)
 });
- 
+const validate = (values) => {
+  const errors = {}
+
+  if (!values.email) {
+    errors.email = 'Required'
+  } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+    errors.email = 'Invalid email address'
+  }
+
+  return errors
+}
 const Team = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -83,7 +95,18 @@ const Team = () => {
   });
    const [editDialogOpen, setEditDialogOpen] = useState(false);
     const [editedEmployee, setEditedEmployee] = useState({});
-   
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+  
+    const handleSearch = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/api/search_employee/${searchQuery}`);
+        setSearchResults(response.data);
+      } catch (error) {
+        console.error('Error searching employees:', error);
+        // Handle the error as needed
+      }
+    };
    const handleEdit = async (id) => {
       try {
         const response = await axios.get(`http://localhost:5000/api/get_employee/${id}`);
@@ -341,7 +364,7 @@ const [leaving, setLeaving] = useState("");
     <Header title="EMPLOYEES" subtitle="Managing the Employees " />
     <Tabs value={activeTab} onChange={handleTabChange}>
       <Tab label="Add Employee" value="addEmployee" />
-      <Tab label="View Employee Profile" value="deleteEmployee" />
+      <Tab label="View Employee Profile" value="employeeProfile" />
       <Tab label="View All Employees" value="viewAllEmployees" />
     </Tabs>
  
@@ -568,13 +591,49 @@ const [leaving, setLeaving] = useState("");
        
       )}
  
-      {activeTab === "Employee Profile" && (
-         <Box m="20px">
-         
-         
-          {/* See Employee profile content goes here */}
-           <Typography>View Employee Profile</Typography>
-         </Box>
+      {activeTab === "employeeProfile" && (
+        <Box m="40px 0 0 0">
+        {/* Colored bar behind the search bar */}
+        <Box
+          display="flex"
+          alignItems="center"
+          backgroundColor={colors.blueAccent[700]}
+          borderRadius="5px"
+          p={1} // Padding
+        >
+          {/* Search bar with limited space */}
+          <Box
+            display="flex"
+            alignItems="center"
+            sx={{ width: "200px", ml: 1 }}
+            backgroundColor={colors.blueAccent[900]}
+            borderRadius="5px"
+          >
+            <InputBase
+              placeholder="Search"
+              sx={{ flex: 1, ml: 1 }}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <IconButton type="button" sx={{ p: 1 }} onClick={handleSearch}>
+              <SearchIcon />
+            </IconButton>
+          </Box>
+        </Box>
+
+      {/* Employee profile content goes here */}
+      <Typography variant="h5" mt={2}>
+        View Employee Profile
+      </Typography>
+      {searchResults.map((employee) => (
+        <div key={employee._id}>
+          {/* Render the employee data as needed */}
+          <Typography>{employee.firstName} {employee.lastName}</Typography>
+          {/* Add other details as needed */}
+        </div>
+      ))}
+        </Box>
+        
        
        
       )}
