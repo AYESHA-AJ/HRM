@@ -9,11 +9,19 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import SearchIcon from "@mui/icons-material/Search";
+import CancelIcon from '@mui/icons-material/Cancel';
 import InputBase from "@mui/material/InputBase";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Modal,
+  Backdrop,
+  Fade,
+} from '@mui/material';
  
 import {
   Box,
-  Typography,
   useTheme,
   Tab,
   TextField,
@@ -97,6 +105,19 @@ const Team = () => {
     const [editedEmployee, setEditedEmployee] = useState({});
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
+    const [openModal, setOpenModal] = useState(false);
+    const [selectedUser, setSelectedUser] = useState(null);
+    // Function to handle user card click
+    const handleUserClick = (user) => {
+      setSelectedUser(user);
+      setOpenModal(true);
+    };
+  
+    // Function to close the modal
+    const handleCloseModal = () => {
+      setSelectedUser(null);
+      setOpenModal(false);
+    };
   
     const handleSearch = async () => {
       try {
@@ -625,13 +646,62 @@ const [leaving, setLeaving] = useState("");
       <Typography variant="h5" mt={2}>
         View Employee Profile
       </Typography>
-      {searchResults.map((employee) => (
-        <div key={employee._id}>
-          {/* Render the employee data as needed */}
-          <Typography>{employee.firstName} {employee.lastName}</Typography>
-          {/* Add other details as needed */}
-        </div>
+      {searchResults.map((user) => (
+        <Card key={user._id} onClick={() => handleUserClick(user)}>
+          <CardContent>
+            <Typography variant="h6">
+              {user.firstName} {user.lastName}
+            </Typography>
+            <Typography variant="body2">
+              Email: {user.email} | Contact: {user.contact}
+            </Typography>
+          </CardContent>
+        </Card>
       ))}
+ <Modal
+        open={openModal}
+        onClose={handleCloseModal}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+          <Fade in={openModal}>
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: 400,
+                  bgcolor: 'background.paper',
+              borderRadius:"20px",
+              boxShadow: 24,
+              p: 3,
+            }}
+          >
+            <IconButton
+              edge="end"
+              color="inherit"
+              onClick={handleCloseModal}
+              sx={{ position: 'absolute', top: 0, right: 10 }}
+            >
+              <CancelIcon />
+            </IconButton>
+            {selectedUser && (
+              <div>
+                <Typography variant="h5">
+                  {selectedUser.firstName} {selectedUser.lastName}
+                </Typography>
+                <Typography>Email: {selectedUser.email}</Typography>
+                <Typography>Contact: {selectedUser.contact}</Typography>
+                {/* Add more details as needed */}
+              </div>
+            )}
+          </Box>
+        </Fade>
+      </Modal>
         </Box>
         
        
