@@ -9,7 +9,8 @@ router.get('/get_employees', controller.getAllEmployees);
 router.put('/edit_employee/:id', controller.editEmployee);
 router.get('/get_employee/:id', controller.getEmployeeById);
 router.delete('/delete_employee/:id', controller.deleteEmployee);
- 
+router.get('/search_employee/:query', controller.searchEmployee);
+
  
  
 module.exports = router;

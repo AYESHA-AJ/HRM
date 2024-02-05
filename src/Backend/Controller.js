@@ -146,6 +146,8 @@ const searchEmployee = async (req, res) => {
 };
 
 
+
+
 module.exports = {
   addEmployee,
   getAllEmployees,
