@@ -1,85 +1,85 @@
 // backend/controllers/controller.js
 const Employee = require('./models/Employee_DB');
  
-// const addEmployee = async (req, res) => {
-//   try {
-//     // const {
-//     //   firstName,
-//     //   lastName,
-//     //   email,
-//     //   contact,
-//     //   address1,
-//     //   address2,
-//     //   gender,
-//     //   password,
-//     //   designation,
-//     //   department,
-//     //   education,
-//     //   address,
-//     //   date,
-//     //   joiningDate,
-//     //   leaving,
-//     //   profilepic,
-//     //   profilecv,
-//     // } = req.body;
-
-//     // Assuming uploadImage and uploadCv are file buffers sent from the frontend
-//     // const { uploadImage, uploadCv } = req.files;
- 
-//     // Creating a new instance of Employee model
-//     const newEmployee = new Employee({
-//       // firstName,
-//       // lastName,
-//       // email,
-//       // contact,
-//       // address1,
-//       // address2,
-//       // gender,
-//       // password,
-//       // designation,
-//       // department,
-//       // education,
-//       // address,
-//       // date,
-//       // joiningDate,
-//       // leaving,
-//       // profilepic,
-//       // profilecv,
-//       // uploadImage: uploadImage.data, // Assuming uploadImage is a buffer
-//       // uploadCv: uploadCv.data, // Assuming uploadCv is a buffer
-//       ...req.body,
-//     });
- 
-//     // Saving the new employee to the database
-//     await newEmployee.save();
- 
-//     // Sending the created employee data as a response
-//     res.status(201).json(newEmployee);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
-
 const addEmployee = async (req, res) => {
   try {
-    const existingEmployee = await Employee.findOne({ email: req.body.email });
-    if (existingEmployee) {
-      return res.status(400).json({ error: 'Email already exists' });
-    }
+    // const {
+    //   firstName,
+    //   lastName,
+    //   email,
+    //   contact,
+    //   address1,
+    //   address2,
+    //   gender,
+    //   password,
+    //   designation,
+    //   department,
+    //   education,
+    //   address,
+    //   date,
+    //   joiningDate,
+    //   leaving,
+    //   profilepic,
+    //   profilecv,
+    // } = req.body;
 
-    const newEmployee = new Employee(req.body);
+    // Assuming uploadImage and uploadCv are file buffers sent from the frontend
+    // const { uploadImage, uploadCv } = req.files;
+ 
+    // Creating a new instance of Employee model
+    const newEmployee = new Employee({
+      // firstName,
+      // lastName,
+      // email,
+      // contact,
+      // address1,
+      // address2,
+      // gender,
+      // password,
+      // designation,
+      // department,
+      // education,
+      // address,
+      // date,
+      // joiningDate,
+      // leaving,
+      // profilepic,
+      // profilecv,
+      // uploadImage: uploadImage.data, // Assuming uploadImage is a buffer
+      // uploadCv: uploadCv.data, // Assuming uploadCv is a buffer
+      ...req.body,
+    });
+ 
+    // Saving the new employee to the database
     await newEmployee.save();
+ 
+    // Sending the created employee data as a response
     res.status(201).json(newEmployee);
   } catch (error) {
-    if (error.name === 'ValidationError') {
-      // Handling validation errors
-      const errors = Object.values(error.errors).map(({ message }) => message);
-      return res.status(400).json({ errors });
-    }
-    console.error('Error adding employee:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ message: error.message });
   }
 };
+
+// const addEmployee = async (req, res) => {
+//   try {
+//     const existingEmployee = await Employee.findOne({ email: req.body.email });
+//     if (existingEmployee) {
+//       return res.status(400).json({ error: 'Email already exists' });
+//     }
+
+//     const newEmployee = new Employee(req.body);
+//     await newEmployee.save();
+//     res.status(201).json(newEmployee);
+//   } catch (error) {
+//     if (error.name === 'ValidationError') {
+//       // Handling validation errors
+//       const errors = Object.values(error.errors).map(({ message }) => message);
+//       return res.status(400).json({ errors });
+//     }
+//     console.error('Error adding employee:', error);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// };
  
 const getAllEmployees = async (req, res) => {
   try {

@@ -335,22 +335,27 @@ const [error, setError] = useState()
 
 const handleSubmit = async (e) => {
   e.preventDefault();
-  // values.profilepic = await upload(profilePic)
-  // values.profilecv = await upload(profileCv)
+  
   const cv = await upload(profileCv)
   const pic = await upload(profilePic)
   console.log(values)
+  // console.log(profileCv, profilePic)
   try {
     await axios.post("http://localhost:5000/api/add_employee", {
       ...values,
       profilepic: pic,
       profilecv: cv,
     })
+    setProfileCv(null)
+    setProfilePic(null)
     // If the request is successful, you can perform any additional actions here
   }
     catch (error) {
       console.log(error)
+      setProfileCv(null)
+      setProfilePic(null)
   }
+  
   // console.log(values)
 };
  
