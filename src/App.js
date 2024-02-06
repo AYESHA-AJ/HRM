@@ -7,6 +7,7 @@ import Dashboard from "./scenes/dashboard";
 import Team from "./scenes/team";
 import attendance from "./scenes/attendance";
 import Contacts from "./scenes/contacts";
+import Talent from "./scenes/talent";
 import Bar from "./scenes/bar";
 import Form from "./scenes/form";
 import Line from "./scenes/line";
@@ -49,6 +50,7 @@ function App() {
               <Route path="/attendance" element={<Attendence />} />
               <Route path="/form" element={<Form />} />
               <Route path="/bar" element={<Bar />} />
+              <Route path="/talent" element={<Talent/>}/>
               <Route path="/pie" element={<Pie />} />
               <Route path="/line" element={<Line />} />
               <Route path="/faq" element={<FAQ />} />
