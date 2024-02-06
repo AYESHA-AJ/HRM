@@ -4,6 +4,7 @@ import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { Link } from "react-router-dom";
 import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../../theme";
+import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 import PaidOutlinedIcon from '@mui/icons-material/PaidOutlined';
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
@@ -139,6 +140,13 @@ const Sidebar = () => {
               title="Employees"
               to="/team"
               icon={<PeopleOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Talent Acquisition"
+              to="/talent"
+              icon={<PersonSearchIcon />}
               selected={selected}
               setSelected={setSelected}
             />
