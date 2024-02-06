@@ -39,6 +39,8 @@ import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutl
 import Header from "../../components/Header";
 import MenuItem from "@mui/material/MenuItem";
 import axios from "axios";
+
+import upload from "../../utilis/upload.js";
  
 const initialValues = {
   firstName: "",
@@ -83,17 +85,7 @@ const userSchema = yup.object().shape({
   joiningDate: yup.string().required("required"), // New field
   leaving: yup.string(), // New field (optional)
 });
-const validate = (values) => {
-  const errors = {}
 
-  if (!values.email) {
-    errors.email = 'Required'
-  } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
-    errors.email = 'Invalid email address'
-  }
-
-  return errors
-}
 const Team = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -107,11 +99,22 @@ const Team = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [openModal, setOpenModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
+
+    const [profilePic, setProfilePic] = useState(null)
+    const [profileCv, setProfileCv] = useState(null)
     // Function to handle user card click
     const handleUserClick = (user) => {
       setSelectedUser(user);
       setOpenModal(true);
     };
+
+    const handleProfilePicChange = (e) => {
+      setProfilePic(e.target.files[0])
+    }
+
+    const handleProfileCvChange = (e) => {
+      setProfileCv(e.target.files[0])
+    }
   
     // Function to close the modal
     const handleCloseModal = () => {
@@ -190,6 +193,18 @@ const Team = () => {
   };
   const columns = [
     { field: "_id", headerName: "ID", flex: 1 }, // Assuming MongoDB uses _id as the identifier
+    {
+      field: "profilepic",
+      headerName: "Profile Picture",
+      flex: 1,
+      renderCell: ({ row }) => (
+        <img
+          src={row.profilepic} // Use the profilepic field from the row object
+          alt="Profile Pic"
+          style={{ width: 50, height: 50, borderRadius: '50%' }} // Adjust the size as needed
+        />
+      ),
+    },
   { field: "firstName", headerName: "First Name", flex: 1 },
   { field: "lastName", headerName: "Last Name", flex: 1 },
   { field: "email", headerName: "Email", flex: 1 },
@@ -274,11 +289,13 @@ const [values, setValues] = useState({
   department: "", // New field
   education: "", // New field
   address: "", // New field
-  uploadImage: "", // New field
-  uploadCv: "",
+  // uploadImage: "", // New field
+  // uploadCv: "",
   date: "",
-  joiningDate: "", // New field
-  leaving: "", // New field (optional)
+  // profilepic: "",
+  // profilecv: "",
+  // joiningDate: "", // New field
+  // leaving: "", // New field (optional)
 });
  
 const [test, setTest] = useState("")
@@ -293,23 +310,48 @@ const handlechange = (e) => {
  
 // Function to handle onBlur
  
+const [error, setError] = useState()
  
  
 // Function to handle form submission or any other action
+// const handleSubmit = async (e) => {
+//   e.preventDefault();
+//   // const url = await upload(profilePic)
+//   values.profilepic = await upload(profilePic)
+//   values.profilecv = await upload(profileCv)
+//   console.log(values)
+//   try {
+//     await axios.post("http://localhost:5000/api/add_employee", {
+//       ...values,
+//       // profilepic: url,
+//     })
+//   } catch (error) {
+//     console.log(error)
+   
+//   }
+//   // console.log(url)
+//   // You can perform any other actions like API requests here
+// };
+
 const handleSubmit = async (e) => {
   e.preventDefault();
+  // values.profilepic = await upload(profilePic)
+  // values.profilecv = await upload(profileCv)
+  const cv = await upload(profileCv)
+  const pic = await upload(profilePic)
   console.log(values)
   try {
     await axios.post("http://localhost:5000/api/add_employee", {
       ...values,
-     
-     
+      profilepic: pic,
+      profilecv: cv,
     })
-  } catch (error) {
-    console.log(error)
-   
+    // If the request is successful, you can perform any additional actions here
   }
-  // You can perform any other actions like API requests here
+    catch (error) {
+      console.log(error)
+  }
+  // console.log(values)
 };
  
 /////////////////////////////
@@ -328,6 +370,7 @@ const [address, setAddress] = useState("");
 const [date, setDate] = useState("");
 const [joiningDate, setJoiningDate] = useState("");
 const [leaving, setLeaving] = useState("");
+
  
  
   const handleTest = async () => {
@@ -378,7 +421,21 @@ const [leaving, setLeaving] = useState("");
       />
     );
   };
- 
+
+  
+  const handleViewCV = (user) => {
+    window.open(user.profilecv, '_blank'); // Open CV URL in a new tab
+  };
+
+  const handleInputChange = (e, field) => {
+    const value = e.target.value;
+    setEditedEmployee({ ...editedEmployee, [field]: value });
+  
+    
+  };
+
+
+ /////////////////////////////////////////////////////////////////////////////////
  
   return (
     <Box m="20px">
@@ -416,6 +473,9 @@ const [leaving, setLeaving] = useState("");
                   onChange={handlechange}
                   // value={values.firstName}
                   name="firstName"
+                  // error={!!touched.firstName && !!errors.firstName}
+                  // helperText={touched.firstName && errors.firstName}
+                  // onBlur={handleBlur} // Add onBlur event handler
                   error={!!touched.firstName && !!errors.firstName}
                   helperText={touched.firstName && errors.firstName}
                   sx={{ gridColumn: "span 2" }}
@@ -566,7 +626,7 @@ const [leaving, setLeaving] = useState("");
                   variant="filled"
                   type="text"
                   label="Address"
-                  //  onBlur={handleBlur}
+                  // onBlur={handleBlur}
                   onChange={handlechange}
                   // value={values.address}
                   name="address"
@@ -580,7 +640,7 @@ const [leaving, setLeaving] = useState("");
                   variant="filled"
                   type="text"
                   label="DateOfBirth"
-                  //  onBlur={handleBlur}
+                  // onBlur={handleBlur}
                   onChange={handlechange}
                   // value={values.address}
                   name="date"
@@ -592,13 +652,37 @@ const [leaving, setLeaving] = useState("");
                name="date"
                
              
-             /></TextField>            
-                
+             /></TextField>   
+              <Box sx={{ gridColumn: "span 2" }}>
+              <label htmlFor="profilePicInput">Upload Profile Picture  </label>
+              <input
+                id="file"
+                type="file"
+                accept=".jpg,.jpeg,.png"
+                onChange={handleProfilePicChange}
+                name="profilePic"
+              />
+            </Box>
+            {/* Upload CV input field */}
+            <Box sx={{ gridColumn: "span 2" }}>
+              <label htmlFor="cvInput">Upload Your CV  </label>
+              <input
+                id="file"
+                type="file"
+                accept=".pdf"
+                onChange={handleProfileCvChange}
+                name="profileCv"
+              />
+            </Box>
               </Box>
               <Box display="flex" justifyContent="end" mt="20px">
                 <Button color="secondary" variant="contained" type="submit">
                   Add Employee
                 </Button>
+                
+                <div>
+      
+    </div>
                 {/* <button onClick={handleTest}>Testing</button> */}
               </Box>
              
@@ -655,8 +739,22 @@ const [leaving, setLeaving] = useState("");
             <Typography variant="body2">
               Email: {user.email} | Contact: {user.contact}
             </Typography>
+            <div>
+              <a
+                style={{
+                  color: 'blue',
+                  textDecoration: 'underline',
+                  cursor: 'pointer',
+                }}
+                onClick={() => handleViewCV(user)}
+              >
+                View CV
+              </a>
+            </div>
           </CardContent>
         </Card>
+       
+        
       ))}
  <Modal
         open={openModal}
@@ -756,6 +854,7 @@ const [leaving, setLeaving] = useState("");
             getRowId={(row) => row._id} // Specify the field to be used as the row id
             
           />
+           
           <ConfirmationModal
   open={deleteConfirmation.open}
   onClose={handleCloseDeleteConfirmation}
@@ -793,6 +892,8 @@ const [leaving, setLeaving] = useState("");
     value={editedEmployee.firstName}
     onChange={(e) => setEditedEmployee({ ...editedEmployee, firstName: e.target.value })}
     sx={{ marginBottom: '16px' }}
+   
+      
   />
   <TextField
     fullWidth
@@ -841,9 +942,8 @@ const [leaving, setLeaving] = useState("");
       <MenuItem value="Designing">Designing</MenuItem>
       <MenuItem value="Development">Development</MenuItem>
       <MenuItem value="Testing">Testing</MenuItem>
-      {/* Add more departments as needed */}
+      
     </TextField>
- 
  
    
  

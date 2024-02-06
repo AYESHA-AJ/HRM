@@ -13,6 +13,7 @@ const employeeSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
+    // unique: true,
   },
   contact: {
     type: String,
@@ -54,6 +55,14 @@ const employeeSchema = new mongoose.Schema({
   date: {
     type: String,
     required: true,
+  },
+  profilepic: {
+    type: String,
+    require: false,
+  },
+  profilecv: {
+    type: String,
+    require: false,
   },
   
   // joiningDate: {
