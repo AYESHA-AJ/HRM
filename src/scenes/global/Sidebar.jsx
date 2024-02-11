@@ -159,7 +159,7 @@ const Sidebar = () => {
             />
              <Item
               title="Payroll"
-              to="/contacts"
+              to="/Payroll"
               icon={<PaidOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}

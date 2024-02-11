@@ -20,6 +20,7 @@ import Attendence from "./scenes/attendance";
 import Login from './Login';
 import EmployeePage from "./scenes/EmployeePage";
 import SignUp from './signUp';
+import Payroll from "./scenes/Payroll";
 
 
 function App() {
@@ -38,7 +39,8 @@ function App() {
   const handleSignUpClick = () => {
    
   console.log('Sign Up clicked!');
-  setIsSignUpClicked(true); // Set the state to true when sign-up button is clicked
+  // setIsSignUpClicked(true);
+  setLoggedIn(true) // Set the state to true when sign-up button is clicked
   navigate('/signUp');// Set the state to true when sign-up button is clicked
   };
 
@@ -68,6 +70,7 @@ function App() {
                       <Route path="/pie" element={<Pie />} />
                       <Route path="/line" element={<Line />} />
                       <Route path="/faq" element={<FAQ />} />
+                      <Route path="/payroll" element={<Payroll />} />
                      
                     </Routes>
                   </main>
@@ -84,6 +87,9 @@ function App() {
           )}
         </>
       )}
+      <Routes>
+        <Route path="/signup" element={<SignUp />} />
+      </Routes>
     </div>
   );
   

@@ -16,6 +16,7 @@ body {
     transform: translateY(-50%);
     cursor: pointer;
 }
+
  
 .login-container {
     display: flex;
@@ -113,6 +114,18 @@ body {
 .admin-button:hover,
 .employee-button:hover,.applicant-button:hover {
     filter: brightness(1.2);
+}
+
+.sign-up-B{
+    background-color: transparent;
+    color: blue;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    
+}
+.sign-up-B:hover{
+    text-decoration: underline;
 }
  
 .sign-in-text {

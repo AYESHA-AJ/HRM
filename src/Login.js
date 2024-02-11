@@ -6,7 +6,7 @@ import EyeIcon from './src assets/eye icon.png';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
-const Login = ({ onLoginClick,handleSignUpClick }) => {
+const Login = ({ onLoginClick, handleSignUpClick }) => {
   const [loginType, setLoginType] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -14,11 +14,12 @@ const Login = ({ onLoginClick,handleSignUpClick }) => {
   const [passwordError, setPasswordError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
-
+  const [showSignUpButton, setShowSignUpButton] = useState(false); // State to track whether to show the SignUp button
 
   const navigate = useNavigate();
-   const handleSignUp = () => {
-     // Set the state to true when sign-up button is clicked
+
+  const handleSignUp = () => {
+    // Set the state to true when sign-up button is clicked
     handleSignUpClick(); // Pass the event to the parent component
   };
 
@@ -44,6 +45,9 @@ const Login = ({ onLoginClick,handleSignUpClick }) => {
     setUsernameError('');
     setPasswordError('');
     setShowPassword(false);
+    
+    // Conditionally show SignUp button only for "Applicant" type
+    setShowSignUpButton(type === 'applicant');
   };
 
   const handleSubmit = () => {
@@ -92,18 +96,19 @@ const Login = ({ onLoginClick,handleSignUpClick }) => {
           <hr className="horizontal-line" />
         </div>
         <div className="buttons-container">
-          <button className="admin-button" onClick={() => handleLoginType('admin')} >Admin</button>
+          <button className="admin-button" onClick={() => handleLoginType('admin')}>Admin</button>
           <button className="employee-button" onClick={() => handleLoginType('employee')}>Employee</button>
           <button className="applicant-button" onClick={() => handleLoginType('applicant')}>Applicant</button>
         </div>
         <div className="sign-in-text">
           <p>Sign in</p>
         </div>
-        <p>
-              Not registered yet?{' '}
-              <button onClick={handleSignUp}>Sign Up</button>
-</p>
-            
+        {showSignUpButton && ( // Render SignUp button only if showSignUpButton is true
+          <p>
+            Not registered yet?{' '}
+            <button onClick={handleSignUp} className='sign-up-B'>Sign Up</button>
+          </p>
+        )}
         {renderWelcomeMessage()}
         <div className="input-container username-container">
           <input

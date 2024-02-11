@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './signUp.css'; // Import SignUp.css for styling
 import SignUpPic from './src assets/pic2.jpg';
+import { useNavigate } from 'react-router-dom';
 
 const SignUp = ({handleAlreadyLogin}) => {
   const [username, setUsername] = useState('');
@@ -25,6 +26,10 @@ const SignUp = ({handleAlreadyLogin}) => {
     setEmail(event.target.value);
     setEmailError('');
   };
+
+//   const handlesignin = () => {
+//     useNavigate("/")
+//   }
 
   const handleSubmit = (event) => {
     event.preventDefault(); // Prevent form submission
@@ -91,7 +96,7 @@ const SignUp = ({handleAlreadyLogin}) => {
             {emailError && <p className="error-message">{emailError}</p>}
           </div>
           <p>
-          Already registered?  <a href="#" onClick={handleAlreadyLogin}>Login</a>
+          Already registered?  <a href="/" >Login</a>
           
         </p>
           <button type="submit" className="sign-up-button">Sign Up</button>

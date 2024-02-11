@@ -116,4 +116,36 @@
 .input-container-sign-up .input-sign-up:focus {
     outline: none;
 }
+/* signUp.css */
 
+/* Add styles for the popup container */
+.popup {
+    position: fixed;
+    top: 90%;
+    left: 69%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    border:1px solid silver;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 16px rgba(0, 0, 0, 0.2);
+    z-index: 999;
+  }
+  
+  .popup p {
+    margin-bottom: 10px;
+  }
+  
+  .popup button {
+    padding: 8px 20px;
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .popup button:hover {
+    background-color: #45a049;
+  }
+  
