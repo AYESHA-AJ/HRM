@@ -3,53 +3,14 @@ const Employee = require('./models/Employee_DB');
 const Allowance = require('./models/Allowance_DB');
 const BasicSalary = require('./models/Basicsalary_DB');
 const Deduction = require('./models/Deductions_DB');
+const Job = require('./models/JobPortal');
  
 const addEmployee = async (req, res) => {
   try {
-    // const {
-    //   firstName,
-    //   lastName,
-    //   email,
-    //   contact,
-    //   address1,
-    //   address2,
-    //   gender,
-    //   password,
-    //   designation,
-    //   department,
-    //   education,
-    //   address,
-    //   date,
-    //   joiningDate,
-    //   leaving,
-    //   profilepic,
-    //   profilecv,
-    // } = req.body;
-
-    // Assuming uploadImage and uploadCv are file buffers sent from the frontend
-    // const { uploadImage, uploadCv } = req.files;
- 
-    // Creating a new instance of Employee model
+   
     const newEmployee = new Employee({
-      // firstName,
-      // lastName,
-      // email,
-      // contact,
-      // address1,
-      // address2,
-      // gender,
-      // password,
-      // designation,
-      // department,
-      // education,
-      // address,
-      // date,
-      // joiningDate,
-      // leaving,
-      // profilepic,
-      // profilecv,
-      // uploadImage: uploadImage.data, // Assuming uploadImage is a buffer
-      // uploadCv: uploadCv.data, // Assuming uploadCv is a buffer
+      
+     
       ...req.body,
     });
  
@@ -62,28 +23,28 @@ const addEmployee = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+const addJob = async (req, res) => {
+  try {
+    const newJob = new Job({
+      ...req.body,
+    });
 
-// const addEmployee = async (req, res) => {
-//   try {
-//     const existingEmployee = await Employee.findOne({ email: req.body.email });
-//     if (existingEmployee) {
-//       return res.status(400).json({ error: 'Email already exists' });
-//     }
+    await newJob.save();
 
-//     const newEmployee = new Employee(req.body);
-//     await newEmployee.save();
-//     res.status(201).json(newEmployee);
-//   } catch (error) {
-//     if (error.name === 'ValidationError') {
-//       // Handling validation errors
-//       const errors = Object.values(error.errors).map(({ message }) => message);
-//       return res.status(400).json({ errors });
-//     }
-//     console.error('Error adding employee:', error);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// };
- 
+    res.status(201).json(newJob);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+const getAllJobs = async (req, res) => {
+  try {
+    const jobs = await Job.find();
+    res.status(200).json(jobs);
+  } catch (error) {
+    console.error('Error fetching jobs:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
 const getAllEmployees = async (req, res) => {
   try {
     // Fetch all employees from the database
@@ -423,5 +384,6 @@ module.exports = {
   addDeduction, getAllDeductions, editDeduction, deleteDeduction ,
   generatePayslip,
 
+  addJob,getAllJobs,
 };
  

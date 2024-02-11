@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './signUp.css'; // Import SignUp.css for styling
 import SignUpPic from './src assets/pic2.jpg';
 import { useNavigate } from 'react-router-dom';
-
+ 
 const SignUp = ({handleAlreadyLogin}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -11,26 +11,26 @@ const SignUp = ({handleAlreadyLogin}) => {
   const [passwordError, setPasswordError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [showPopup, setShowPopup] = useState(false); // State to control popup visibility
-
+ 
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);
     setUsernameError('');
   };
-
+ 
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
     setPasswordError('');
   };
-
+ 
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
     setEmailError('');
   };
-
+ 
 //   const handlesignin = () => {
 //     useNavigate("/")
 //   }
-
+ 
   const handleSubmit = (event) => {
     event.preventDefault(); // Prevent form submission
     if (username.trim() === '') {
@@ -42,21 +42,21 @@ const SignUp = ({handleAlreadyLogin}) => {
     if (email.trim() === '') {
       setEmailError('Email is required');
     }
-
+ 
     if (username.trim() !== '' && password.trim() !== '' && email.trim() !== '') {
       // Handle form submission
       // For example, you can make an API call to register the user
-
+ 
       // Show the popup message
       setShowPopup(true);
-
+ 
       // Reset form fields
       setUsername('');
       setPassword('');
       setEmail('');
     }
   };
-
+ 
   return (
     <div className="sign-up-container">
       <div className="left-side-sign-up">
@@ -97,7 +97,7 @@ const SignUp = ({handleAlreadyLogin}) => {
           </div>
           <p>
           Already registered?  <a href="/" >Login</a>
-          
+         
         </p>
           <button type="submit" className="sign-up-button">Sign Up</button>
         </form>
@@ -108,10 +108,10 @@ const SignUp = ({handleAlreadyLogin}) => {
             <button onClick={() => setShowPopup(false)}>Close</button>
           </div>
         )}
-
+ 
       </div>
     </div>
   );
 };
-
+ 
 export default SignUp;
