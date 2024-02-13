@@ -4,7 +4,27 @@ const Allowance = require('./models/Allowance_DB');
 const BasicSalary = require('./models/Basicsalary_DB');
 const Deduction = require('./models/Deductions_DB');
 const Job = require('./models/JobPortal');
- 
+
+
+const deleteJob = async (req, res) => {
+  try {
+    const jobId = req.params.id;
+
+    // Check if the job with the given ID exists
+    const existingJob = await Job.findById(jobId);
+    if (!existingJob) {
+      return res.status(404).json({ message: 'Job not found' });
+    }
+
+    // Delete the job from the database using deleteOne()
+    await Job.deleteOne({ _id: jobId });
+
+    res.status(200).json({ message: 'Job deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const addEmployee = async (req, res) => {
   try {
    
@@ -365,6 +385,37 @@ const generatePayslip = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+const editJob = async (req, res) => {
+  const { id } = req.params;
+  const updatedData = req.body;
+
+  try {
+    const updatedJob = await Job.findByIdAndUpdate(id, updatedData, { new: true });
+    if (!updatedJob) {
+      return res.status(404).json({ error: 'Job not found' });
+    }
+
+    res.status(200).json(updatedJob);
+  } catch (error) {
+    console.error('Error updating job:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+const getJobById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const job = await Job.findById(id);
+    if (!job) {
+      return res.status(404).json({ error: 'Job not found' });
+    }
+
+    res.status(200).json(job);
+  } catch (error) {
+    console.error('Error fetching job by ID:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
 
 module.exports = {
   addEmployee,
@@ -381,9 +432,15 @@ module.exports = {
   getAllBasicSalaries,
   editBasicSalary,
   deleteBasicSalary,
-  addDeduction, getAllDeductions, editDeduction, deleteDeduction ,
+  addDeduction, 
+  getAllDeductions, 
+  editDeduction, 
+  deleteDeduction,
   generatePayslip,
-
-  addJob,getAllJobs,
+  addJob,
+  getAllJobs,
+  deleteJob,
+  editJob,
+  getJobById// Add the newly created deleteJob function here
 };
  

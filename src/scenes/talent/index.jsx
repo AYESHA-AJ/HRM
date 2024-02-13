@@ -5,7 +5,7 @@ import { tokens } from "../../theme";
 import CreateJob from "../postjob";
 import Header from "../../components/Header";
 import { useTheme } from "@mui/material";
-
+import JobsPosted from "../editjob";
 const Talent = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -37,7 +37,7 @@ const Talent = () => {
 
       {tabValue === 1 && (
         <div>
-          
+          <JobsPosted/>
           
         </div>
       )}
