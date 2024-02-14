@@ -16,24 +16,26 @@ const CreateJob = () => {
 
   const onSubmit = async (data) => {
     try {
-      // Attach the selected skills to the data object
-      data.skills = selectedOption;
+        // Attach the selected skills to the data object
+        data.skills = selectedOption;
 
-      // Make a POST request to your backend API
-      const response = await axios.post('http://localhost:5000/api/add_job', data);
+        // Make a POST request to your backend API
+        const response = await axios.post('http://localhost:5000/api/add_job', data);
 
-      // Handle the response as needed
-      console.log('Job created successfully:', response.data);
+        // Handle the response as needed
+        console.log('Job created successfully:', response.data);
 
-      // Set the submit success state to true
-      setSubmitSuccess(true);
+        // Set the submit success state to true
+        setSubmitSuccess(true);
 
-      // Reset the form after a successful submission
-      reset();
+        // Reset the form after a successful submission
+        reset();
+
+       
     } catch (error) {
-      console.error('Error creating job:', error.message);
+        console.error('Error creating job:', error.message);
     }
-  };
+};
 
     const options = [{ value: "JavaScipt", lable: "JavaScipt" },
         { value: "C++", label: "C++" },
@@ -340,12 +342,12 @@ const CreateJob = () => {
                         boxSizing: "border-box", // Include padding and border in the total width/height
                     }} />
                     {/* Success popup */}
-          {isSubmitSuccess && (
-            <div>
-              <p>Form submitted successfully!</p>
-              <button onClick={handleClosePopup}>Close</button>
-            </div>
-          )}
+                    {isSubmitSuccess && (
+                <div>
+                    <p>Form submitted successfully!</p>
+                    <button onClick={handleClosePopup}>Close</button>
+                </div>
+            )}
                 </form>
             </div>
         </div>

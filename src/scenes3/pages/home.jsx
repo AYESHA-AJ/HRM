@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import Jobs from "../jobs";
 import Sidebar from "../sidebar/Sidebar";
 import Newsletter from "../newsletter/Newsletter";
+import CreateJob from "../../scenes/postjob";
 
 
 const Home = () => {
@@ -28,15 +29,38 @@ const Home = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 6;
+    const handleJobSubmitted = () => {
+        // Fetch data again after a new job is posted
+        fetchData();
+    };
+
     //load data 
     useEffect(() => {
+        // Initial data fetch
+        fetchData();
+    
+        // Set interval to fetch data every 5 minutes (adjust as needed)
+        const intervalId = setInterval(() => {
+            fetchData();
+        }, 300000); // 5 minutes in milliseconds
+    
+        // Clean up the interval on component unmount
+        return () => clearInterval(intervalId);
+    }, []);
+    
+    const fetchData = () => {
         setIsLoading(true);
-        fetch("http://localhost:5000/api/get_jobs").then(res => res.json()).then(data => {
-            //console.log(data)
-            setJobs(data);
-            setIsLoading(false)
-        })
-    }, [])
+        fetch("http://localhost:5000/api/get_jobs")
+            .then(res => res.json())
+            .then(data => {
+                setJobs(data);
+                setIsLoading(false);
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error.message);
+                setIsLoading(false);
+            });
+    };
     //console.log(jobs)
     //filter jobs using title
     const filteredItems = jobs.filter((job) => job.jobTitle.toLowerCase().indexOf(query.toLowerCase()) !== -1);
@@ -154,6 +178,7 @@ const Home = () => {
                
 
             </div>
+            
         </Box>
     );
 };
