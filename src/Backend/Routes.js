@@ -33,5 +33,9 @@ router.put('/edit_deduction/:id', controller.editDeduction);
 router.delete('/delete_deduction/:id', controller.deleteDeduction);
 
 router.get('/payslip/:id', controller.generatePayslip);
- 
+
+//Applicants add and edit
+router.post('/applicants', controller.addApplicant);
+router.put('/applicants/:id', controller.editApplicant);
+router.get('/applicants/:id', controller.getApplicantById);
 module.exports = router;

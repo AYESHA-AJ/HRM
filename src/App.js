@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { Routes, Route, Navigate ,createBrowserRouter,RouterProvider} from "react-router-dom";
 import Topbar from "./scenes/global/Topbar";
 import Topbar2 from "./scenes2/global/Topbar2";
@@ -27,6 +27,12 @@ import Attendence from "./scenes/attendance";
 import Login from './Login';
 import SignUp from './signUp';
 import Payroll from "./scenes/Payroll";
+import { Settings } from "@mui/icons-material";
+import Setting from "./scenes3/profile/settings";
+import Homesetting from "./scenes3/pages/homesetting";
+import HomeJoblists from "./scenes3/pages/HomeJoblists"
+
+
 
 
 function App() {
@@ -37,6 +43,8 @@ function App() {
   const [loginType, setLoginType] = useState('');
   const [isSignUpClicked, setIsSignUpClicked] = useState(false);
   const navigate = useNavigate();
+
+  
 
   const handleLoginClick = (type) => {
     setLoggedIn(true);
@@ -51,8 +59,14 @@ function App() {
     navigate('/signUp');// Set the state to true when sign-up button is clicked
     };
 
+    useEffect(() => {
+      // Redirect to the default route or login page when the component mounts
+      navigate('/');
+    }, []);
+
 
   return (
+    
     <div>
       {!isLoggedIn && <Login onLoginClick={handleLoginClick} handleSignUpClick={handleSignUpClick} />}
       {isLoggedIn && (
@@ -78,6 +92,7 @@ function App() {
                       <Route path="/line" element={<Line />} />
                       <Route path="/faq" element={<FAQ />} />
                       <Route path="/payroll" element={<Payroll />} />
+                     
                      
                     </Routes>
                   </main>
@@ -111,16 +126,30 @@ function App() {
             <ColorModeContext.Provider value={colorMode}>
               <ThemeProvider theme={theme} />
               <CssBaseline />
-              <Home/>
+              {/* <Home/> */}
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/profilesetting" element={<Homesetting />} />
+                <Route path="/joblist" element={<HomeJoblists
+                 />} />
+
+               
+              </Routes>
            </ColorModeContext.Provider>
           )}
         </>
       )}
       <Routes>
         <Route path="/signup" element={<SignUp />} />
+        {/* <Route path="/profile" element={<Setting />} /> */}
+        {/* <Route path="/profilesetting" element={<Homesetting />} /> */}
+
       </Routes>
     </div>
+    
   );
+ 
+    
   
 }
 

@@ -4,6 +4,7 @@ const Allowance = require('./models/Allowance_DB');
 const BasicSalary = require('./models/Basicsalary_DB');
 const Deduction = require('./models/Deductions_DB');
 const Job = require('./models/JobPortal');
+const Applicant = require('./models/Applicants_DB');
  
 const addEmployee = async (req, res) => {
   try {
@@ -366,6 +367,55 @@ const generatePayslip = async (req, res) => {
   }
 };
 
+const addApplicant = async (req, res) => {
+  try {
+      const { name, email, password } = req.body;
+      const newApplicant = new Applicant({ name, email, password });
+      await newApplicant.save();
+      res.status(201).json({ message: 'Applicant added successfully', applicant: newApplicant });
+  } catch (error) {
+      res.status(500).json({ message: 'Failed to add applicant', error: error.message });
+  }
+};
+
+// Function to edit an existing applicant
+const editApplicant = async (req, res) => {
+  try {
+      const { id } = req.params;
+      const { name, email, password } = req.body;
+      const updatedApplicant = await Applicant.findByIdAndUpdate(id, { name, email, password }, { new: true });
+      if (!updatedApplicant) {
+          return res.status(404).json({ message: 'Applicant not found' });
+      }
+      res.status(200).json({ message: 'Applicant updated successfully', applicant: updatedApplicant });
+  } catch (error) {
+      res.status(500).json({ message: 'Failed to update applicant', error: error.message });
+  }
+};
+
+const getApplicants = async (req, res) => {
+  try {
+    const applicants = await Applicant.find();
+    res.status(200).json({ applicants });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch applicants', error: error.message });
+  }
+};
+
+
+const getApplicantById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const applicant = await Applicant.findById(id);
+    if (!applicant) {
+      return res.status(404).json({ message: 'Applicant not found' });
+    }
+    res.status(200).json({ applicant });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch applicant', error: error.message });
+  }
+};
+
 module.exports = {
   addEmployee,
   getAllEmployees,
@@ -385,5 +435,7 @@ module.exports = {
   generatePayslip,
 
   addJob,getAllJobs,
+
+  addApplicant, editApplicant,getApplicantById
 };
  
