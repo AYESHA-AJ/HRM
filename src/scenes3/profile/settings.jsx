@@ -19,7 +19,7 @@ const Setting = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/applicants/65cbb70127081b50d7da2b70');
+                const response = await axios.get('http://localhost:5000/api/applicants/65cc65fc9ca228813501c49f');
                 const userData = response.data.applicant; // Assuming the API returns user data object with a key 'applicant'
                 setUsername(userData.name);
                 setEmail(userData.email);
@@ -56,7 +56,7 @@ const Setting = () => {
                         throw new Error('Username cannot be empty');
                     }
                     setEditUsername(false);
-                    await axios.put('http://localhost:5000/api/applicants/65cbb70127081b50d7da2b70', { name: username });
+                    await axios.put('http://localhost:5000/api/applicants/65cc65fc9ca228813501c49f', { name: username });
                     break;
                 case 'email':
                     // Validate email format
@@ -65,7 +65,7 @@ const Setting = () => {
                     }
                     // Save email changes
                     setEditEmail(false);
-                    await axios.put('http://localhost:5000/api/applicants/65cbb70127081b50d7da2b70', { email });
+                    await axios.put('http://localhost:5000/api/applicants/65cc65fc9ca228813501c49f', { email });
                     break;
                 case 'password':
                     // Save password changes
@@ -73,7 +73,7 @@ const Setting = () => {
                         throw new Error('Password cannot be empty');
                     }
                     setEditPassword(false);
-                    await axios.put('http://localhost:5000/api/applicants/65cbb70127081b50d7da2b70', { password });
+                    await axios.put('http://localhost:5000/api/applicants/65cc65fc9ca228813501c49f', { password });
                     break;
                 default:
                     break;
