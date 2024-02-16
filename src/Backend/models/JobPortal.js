@@ -10,6 +10,18 @@ const jobSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  jobBenefits: {
+    type: String,
+    required: true,
+  },
+  jobOutline: {
+    type: String,
+    required: true,
+  },
+  employmentFutureGrowth: {
+    type: String,
+    required: true,
+  },
   minPrice: {
     type: String,
     required: true,

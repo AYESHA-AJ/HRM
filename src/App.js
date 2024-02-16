@@ -2,6 +2,7 @@ import { useState,useEffect } from "react";
 import { Routes, Route, Navigate ,createBrowserRouter,RouterProvider} from "react-router-dom";
 import Topbar from "./scenes/global/Topbar";
 import Topbar2 from "./scenes2/global/Topbar2";
+import JobDetails from "./scenes3/jobdetails";
 import Home from "./scenes3/pages/home";
 import Feed from "./scenes3/feed";
 import Sidebar2 from "./scenes2/global/Sidebar2";
@@ -141,6 +142,7 @@ function App() {
       )}
       <Routes>
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/get_job/:id" element={<JobDetails />} />
         {/* <Route path="/profile" element={<Setting />} /> */}
         {/* <Route path="/profilesetting" element={<Homesetting />} /> */}
 

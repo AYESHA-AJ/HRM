@@ -6,7 +6,7 @@ import CurrencyRupeeOutlinedIcon from '@mui/icons-material/CurrencyRupeeOutlined
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 
 const Card = ({ data }) => {
-    const { companyName, jobTitle,companyLogo, minPrice, maxPrice, salaryType, jobLocation, employmentType, description,postingDate } = data;
+    const {_id, companyName, jobTitle,companyLogo, minPrice, maxPrice, salaryType, jobLocation, employmentType, description,postingDate } = data;
     return (
         <section style={{
             margin: "20px",
@@ -14,7 +14,7 @@ const Card = ({ data }) => {
             padding: "20px",
             cursor: "pointer",
         }}>
-            <Link to={"/"} style={{
+            <Link to={`/get_job/${_id}`} style={{
                 display: "flex",
                 gap: "1rem",
                 textDecoration: "none", // Remove underline
@@ -65,6 +65,8 @@ const Card = ({ data }) => {
                 </div>
             </Link>
         </section>
+        
+        
     );
 };
 

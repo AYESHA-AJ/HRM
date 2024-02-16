@@ -36,7 +36,7 @@ const Navbar = () => {
                 paddingLeft: '6rem',
                 paddingRight: '6rem',
                 maxWidth: '1536px',
-                backgroundColor: '#e5e5e5',
+                backgroundColor: '#FAFAFA',
             }}
         >
             <nav

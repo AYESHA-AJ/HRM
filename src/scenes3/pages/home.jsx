@@ -5,6 +5,7 @@ import { useTheme } from "@mui/system";
 import Navbar from "../navbar";
 import Banner from "../banner";
 import { useState } from "react";
+import { Link } from 'react-router-dom';
 import Card from "../../components/Card";
 import { useEffect } from "react";
 import Jobs from "../jobs";

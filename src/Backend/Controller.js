@@ -406,17 +406,22 @@ const getJobById = async (req, res) => {
   const { id } = req.params;
 
   try {
+    console.log('Fetching job with ID:', id);
+
     const job = await Job.findById(id);
     if (!job) {
+      console.log('Job not found');
       return res.status(404).json({ error: 'Job not found' });
     }
 
+    console.log('Job found:', job);
     res.status(200).json(job);
   } catch (error) {
     console.error('Error fetching job by ID:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
 
 const addApplicant = async (req, res) => {
   try {

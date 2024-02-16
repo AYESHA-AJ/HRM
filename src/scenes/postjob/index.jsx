@@ -299,8 +299,77 @@ const CreateJob = () => {
        
                             placeholder='Job Description' />
                     </div>
-                    {/* row 8 */}
-                    <div style={{ width: "100%" ,marginTop:"2rem"}}>
+                    
+           
+                   {/* row 9 - Additional Fields */}
+                   <div style={{ width: "100%" }}>
+                        <label style={{ marginBottom: "0.5rem", fontSize: "1.2rem", color: "#535353" }}>Job Benefits</label>
+                        <textarea  {...register("jobBenefits")} style={{
+                            width: " 100%",
+                            paddingTop: "0.375rem",
+                            paddingBottom: "0.375rem",
+                            paddingLeft: "0.75rem",
+                            marginTop: "2rem", /* Adjust as needed */
+                            backgroundColor: "#ffffff",
+                            height: "150px",
+                            border: " none",
+                            borderRadius: "2px",
+                            fontSize: "1rem",
+                            color: "#4F4F4F",
+  
+                        }}
+                            row={8}
+                            defaultValue={"Ex: Health Insurance, Flexible Schedule!"}
+       
+                            placeholder='Job Benefits' />
+                    </div>
+                   
+{/* row 10 */}
+<div style={{ width: "100%" }}>
+                        <label style={{ marginBottom: "0.5rem", fontSize: "1.2rem", color: "#535353" }}>Future Growth</label>
+                        <textarea   {...register("employmentFutureGrowth")} style={{
+                            width: " 100%",
+                            paddingTop: "0.375rem",
+                            paddingBottom: "0.375rem",
+                            paddingLeft: "0.75rem",
+                            marginTop: "2rem", /* Adjust as needed */
+                            backgroundColor: "#ffffff",
+                            height: "150px",
+                            border: " none",
+                            borderRadius: "2px",
+                            fontSize: "1rem",
+                            color: "#4F4F4F",
+  
+                        }}
+                            row={8}
+                            defaultValue={"Ex: Health Insurance, Flexible Schedule!"}
+       
+                            placeholder='Job Benefits' />
+                    </div>
+                    {/* row 11 */}
+<div style={{ width: "100%" }}>
+                        <label style={{ marginBottom: "0.5rem", fontSize: "1.2rem", color: "#535353" }}>OutLine</label>
+                        <textarea   {...register("jobOutline")} style={{
+                            width: " 100%",
+                            paddingTop: "0.375rem",
+                            paddingBottom: "0.375rem",
+                            paddingLeft: "0.75rem",
+                            marginTop: "2rem", /* Adjust as needed */
+                            backgroundColor: "#ffffff",
+                            height: "150px",
+                            border: " none",
+                            borderRadius: "2px",
+                            fontSize: "1rem",
+                            color: "#4F4F4F",
+  
+                        }}
+                            row={8}
+                            defaultValue={"Ex: This position entails joining a web design and development team....!"}
+       
+                            placeholder='Job Benefits' />
+                    </div>
+                     {/* row 12 */}
+                     <div style={{ width: "100%" ,marginTop:"2rem"}}>
                         <label style={{ marginBottom: "0.5rem", fontSize: "1.2rem", color: "#535353" }}>Job Posted By</label>
                         <input
                                 type="email"
