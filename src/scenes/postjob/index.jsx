@@ -342,7 +342,7 @@ const CreateJob = () => {
   
                         }}
                             row={8}
-                            defaultValue={"Ex: Health Insurance, Flexible Schedule!"}
+                            defaultValue={"We put people first,drive innovation and do good in the community we live and work in."}
        
                             placeholder='Job Benefits' />
                     </div>
