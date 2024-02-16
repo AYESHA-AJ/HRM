@@ -43,4 +43,8 @@ router.get('/payslip/:id', controller.generatePayslip);
 router.post('/applicants', controller.addApplicant);
 router.put('/applicants/:id', controller.editApplicant);
 router.get('/applicants/:id', controller.getApplicantById);
+
+router.put('/addimg/:id', controller.editProfilePic);
+router.put('/addcv/:id', controller.editCV);
+
 module.exports = router;

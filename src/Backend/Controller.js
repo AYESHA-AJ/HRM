@@ -467,6 +467,47 @@ const getApplicantById = async (req, res) => {
   }
 };
 
+const editProfilePic = async (req, res) => {
+  const { id } = req.params;
+  const { profilepic } = req.body; // Assuming the file path is in req.body
+
+  try {
+    const updatedApplicant = await Applicant.findByIdAndUpdate(id, { profilepic }, { new: true });
+    if (!updatedApplicant) {
+      return res.status(404).json({ error: 'Applicant not found' });
+    }
+
+    res.status(200).json(updatedApplicant);
+  } catch (error) {
+    console.error('Error updating profile picture:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+const editCV = async (req, res) => {
+  const { id } = req.params;
+  const { profilecv } = req.body; // Assuming profilecv path is in req.body if uploaded
+
+  try {
+    const updatedApplicant = await Applicant.findByIdAndUpdate(
+      id,
+      profilecv ? { profilecv } : {}, // Update only if profilecv exists
+      { new: true }
+    );
+    if (!updatedApplicant) {
+      return res.status(404).json({ error: 'Applicant not found' });
+    }
+
+    res.status(200).json(updatedApplicant);
+  } catch (error) {
+    console.error('Error updating CV:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+
+
+
 module.exports = {
   addEmployee,
   getAllEmployees,
@@ -493,6 +534,7 @@ module.exports = {
   editJob,
   getJobById,// Add the newly created deleteJob function here
 
-  addApplicant, editApplicant,getApplicantById
+  addApplicant, editApplicant,getApplicantById,
+  editProfilePic,editCV,
 };
  
