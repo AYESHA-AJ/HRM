@@ -29,7 +29,7 @@ router.post('/add_basic_salary', controller.addBasicSalary);
 router.get('/get_basic_salaries', controller.getAllBasicSalaries);
 router.put('/edit_basic_salary/:id', controller.editBasicSalary);
 router.delete('/delete_basic_salary/:id', controller.deleteBasicSalary);
-
+//helloooo
 // Deduction routes
 router.post('/add_deduction', controller.addDeduction);
 router.get('/get_deductions', controller.getAllDeductions);
