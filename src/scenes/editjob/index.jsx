@@ -34,15 +34,16 @@ const JobsPosted = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/get_jobs');
+        const response = await axios.get('http://localhost:5000/api/get_all_jobs');
         setJobs(response.data);
       } catch (error) {
         console.error('Error fetching jobs:', error);
       }
     };
-
+  
     fetchJobs();
   }, []);
+  
 
   const handleEdit = async (id) => {
     try {
@@ -61,6 +62,29 @@ const JobsPosted = () => {
       console.error("Error fetching job data:", error);
     }
   };
+
+  
+
+  const handleActivateDeactivate = async (id, isActive) => {
+    try {
+      // Send the request to the backend to update the isActive state
+      const response = await axios.put(`http://localhost:5000/api/activate_deactivate_job/${id}`, {
+        isActive: !isActive,
+      });
+
+      console.log('Job activation/deactivation successful:', response.data);
+
+      // Update the local state based on the response
+      const updatedJobs = jobs.map((job) =>
+        job._id === id ? { ...job, isActive: !isActive } : job
+      );
+
+      setJobs(updatedJobs);
+    } catch (error) {
+      console.error('Error activating/deactivating job:', error);
+    }
+  };
+  
   
   
   
@@ -166,7 +190,22 @@ const JobsPosted = () => {
           </IconButton>
         </Box>
       ),
+      
     },
+    {field:'isActive',headerName:'Status',flex:1,renderCell: ({ row }) => (
+      <Button
+      variant="contained"
+      onClick={() => handleActivateDeactivate(row._id, row.isActive)}
+      style={{
+        backgroundColor: row.isActive ? '#E74C3C' : '#2ECC71',
+        color: '#FFFFFF',
+        fontWeight: 'bold',
+      }}
+    >
+      {row.isActive ? 'Inactive' : 'Active'}
+    </Button>
+    ),},
+
   ];
 
   return (

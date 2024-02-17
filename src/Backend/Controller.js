@@ -58,9 +58,36 @@ const addJob = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+const activateDeactivateJob = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { isActive } = req.body;
+
+    // Assuming you have a Job model
+    const job = await Job.findById(id);
+
+    if (!job) {
+      return res.status(404).json({ error: 'Job not found' });
+    }
+
+    // Update the 'status' field based on the 'isActive' value
+    job.status = isActive ? 'active' : 'inactive';
+
+    // Save the updated job
+    await job.save();
+
+    res.status(200).json({ message: 'Job activation/deactivation successful', job });
+  } catch (error) {
+    console.error('Error activating/deactivating job:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
 const getAllJobs = async (req, res) => {
   try {
-    const jobs = await Job.find();
+    // Fetch only active jobs from the database
+    const jobs = await Job.find({ status: 'active' });
     res.status(200).json(jobs);
   } catch (error) {
     console.error('Error fetching jobs:', error);
@@ -555,11 +582,23 @@ const getApplicantsByJobTitle = async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+const getEveryJob = async (req, res) => {
+  try {
+    console.log('Fetching every job...');
+    const jobs = await Job.find();
+    console.log('Fetched jobs:', jobs);
+    res.status(200).json(jobs);
+  } catch (error) {
+    console.error('Error fetching jobs:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
 
 
 
 module.exports = {
   addEmployee,
+  activateDeactivateJob,
   getAllEmployees,
   deleteEmployee,
   editEmployee,
@@ -588,5 +627,6 @@ module.exports = {
   editProfilePic,editCV,
   addAppliedApplicants,
   getApplicantsByJobTitle,
+  getEveryJob,
 };
  

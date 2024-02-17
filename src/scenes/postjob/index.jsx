@@ -212,20 +212,23 @@ const CreateJob = () => {
                                 }}
                             />
                         </div>
-                        <div style={{ width: "50%", marginRight: "2%", padding: "12px 12px" }}>
-                            <label style={{ fontSize: "1.2rem", color: "#535353" }}>Experience Level</label>
-                            <select {...register("experienceLevel")} className="create-job-input" style={{
-                                border: "none", borderRadius: "8px",
-                                padding: "12px",
-                                width: "100%",
-                                fontSize: "1rem", marginTop: "1rem"
-                            }}>
-                                <option value="">Select your experience level</option>
-                                <option value="NoExperience">No Experience</option>
-                                <option value="Internship">Internship</option>
-                                <option value="Work remotely">Work remotely</option>
-                            </select>
-              
+                        <div style={{ width: "50%", padding: "12px 12px" }}>
+                            <label style={{ marginBottom: "0.5rem", fontSize: "1.2rem", color: "#535353" }}>End Date</label>
+                            <input
+                                type="date"
+                                placeholder='Ex: 2023-11-03'
+                                {...register("endingDate")}
+                                className='create-job-input'
+                                style={{
+                                    backgroundColor: "#ffffff",
+                                    border: "none",
+                                    borderRadius: "8px",
+                                    padding: "12px",
+                                    width: "100%", marginTop: "1rem",
+                                    fontSize: "1rem",
+                                    color: "#4F4F4F",
+                                }}
+                            />
                         </div>
             
                     </div>
@@ -277,6 +280,21 @@ const CreateJob = () => {
                         </div>
             
                     </div>
+                    <div style={{ width: "50%", marginRight: "2%", padding: "12px 12px" }}>
+                            <label style={{ fontSize: "1.2rem", color: "#535353" }}>Experience Level</label>
+                            <select {...register("experienceLevel")} className="create-job-input" style={{
+                                border: "none", borderRadius: "8px",
+                                padding: "12px",
+                                width: "100%",
+                                fontSize: "1rem", marginTop: "1rem"
+                            }}>
+                                <option value="">Select your experience level</option>
+                                <option value="NoExperience">No Experience</option>
+                                <option value="Internship">Internship</option>
+                                <option value="Work remotely">Work remotely</option>
+                            </select>
+              
+                        </div>
                     {/* row 7 */}
                     <div style={{ width: "100%" }}>
                         <label style={{ marginBottom: "0.5rem", fontSize: "1.2rem", color: "#535353" }}>Job Description</label>

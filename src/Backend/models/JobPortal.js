@@ -10,6 +10,12 @@ const jobSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  status: {
+    type: String,
+    enum: ['active', 'inactive'], 
+    default: 'active',
+  },
+  
   jobBenefits: {
     type: String,
     required: true,
@@ -39,6 +45,10 @@ const jobSchema = new mongoose.Schema({
     required: true,
   },
   postingDate: {
+    type: String,
+    required: true,
+  },
+  endingDate: {
     type: String,
     required: true,
   },

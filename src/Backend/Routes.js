@@ -11,12 +11,15 @@ router.get('/get_employee/:id', controller.getEmployeeById);
 router.delete('/delete_employee/:id', controller.deleteEmployee);
 router.get('/search_employee/:query', controller.searchEmployee);
 
+
 // Job routes
 router.post('/add_job', controller.addJob);
 router.get('/get_jobs', controller.getAllJobs);
 router.put('/edit_job/:id', controller.editJob); // Add this line for editing jobs
 router.delete('/delete_job/:id', controller.deleteJob);
+router.get('/get_all_jobs', controller.getEveryJob);
 router.get('/get_job/:id', controller.getJobById);
+router.put('/activate_deactivate_job/:id', controller.activateDeactivateJob);
 
 // Allowance routes
 router.post('/add_allowance', controller.addAllowance);
