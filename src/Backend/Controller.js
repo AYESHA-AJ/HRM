@@ -4,6 +4,7 @@ const Allowance = require('./models/Allowance_DB');
 const BasicSalary = require('./models/Basicsalary_DB');
 const Deduction = require('./models/Deductions_DB');
 const Job = require('./models/JobPortal');
+const AppliedApplicant = require('./models/AppliedApplicants');
 
 
 const deleteJob = async (req, res) => {
@@ -510,6 +511,50 @@ const editCV = async (req, res) => {
   }
 };
 
+const addAppliedApplicants = async (req, res) => {
+  const { jobTitle, applicants } = req.body;
+
+  try {
+      // Check if jobTitle and applicants array are provided
+      if (!jobTitle || !Array.isArray(applicants)) {
+          return res.status(400).json({ error: 'Invalid input data' });
+      }
+
+      // Check if the jobTitle already exists in the database
+      let appliedApplicant = await AppliedApplicant.findOne({ jobTitle });
+
+      if (appliedApplicant) {
+          // If the jobTitle exists, push the new applicants into the applicants array
+          appliedApplicant.applicants.push(...applicants);
+      } else {
+          // If the jobTitle does not exist, create a new document
+          appliedApplicant = new AppliedApplicant({ jobTitle, applicants });
+      }
+
+      // Save the changes to the database
+      await appliedApplicant.save();
+
+      res.status(201).json({ message: 'Applied applicants data added successfully' });
+  } catch (error) {
+      console.error('Error adding applied applicants data:', error);
+      res.status(500).json({ error: 'Failed to add applied applicants data' });
+  }
+};
+
+const getApplicantsByJobTitle = async (req, res) => {
+  const { jobTitle } = req.params;
+
+  try {
+    const applicants = await AppliedApplicant.findOne({ jobTitle });
+    if (!applicants) {
+      return res.status(404).json({ error: 'Applicants not found for the specified job title' });
+    }
+    res.status(200).json(applicants);
+  } catch (error) {
+    console.error('Error fetching applicants:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
 
 
 
@@ -541,5 +586,7 @@ module.exports = {
 
   addApplicant, editApplicant,getApplicantById,
   editProfilePic,editCV,
+  addAppliedApplicants,
+  getApplicantsByJobTitle,
 };
  

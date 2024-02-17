@@ -6,6 +6,8 @@ import CreateJob from "../postjob";
 import Header from "../../components/Header";
 import { useTheme } from "@mui/material";
 import JobsPosted from "../editjob";
+import ResumeReceived from "../ResumeReceived/ResumeReceived";
+
 const Talent = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -44,10 +46,7 @@ const Talent = () => {
 
       {tabValue === 2 && (
         <div>
-          {/* Content for "Resume Received" tab */}
-          {/* You can render your DataGrid or any other content here */}
-          
-          <p>Short Listed Candidates Content</p>
+         <ResumeReceived/>
         </div>
       )}
 
