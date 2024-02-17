@@ -93,8 +93,8 @@ const ResumeReceived = () => {
 
       {jobDetails && (
   
-      <div style={{ background: grey[300], padding: '10px', borderRadius: '9px', marginBottom: '20px',width:"400px" }}>
-        
+      <div style={{ padding: '10px', borderRadius: '9px', marginBottom: '20px',width:"400px" , boxShadow: '0 1px 2px'}}>
+        <Typography><strong>JOB DESCRIPTION:</strong></Typography>
         <Typography><strong>Company:</strong> {jobDetails.companyName}</Typography>
         <Typography><strong>Salary Type:</strong> {jobDetails.salaryType}</Typography>
         <Typography><strong>Job Location:</strong> {jobDetails.jobLocation}</Typography>
