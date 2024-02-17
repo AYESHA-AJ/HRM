@@ -40,7 +40,7 @@ const navigate = useNavigate();
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/applicants/65cc6529b309d5c8e824b50f');
+                const response = await axios.get('http://localhost:5000/api/applicants/65cc65fc9ca228813501c49f');
                 const userData = response.data.applicant; // Assuming the API returns user data object with a key 'applicant'
                 setUsername(userData.name);
                 setEmail(userData.email);
@@ -92,7 +92,7 @@ const navigate = useNavigate();
                         throw new Error('Username cannot be empty');
                     }
                     setEditUsername(false);
-                    await axios.put('http://localhost:5000/api/applicants/65cc6529b309d5c8e824b50f', { name: username });
+                    await axios.put('http://localhost:5000/api/applicants/65cc65fc9ca228813501c49f', { name: username });
                     break;
                 case 'email':
                     // Validate email format
@@ -101,7 +101,7 @@ const navigate = useNavigate();
                     }
                     // Save email changes
                     setEditEmail(false);
-                    await axios.put('http://localhost:5000/api/applicants/65cc6529b309d5c8e824b50f', { email });
+                    await axios.put('http://localhost:5000/api/applicants/65cc65fc9ca228813501c49f', { email });
                     break;
                 case 'password':
                     // Save password changes
@@ -109,7 +109,7 @@ const navigate = useNavigate();
                         throw new Error('Password cannot be empty');
                     }
                     setEditPassword(false);
-                    await axios.put('http://localhost:5000/api/applicants/65cc6529b309d5c8e824b50f', { password });
+                    await axios.put('http://localhost:5000/api/applicants/65cc65fc9ca228813501c49f', { password });
                     break;
                 default:
                     break;
@@ -140,7 +140,7 @@ const navigate = useNavigate();
  
     try {
       const imagePath = await upload(selectedImage);
-      await axios.put(`http://localhost:5000/api/addimg/65cc6529b309d5c8e824b50f`, {
+      await axios.put(`http://localhost:5000/api/addimg/65cc65fc9ca228813501c49f`, {
         profilepic: imagePath,
       });
    
@@ -169,7 +169,7 @@ const navigate = useNavigate();
   {
     try {
       const cvPath = await upload(selectedCV);
-      await axios.put(`http://localhost:5000/api/addcv/65cc6529b309d5c8e824b50f`, {
+      await axios.put(`http://localhost:5000/api/addcv/65cc65fc9ca228813501c49f`, {
         profilecv: cvPath,
       });
 
