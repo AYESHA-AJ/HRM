@@ -16,6 +16,38 @@ const ResumeReceived = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
+  ////////////////////////////////////////////////
+
+
+  
+    const [emailData, setEmailData] = useState({
+      to: 'ayeshaaj25@gmail.com',
+      subject: 'Testing send-email api',
+      text: 'so its fine I think!'
+    });
+    const [message, setMessage] = useState('');
+  
+    // const handleChange = (e) => {
+    //   const { name, value } = e.target;
+    //   setEmailData({ ...emailData, [name]: value });
+    // };
+  
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+  
+      try {
+        const response = await axios.post('http://localhost:5000/api/send-email', emailData);
+        setMessage(response.data);
+      } catch (error) {
+        setMessage('Error sending email');
+        console.error(error);
+      }
+    };
+
+
+
+  /////////////////////////////////////////////////
+
   useEffect(() => {
     // Fetch applicant data based on selected job
     const fetchData = async () => {
@@ -155,6 +187,9 @@ const ResumeReceived = () => {
           }}
         />
       </Box>
+      <button onClick={handleSubmit}>
+        buton
+      </button>
     </Box>
   );
 };

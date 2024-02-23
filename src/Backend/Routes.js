@@ -2,6 +2,16 @@
 const express = require('express');
 const router = express.Router();
 const controller = require('./Controller');
+const emailController = require('./nodemailController');
+
+// email routes
+
+// emailRoutes.js
+
+
+// Define routes
+router.post('/send-email', emailController.sendEmail);
+
 
 // Employee routes
 router.post('/add_employee', controller.addEmployee);
