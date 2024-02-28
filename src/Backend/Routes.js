@@ -64,4 +64,17 @@ router.put('/addcv/:id', controller.editCV);
 router.post('/applied-applicants', controller.addAppliedApplicants);
 router.get('/applied-applicants/:jobTitle', controller.getApplicantsByJobTitle);
 
+// Route for shortlisting an applicant
+router.post('/shortlist/:applicantId', controller.shortlistApplicant);
+
+// Route for unshortlisting an applicant
+router.post('/unshortlist/:applicantId', controller.unshortlistApplicant);
+
+// Route for selecting an applicant
+router.post('/select/:applicantId', controller.selectApplicant);
+
+// Route for unselecting an applicant
+router.post('/unselect/:applicantId', controller.unselectApplicant);
+
+
 module.exports = router;

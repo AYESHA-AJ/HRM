@@ -593,8 +593,117 @@ const getEveryJob = async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+const shortlistApplicant = async (req, res) => {
+  const { jobId } = req.body; // Get the job title from the request body
+  const { applicantId } = req.params; // Get the applicant ID from the URL parameter
 
+  try {
+    const appliedApplicant = await AppliedApplicant.findOne({ jobTitle: jobId });
 
+    if (!appliedApplicant) {
+      return res.status(404).json({ error: 'Applied applicant not found' });
+    }
+
+    const applicant = appliedApplicant.applicants.find(app => app._id.toString() === applicantId);
+
+    if (!applicant) {
+      return res.status(404).json({ error: 'Applicant not found' });
+    }
+
+    applicant.shortlisted = true;
+
+    await appliedApplicant.save();
+
+    res.status(200).json({ message: 'Applicant shortlisted successfully' });
+  } catch (error) {
+    console.error('Error shortlisting applicant:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+const unshortlistApplicant = async (req, res) => {
+  const { jobId } = req.body; // Get the job title from the request body
+  const { applicantId } = req.params; // Get the applicant ID from the URL parameter
+
+  try {
+    const appliedApplicant = await AppliedApplicant.findOne({ jobTitle: jobId });
+
+    if (!appliedApplicant) {
+      return res.status(404).json({ error: 'Applied applicant not found' });
+    }
+
+    const applicant = appliedApplicant.applicants.find(app => app._id.toString() === applicantId);
+
+    if (!applicant) {
+      return res.status(404).json({ error: 'Applicant not found' });
+    }
+
+    applicant.shortlisted = false;
+
+    await appliedApplicant.save();
+
+    res.status(200).json({ message: 'Applicant removed from shortlist successfully' });
+  } catch (error) {
+    console.error('Error unshortlisting applicant:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+const selectApplicant = async (req, res) => {
+  const { jobId } = req.body; // Get the job title from the request body
+  const { applicantId } = req.params; // Get the applicant ID from the URL parameter
+
+  try {
+    const appliedApplicant = await AppliedApplicant.findOne({ jobTitle: jobId });
+
+    if (!appliedApplicant) {
+      return res.status(404).json({ error: 'Applied applicant not found' });
+    }
+
+    const applicant = appliedApplicant.applicants.find(app => app._id.toString() === applicantId);
+
+    if (!applicant) {
+      return res.status(404).json({ error: 'Applicant not found' });
+    }
+
+    applicant.selected = true;
+
+    await appliedApplicant.save();
+
+    res.status(200).json({ message: 'Applicant selected successfully' });
+  } catch (error) {
+    console.error('Error selecting applicant:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+const unselectApplicant = async (req, res) => {
+  const { jobId } = req.body; // Get the job title from the request body
+  const { applicantId } = req.params; // Get the applicant ID from the URL parameter
+
+  try {
+    const appliedApplicant = await AppliedApplicant.findOne({ jobTitle: jobId });
+
+    if (!appliedApplicant) {
+      return res.status(404).json({ error: 'Applied applicant not found' });
+    }
+
+    const applicant = appliedApplicant.applicants.find(app => app._id.toString() === applicantId);
+
+    if (!applicant) {
+      return res.status(404).json({ error: 'Applicant not found' });
+    }
+
+    applicant.selected = false;
+
+    await appliedApplicant.save();
+
+    res.status(200).json({ message: 'Applicant removed from selected successfully' });
+  } catch (error) {
+    console.error('Error unselecting applicant:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
 
 module.exports = {
   addEmployee,
@@ -628,5 +737,7 @@ module.exports = {
   addAppliedApplicants,
   getApplicantsByJobTitle,
   getEveryJob,
+  shortlistApplicant,unshortlistApplicant,selectApplicant,unselectApplicant,
+ 
 };
  

@@ -1,73 +1,52 @@
 import React, { useState, useEffect } from 'react';
-import { Box, FormControl, Select, MenuItem, Typography,Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Card, CardContent, List, ListItem, ListItemText, Grid } from '@mui/material';
+import { Box, FormControl, Select, MenuItem, Typography, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import axios from 'axios';
-import HowToRegIcon from '@mui/icons-material/HowToReg';
-import { blue,red } from '@mui/material/colors';
-import { grey } from '@mui/material/colors';
+import EmailIcon from '@mui/icons-material/Email';
+import { blue, red ,grey} from '@mui/material/colors';
 import { tokens } from "../../theme";
 import { useTheme } from "@mui/material";
-import EmailIcon from '@mui/icons-material/Email';
 
-
-const ResumeReceived = () => {
+const Shortlisted = () => {
   const [selectedJob, setSelectedJob] = useState('');
   const [applicantData, setApplicantData] = useState([]);
   const [jobDetails, setJobDetails] = useState(null);
-   const [verificationDialogOpen, setVerificationDialogOpen] = useState(false);
+  const [verificationDialogOpen, setVerificationDialogOpen] = useState(false);
   const [selectedApplicantId, setSelectedApplicantId] = useState(null);
-  const [selectedAction, setSelectedAction] = useState(null); 
+  const [selectedAction, setSelectedAction] = useState(null);
   const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
+  const [filteredApplicantData, setFilteredApplicantData] = useState([]);
   const [emailDataForConfirmation, setEmailDataForConfirmation] = useState(null);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  ////////////////////////////////////////////////
+  const handleJobChange = (event) => {
+    const selectedJob = event.target.value;
+    setSelectedJob(selectedJob);
+  };
 
-
-  
-    const [emailData, setEmailData] = useState({
-      to: 'mfaizanullah336@gmail.com',
-      subject: 'Testing send-email api',
-      text: 'so its fine I think!'
-    });
-    const [message, setMessage] = useState('');
-  
-    // const handleChange = (e) => {
-    //   const { name, value } = e.target;
-    //   setEmailData({ ...emailData, [name]: value });
-    // };
-  
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-  
-      try {
-        const response = await axios.post('http://localhost:5000/api/send-email', emailData);
-        setMessage(response.data);
-      } catch (error) {
-        setMessage('Error sending email');
-        console.error(error);
-      }
-    };
-
-
-
-  /////////////////////////////////////////////////
+  const [emailData, setEmailData] = useState({
+    to: 'mfaizanullah336@gmail.com',
+    subject: 'Testing send-email api',
+    text: 'so its fine I think!'
+  });
+  const [message, setMessage] = useState('');
+  useEffect(() => {
+    // Filter applicants with shortlisted status
+    const filteredApplicants = applicantData.filter(applicant => applicant.shortlisted);
+    setFilteredApplicantData(filteredApplicants);
+  }, [applicantData]);
 
   useEffect(() => {
-    // Fetch applicant data based on selected job
     const fetchData = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/api/applied-applicants/${selectedJob}`);
-        // Add unique IDs to each row
         const formattedData = response.data.applicants.map((applicant, index) => ({
           ...applicant,
-          id: index + 1, // Generate unique ID based on index
+          id: index + 1,
         }));
         setApplicantData(formattedData);
-        
-        // Fetch job details using the first job ID
         if (formattedData.length > 0) {
           const firstJobId = formattedData[0].jobId;
           fetchJobDetails(firstJobId);
@@ -96,11 +75,6 @@ const ResumeReceived = () => {
     }
   };
 
-  const handleJobChange = (event) => {
-    const selectedJob = event.target.value;
-    setSelectedJob(selectedJob);
-  };
-
   const handleCVClick = (cvLink) => {
     window.open(cvLink, '_blank');
   };
@@ -112,8 +86,8 @@ const ResumeReceived = () => {
     // Construct the email data for the confirmation dialog
     const emailDataForConfirmation = {
       to: selectedApplicant.email,
-      subject: 'Shortlisted for the Job',
-      text: 'Congratulations! You have been shortlisted for the job. Please stay tuned for further updates.',
+      subject: 'Selected for the Job',
+      text: 'Congratulations! You have been selected for the job. Please stay tuned for further updates.',
     };
     setEmailData(emailData);
     // Set the email data for the confirmation dialog
@@ -142,52 +116,46 @@ const ResumeReceived = () => {
     }
   };
 
-  const handleShortlistClick = async (applicantId) => {
+  const handleSelectedClick = async (applicantId) => {
     setSelectedApplicantId(applicantId);
-    setSelectedAction('shortlist');
+    setSelectedAction('select');
     setVerificationDialogOpen(true);
   };
-  
-  const handleUnshortlistClick = async (applicantId) => {
+
+  const handleUnselectedClick = async (applicantId) => {
     setSelectedApplicantId(applicantId);
-    setSelectedAction('unshortlist');
+    setSelectedAction('unselect');
     setVerificationDialogOpen(true);
   };
-  
+
   const handleConfirmation = async () => {
-    // Update UI immediately
     const updatedApplicantData = applicantData.map((applicant) => {
       if (applicant.id === selectedApplicantId) {
-        return { ...applicant, shortlisted: selectedAction === 'shortlist' };
+        return { ...applicant, selected: selectedAction === 'select' };
       }
       return applicant;
     });
     setApplicantData(updatedApplicantData);
-  
+
     try {
-      if (selectedAction === 'shortlist' || selectedAction === 'unshortlist') {
-        // Send API request
+      if (selectedAction === 'select' || selectedAction === 'unselect') {
         await axios.post(`http://localhost:5000/api/${selectedAction}/${selectedApplicantId}`, { jobId: selectedJob });
-        
-        // Update UI after successful request
         const response = await axios.get(`http://localhost:5000/api/applied-applicants/${selectedJob}`);
         const formattedData = response.data.applicants.map((applicant, index) => ({
           ...applicant,
-          id: index + 1, // Assuming index is unique
+          id: index + 1,
         }));
         setApplicantData(formattedData);
       }
     } catch (error) {
-      console.error(`Error ${selectedAction === 'shortlist' ? 'shortlisting' : 'unshortlisting'} applicant:`, error);
+      console.error(`Error ${selectedAction === 'select' ? 'selecting' : 'unselecting'} applicant:`, error);
     }
-  
+
     setVerificationDialogOpen(false);
   };
-  const filteredApplicantData = applicantData.filter((applicant) => !applicant.shortlisted);
 
   return (
     <Box m="20px">
-      {/* Job Selection Dropdown */}
       <FormControl variant="outlined" style={{ marginBottom: '20px' }}>
         <Select
           value={selectedJob}
@@ -201,42 +169,32 @@ const ResumeReceived = () => {
           <MenuItem value="Testing Engineer">Testing Engineer</MenuItem>
           <MenuItem value="Software Engineer">Software Engineer</MenuItem>
           <MenuItem value="Quality Assurance Engineer">Quality Assurance Engineer</MenuItem>
-          {/* Add more job titles as needed */}
         </Select>
       </FormControl>
 
       {jobDetails && (
-  
-      <div style={{ padding: '10px', borderRadius: '9px', marginBottom: '20px',width:"400px" , boxShadow: '0 1px 2px'}}>
-        <Typography><strong>JOB DESCRIPTION:</strong></Typography>
-        <Typography><strong>Company:</strong> {jobDetails.companyName}</Typography>
-        <Typography><strong>Salary Type:</strong> {jobDetails.salaryType}</Typography>
-        <Typography><strong>Job Location:</strong> {jobDetails.jobLocation}</Typography>
-        <Typography><strong>Posting Date:</strong> {jobDetails.postingDate}</Typography>
-        <Typography><strong>Experience Level:</strong> {jobDetails.experienceLevel}</Typography>
-        <Typography><strong>Skills:</strong> {jobDetails.skills.map(skill => skill.label).join(', ')}</Typography>
-      </div>
-    
+        <div style={{ padding: '10px', borderRadius: '9px', marginBottom: '20px', width: "400px", boxShadow: '0 1px 2px' }}>
+          <Typography><strong>JOB DESCRIPTION:</strong></Typography>
+          <Typography><strong>Company:</strong> {jobDetails.companyName}</Typography>
+          <Typography><strong>Salary Type:</strong> {jobDetails.salaryType}</Typography>
+          <Typography><strong>Job Location:</strong> {jobDetails.jobLocation}</Typography>
+          <Typography><strong>Posting Date:</strong> {jobDetails.postingDate}</Typography>
+          <Typography><strong>Experience Level:</strong> {jobDetails.experienceLevel}</Typography>
+          <Typography><strong>Skills:</strong> {jobDetails.skills.map(skill => skill.label).join(', ')}</Typography>
+        </div>
+      )}
 
-)}
-
-
-      {/* Data Grid for Resume Received */}
       <Box mt={3} style={{ height: 400, width: '100%' }}>
         <DataGrid
-
-        sx={{ "& .MuiDataGrid-columnHeaders": {
+          sx={{ "& .MuiDataGrid-columnHeaders": {
             backgroundColor: colors.blueAccent[700],
            
           },
-        
         }}
-       
-          rows={applicantData}
+          rows={filteredApplicantData}
           columns={[
             { field: '_id', headerName: 'ID', width: 100 },
             { field: 'name', headerName: 'Name', width: 150 },
-            // { field: 'jobId', headerName: 'Job ID', width: 200 },
             { field: 'email', headerName: 'Email', width: 250 },
             {
               field: 'cv',
@@ -248,36 +206,43 @@ const ResumeReceived = () => {
                 </a>
               ),
             },
-
-            { field: 'status', headerName: 'Status', width: 200,
+            { field: 'status one', headerName: 'Status Shortlisted', width: 150,
             renderCell: (params) => (
-              params.row.shortlisted ? (
-                <Button
-                  variant="contained"
-                  style={{ backgroundColor: blue[500], color: '#fff' }}
-                  onClick={() => handleUnshortlistClick(params.row._id)}
-                >
-                  Shortlisted
-                </Button>
-              ) : (
-                <Button
-                  variant="contained"
-                  style={{ backgroundColor: red[500], color: '#fff' }}
-                  onClick={() => handleShortlistClick(params.row._id)}
-                >
-                  Not Shortlisted
-                </Button>
-              )
+              <Typography style={{ color: params.row.shortlisted ? blue[500] : grey[500] }}>
+                {params.row.shortlisted ? 'Shortlisted' : 'Not Shortlisted'}
+              </Typography>
             ),
           },
+            {
+              field: 'status',
+              headerName: 'Status Selected',
+              width: 200,
+              renderCell: (params) => (
+                params.row.selected ? (
+                  <Button
+                    variant="contained"
+                    style={{ backgroundColor: blue[500], color: '#fff' }}
+                    onClick={() => handleUnselectedClick(params.row._id)}
+                  >
+                    Selected
+                  </Button>
+                ) : (
+                  <Button
+                    variant="contained"
+                    style={{ backgroundColor: red[500], color: '#fff' }}
+                    onClick={() => handleSelectedClick(params.row._id)}
+                  >
+                    Unselected
+                  </Button>
+                )
+              ),
+            },
             {
               field: 'actions',
               headerName: 'Actions',
               width: 150,
               renderCell: (params) => (
-                  <EmailIcon style={{ color: red[500] ,fontSize:30}}  onClick={() => handleEmailSend(params.row.id)}/>
-                
-               
+                <EmailIcon style={{ color: red[500], fontSize: 30 }} onClick={() => handleEmailSend(params.row.id)} />
               ),
             },
           ]}
@@ -286,8 +251,8 @@ const ResumeReceived = () => {
           }}
         />
       </Box>
-     {/* Verification Dialog */}
-     <Dialog
+
+      <Dialog
         open={verificationDialogOpen}
         onClose={() => setVerificationDialogOpen(false)}
         aria-labelledby="verification-dialog-title"
@@ -296,9 +261,9 @@ const ResumeReceived = () => {
         <DialogTitle id="verification-dialog-title">Confirmation</DialogTitle>
         <DialogContent>
           <DialogContentText id="verification-dialog-description">
-            {selectedAction === 'shortlist'
-              ? 'Are you sure you want to shortlist this applicant?'
-              : 'Are you sure you want to remove the shortlist for this applicant?'}
+            {selectedAction === 'select'
+              ? 'Are you sure you want to select this applicant?'
+              : 'Are you sure you want to unselect this applicant?'}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -311,7 +276,6 @@ const ResumeReceived = () => {
         </DialogActions>
       </Dialog>
 
-       {/* Confirmation Dialog */}
       <Dialog
         open={confirmationDialogOpen}
         onClose={() => setConfirmationDialogOpen(false)}
@@ -339,8 +303,7 @@ const ResumeReceived = () => {
         </DialogActions>
       </Dialog>
 
-       {/* Success Dialog */}
-       <Dialog
+      <Dialog
         open={successDialogOpen}
         onClose={() => setSuccessDialogOpen(false)}
         aria-labelledby="success-dialog-title"
@@ -358,9 +321,9 @@ const ResumeReceived = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    
+
     </Box>
   );
 };
 
-export default ResumeReceived;
+export default Shortlisted;

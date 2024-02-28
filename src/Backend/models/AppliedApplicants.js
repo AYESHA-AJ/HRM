@@ -6,7 +6,9 @@ const appliedApplicantSchema = new mongoose.Schema({
         name: { type: String, required: true },
         jobId: { type: String, required: true }, // Store jobId as string
         email: { type: String, required: true },
-        cv: { type: String, required: true }
+        cv: { type: String, required: true },
+        shortlisted: { type: Boolean, required: false ,default:false},
+        selected: { type: Boolean, required: false,default:false },
     }]
 });
 

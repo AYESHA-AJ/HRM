@@ -7,6 +7,8 @@ import Header from "../../components/Header";
 import { useTheme } from "@mui/material";
 import JobsPosted from "../editjob";
 import ResumeReceived from "../ResumeReceived/ResumeReceived";
+import Shortlisted from "../Shortlisted/Shortlisted";
+import Selected from "../Selected/Selected";
 
 const Talent = () => {
   const theme = useTheme();
@@ -52,11 +54,8 @@ const Talent = () => {
 
       {tabValue === 3 && (
         <div>
-          {/* Content for "Short Listed Candidates" tab */}
-          {/* You can render your components, forms, or any other content here */}
-          {/* Content for "Selected Candidates" tab */}
-          {/* You can render your components, forms, or any other content here */}
-          <p>Selected Candidates Content</p>
+           <p>All Shortlisted Applicants.</p>
+         <Shortlisted/>
         </div>
 
 
@@ -64,9 +63,9 @@ const Talent = () => {
       {tabValue === 4 && (
         <div>
           
-          {/* Content for "Selected Candidates" tab */}
-          {/* You can render your components, forms, or any other content here */}
-          <p>Selected Candidates Content</p>
+          
+          <p>All Selected Applicants.</p>
+        <Selected/>
         </div>
 
 
