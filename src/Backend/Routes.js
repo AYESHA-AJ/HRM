@@ -75,6 +75,13 @@ router.post('/select/:applicantId', controller.selectApplicant);
 
 // Route for unselecting an applicant
 router.post('/unselect/:applicantId', controller.unselectApplicant);
+ 
 
+router.get('/get_leaves', controller.getAllLeaves);
+router.post('/add_leave', controller.addLeave);
+router.put('/edit_leave/:id', controller.editLeave);
+router.delete('/delete_leave/:id', controller.deleteLeave);
+router.put('/activate_deactivate_leave/:id', controller.activateDeactivateLeave);
+router.get('/api/get_leave/:id', controller.getLeaveById);
 
 module.exports = router;

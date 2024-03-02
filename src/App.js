@@ -12,9 +12,10 @@ import Dashboard2 from "./scenes2/dashboard2";
 import Calendar2 from "./scenes2/calendar";
 import Team from "./scenes/team";
 import Form2 from "./scenes2/form";
+import LeaveForm from "./scenes2/leaves";
 import attendance from "./scenes/attendance";
 import { useNavigate } from 'react-router-dom';
-import Contacts from "./scenes/contacts";
+import Leaves from "./scenes/leaves";
 import Talent from "./scenes/talent";
 import Bar from "./scenes/bar";
 import Form from "./scenes/form";
@@ -81,10 +82,9 @@ function App() {
                   <main className="content">
                     <Topbar setIsSidebar={setIsSidebar} />
                     <Routes>
-                      <Route path="/" element={<Dashboard />} />
+                    <Route path="/leaves" element={<Leaves />} />
                       <Route path="/calendar" element={<Calendar />} />
                       <Route path="/team" element={<Team />} />
-                      <Route path="/contacts" element={<Contacts />} />
                       <Route path="/attendance" element={<Attendence />} />
                       <Route path="/form" element={<Form />} />
                       <Route path="/bar" element={<Bar />} />
@@ -93,7 +93,7 @@ function App() {
                       <Route path="/line" element={<Line />} />
                       <Route path="/faq" element={<FAQ />} />
                       <Route path="/payroll" element={<Payroll />} />
-                     
+                      <Route path="/" element={<Dashboard />} />
                      
                     </Routes>
                   </main>
@@ -111,8 +111,8 @@ function App() {
                   <Topbar2 setIsSidebar2={setIsSidebar2} />
           <Routes>
             <Route path="/" element={<Dashboard2 />} />
-                      <Route path="/calendar" element={<Calendar2 />} />
-                      
+            <Route path="/calendar" element={<Calendar2 />} />
+            <Route path="/leaves" element={<LeaveForm/>}/>
             <Route path="/form" element={<Form2 />} />
             
           </Routes>

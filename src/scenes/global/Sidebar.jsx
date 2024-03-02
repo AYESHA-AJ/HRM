@@ -152,7 +152,7 @@ const Sidebar = () => {
             />
             <Item
               title="Leave Management"
-              to="/contacts"
+              to="/leaves"
               icon={<ContactsOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}

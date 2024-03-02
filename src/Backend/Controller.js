@@ -5,26 +5,10 @@ const BasicSalary = require('./models/Basicsalary_DB');
 const Deduction = require('./models/Deductions_DB');
 const Job = require('./models/JobPortal');
 const AppliedApplicant = require('./models/AppliedApplicants');
+const Leave = require('./models/Leave_DB');
 
 
-const deleteJob = async (req, res) => {
-  try {
-    const jobId = req.params.id;
 
-    // Check if the job with the given ID exists
-    const existingJob = await Job.findById(jobId);
-    if (!existingJob) {
-      return res.status(404).json({ message: 'Job not found' });
-    }
-
-    // Delete the job from the database using deleteOne()
-    await Job.deleteOne({ _id: jobId });
-
-    res.status(200).json({ message: 'Job deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
 const Applicant = require('./models/Applicants_DB');
 
 const addEmployee = async (req, res) => {
@@ -107,22 +91,6 @@ const getAllEmployees = async (req, res) => {
 };
 
  
-// const editEmployee = async (req, res) => {
-//   const { id } = req.params;
-//   const updatedData = req.body;
- 
-//   try {
-//     const updatedEmployee = await Employee.findByIdAndUpdate(id, updatedData, { new: true });
-//     if (!updatedEmployee) {
-//       return res.status(404).json({ error: 'Employee not found' });
-//     }
- 
-//     res.status(200).json(updatedEmployee);
-//   } catch (error) {
-//     console.error('Error updating employee:', error);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// };
 
 const editEmployee = async (req, res) => {
   const { id } = req.params;
@@ -414,41 +382,7 @@ const generatePayslip = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
-const editJob = async (req, res) => {
-  const { id } = req.params;
-  const updatedData = req.body;
 
-  try {
-    const updatedJob = await Job.findByIdAndUpdate(id, updatedData, { new: true });
-    if (!updatedJob) {
-      return res.status(404).json({ error: 'Job not found' });
-    }
-
-    res.status(200).json(updatedJob);
-  } catch (error) {
-    console.error('Error updating job:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-};
-const getJobById = async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    console.log('Fetching job with ID:', id);
-
-    const job = await Job.findById(id);
-    if (!job) {
-      console.log('Job not found');
-      return res.status(404).json({ error: 'Job not found' });
-    }
-
-    console.log('Job found:', job);
-    res.status(200).json(job);
-  } catch (error) {
-    console.error('Error fetching job by ID:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-};
 
 
 const addApplicant = async (req, res) => {
@@ -477,14 +411,7 @@ const editApplicant = async (req, res) => {
   }
 };
 
-const getApplicants = async (req, res) => {
-  try {
-    const applicants = await Applicant.find();
-    res.status(200).json({ applicants });
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch applicants', error: error.message });
-  }
-};
+
 
 
 const getApplicantById = async (req, res) => {
@@ -704,7 +631,165 @@ const unselectApplicant = async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+const addLeave = async (req, res) => {
+  try {
+    const { name, type, unit } = req.body;
+    const newLeave = new Leave({
+      name,
+      type,
+      unit,
+      status: 'inactive', // You can set a default status if needed
+    });
+    const savedLeave = await newLeave.save();
+    res.status(201).json(savedLeave);
+  } catch (error) {
+    console.error('Error adding leave:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
 
+const deleteJob = async (req, res) => {
+  try {
+    const jobId = req.params.id;
+
+    // Check if the job with the given ID exists
+    const existingJob = await Job.findById(jobId);
+    if (!existingJob) {
+      return res.status(404).json({ message: 'Job not found' });
+    }
+
+    // Delete the job from the database using deleteOne()
+    await Job.deleteOne({ _id: jobId });
+
+    res.status(200).json({ message: 'Job deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+const deleteLeave = async (req, res) => {
+  try {
+    const leaveId = req.params.id;
+
+    const existingLeave = await Leave.findById(leaveId);
+    if (!existingLeave) {
+      return res.status(404).json({ message: 'Leave not found' });
+    }
+
+    await Leave.deleteOne({ _id: leaveId });
+
+    res.status(200).json({ message: 'Leave deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+const getAllLeaves = async (req, res) => {
+  try {
+    const leaves = await Leave.find();
+    res.json(leaves);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+const activateDeactivateLeave = async (req, res) => {
+  try {
+    const leaveId = req.params.id;
+    const { status } = req.body;
+
+    // Find leave by ID and update its status
+    const updatedLeave = await Leave.findByIdAndUpdate(
+      leaveId,
+      { $set: { status } },
+      { new: true } // Return the updated leave
+    );
+
+    if (!updatedLeave) {
+      return res.status(404).json({ error: 'Leave not found' });
+    }
+
+    res.json(updatedLeave);
+  } catch (error) {
+    console.error('Error activating/deactivating leave:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+const editJob = async (req, res) => {
+  const { id } = req.params;
+  const updatedData = req.body;
+
+  try {
+    const updatedJob = await Job.findByIdAndUpdate(id, updatedData, { new: true });
+    if (!updatedJob) {
+      return res.status(404).json({ error: 'Job not found' });
+    }
+
+    res.status(200).json(updatedJob);
+  } catch (error) {
+    console.error('Error updating job:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+const editLeave = async (req, res) => {
+  const { id } = req.params;
+  const updatedData = req.body;
+  try {
+    const updatedLeave = await Leave.findByIdAndUpdate(id, updatedData, { new: true });
+    if (!updatedLeave) {
+      return res.status(404).json({ error: 'Leave not found' });
+    }
+
+    res.status(200).json(updatedLeave);
+  } catch (error) {
+    console.error('Error updating leave:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+const getJobById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    console.log('Fetching job with ID:', id);
+
+    const job = await Job.findById(id);
+    if (!job) {
+      console.log('Job not found');
+      return res.status(404).json({ error: 'Job not found' });
+    }
+
+    console.log('Job found:', job);
+    res.status(200).json(job);
+  } catch (error) {
+    console.error('Error fetching job by ID:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+const getLeaveById = async (req, res) => {
+ 
+  
+  try {
+    const { id } = req.params;
+    console.log('Fetching leave with ID:', id);
+    const leave = await Leave.findById(id);
+    if (!leave) {
+      console.log('Leave not found');
+      return res.status(404).json({ error: 'Leave not found' });
+    }
+
+    console.log('Leave found:', leave);
+    res.status(200).json(leave);
+  } catch (error) {
+    console.error('Error fetching leave by ID:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+const getAllLeaveTypes = async (req, res) => {
+  try {
+    const leaves = await Leave.find({}, 'name'); // Only fetch the 'name' field of leaves
+    res.json(leaves);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 module.exports = {
   addEmployee,
   activateDeactivateJob,
@@ -738,6 +823,7 @@ module.exports = {
   getApplicantsByJobTitle,
   getEveryJob,
   shortlistApplicant,unshortlistApplicant,selectApplicant,unselectApplicant,
- 
+  getAllLeaves, deleteLeave, editLeave, addLeave, activateDeactivateLeave,
+  getLeaveById,getAllLeaveTypes,
 };
  
