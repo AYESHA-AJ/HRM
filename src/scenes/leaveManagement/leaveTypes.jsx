@@ -50,21 +50,31 @@ const LeaveTypes = () => {
   };
   const handleEditLeave = async (id) => {
     try {
-        console.log('Leave ID:', id); // Log the leave ID
-        const response = await axios.get(`http://localhost:5000/api/get_leave/${id}`);
-        const existingLeave = response.data;
-        console.log("Fetched leave Data:", existingLeave);
-        // Check if existingLeave is valid before setting the state
-        if (existingLeave) {
-            setEditedLeave(existingLeave);
-            setEditDialogOpen(true);
-        } else {
-            console.error("Fetched leave data is invalid:", existingLeave);
-        }
+      console.log('Leave ID:', id); // Log the leave ID
+      const response = await axios.get(`http://localhost:5000/api/get_leave/${id}`);
+      const existingLeave = response.data;
+      console.log("Fetched leave Data:", existingLeave);
+  
+      // Check if existingLeave is valid before setting the state
+      if (existingLeave) {
+        // Update state structure based on the properties
+        setEditedLeave({
+          _id: existingLeave._id,
+          name: existingLeave.name,
+          type: existingLeave.type,
+          unit: existingLeave.unit,
+          status: existingLeave.status,
+        });
+  
+        setEditDialogOpen(true);
+      } else {
+        console.error("Fetched leave data is invalid:", existingLeave);
+      }
     } catch (error) {
-        console.error("Error fetching leave data:", error);
+      console.error("Error fetching leave data:", error);
     }
-};
+  };
+  
 
  
   
@@ -318,7 +328,7 @@ const fetchLeaveData = () => {
         {/* Leave Dialog */}
         <Dialog open={editDialogOpen} onClose={handleDialogClose}>
 
-        <DialogTitle>{editedLeave._id ? 'Edit Leave' : 'Add Leave'}</DialogTitle>
+        <DialogTitle>{editedLeave._id ? 'Edit Leave Type' : 'Add Leave Type'}</DialogTitle>
         <DialogContent sx={{ padding: '20px' }}>
           <TextField
             fullWidth
