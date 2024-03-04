@@ -8,8 +8,16 @@ import {
   FormControl,
   InputLabel,
   Typography,
+  Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  IconButton,
 } from "@mui/material";
 import axios from 'axios';
+import CloseIcon from '@mui/icons-material/Close';
 
 const LeaveRequest = () => {
   const [startDate, setStartDate] = useState('');
@@ -17,6 +25,9 @@ const LeaveRequest = () => {
   const [selectedLeaveType, setSelectedLeaveType] = useState('');
   const [leaveTypes, setLeaveTypes] = useState([]);
   const [description, setDescription] = useState('');
+  const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [openSuccessDialog, setOpenSuccessDialog] = useState(false);
 
   useEffect(() => {
     // Fetch only active leaves from the backend
@@ -42,13 +53,48 @@ const LeaveRequest = () => {
     setSelectedLeaveType(event.target.value);
   };
 
-  const handleSubmit = () => {
-    console.log('Submitting Leave Request:', {
-      startDate,
-      endDate,
-      leaveType: selectedLeaveType,
-      description,
-    });
+  const validateFields = () => {
+    setErrorMessage(''); // Clear any previous error message
+
+    if (!startDate || !endDate || !selectedLeaveType) {
+      setErrorMessage('Please fill in all required fields.');
+      setSubmitButtonDisabled(true);
+      return false;
+    }
+
+    setSubmitButtonDisabled(false); // Enable submit button if all fields are filled
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    if (!validateFields()) {
+      return; // Prevent submission if validation fails
+    }
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/requests', {
+        startDate,
+        endDate,
+        leaveType: selectedLeaveType,
+        description,
+      });
+
+      console.log('Leave request submitted successfully:', response.data);
+      setOpenSuccessDialog(true); // Open success dialog
+      // Clear form data and any error messages
+      setStartDate('');
+      setEndDate('');
+      setSelectedLeaveType('');
+      setDescription('');
+      setErrorMessage('');
+    } catch (error) {
+      console.error('Error submitting leave request:', error);
+      setErrorMessage('An error occurred while submitting your request. Please try again later.');
+    }
+  };
+
+  const handleCloseSuccessDialog = () => {
+    setOpenSuccessDialog(false);
   };
 
   return (
@@ -107,14 +153,31 @@ const LeaveRequest = () => {
         fullWidth
       />
 
-      <Button
+<Button
         variant="contained"
         color="primary"
         onClick={handleSubmit}
         style={{ backgroundColor: '#2196F3', width: '50%' }}
+        disabled={submitButtonDisabled}
       >
         Submit Leave Request
       </Button>
+      <Dialog open={openSuccessDialog} onClose={handleCloseSuccessDialog}>
+        <DialogTitle style={{color:"green"}}>
+          Success!
+          <IconButton onClick={handleCloseSuccessDialog} sx={{ position: 'absolute', right: 8, top: 8, color: (theme) => theme.palette.grey[500] }}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Your leave request has been submitted successfully.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseSuccessDialog}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

@@ -6,6 +6,7 @@ const Deduction = require('./models/Deductions_DB');
 const Job = require('./models/JobPortal');
 const AppliedApplicant = require('./models/AppliedApplicants');
 const Leave = require('./models/Leave_DB');
+const LeaveRequest = require('./models/LeaveRequests_DB');
 
 
 
@@ -790,6 +791,98 @@ const getAllLeaveTypes = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
+const addLeaveRequest = async (req, res) => {
+  try {
+    // Extract data from request body
+    const { startDate, endDate, leaveType, description } = req.body;
+
+    // Validate required fields (example)
+    if (!startDate || !endDate || !leaveType) {
+      return res.status(400).json({ message: 'Please fill in all required fields.' });
+    }
+
+    // Create a new leave request instance
+    const newLeaveRequest = new LeaveRequest({
+      startDate,
+      endDate,
+      leaveType,
+      description,
+    });
+
+    // Save the new leave request to the database
+    await newLeaveRequest.save();
+
+    // Send a successful response with the created request data
+    res.status(201).json(newLeaveRequest);
+  } catch (error) {
+    console.error('Error adding leave request:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+const getAllLeaveRequests = async (req, res) => {
+  try {
+    const leaveRequests = await LeaveRequest.find();
+    res.json(leaveRequests);
+  } catch (error) {
+    console.error('Error fetching leave requests:', error);
+    res.status(500).json({ message: 'Internal Server Error' }); // Improve error handling
+  }
+};
+
+const cancelLeaveRequest = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const updatedLeaveRequest = await LeaveRequest.findByIdAndUpdate(id, { status: 'cancelled' }, { new: true });
+
+    if (updatedLeaveRequest) {
+      res.json(updatedLeaveRequest);
+    } else {
+      res.status(404).json({ message: 'Leave request not found' });
+    }
+  } catch (error) {
+    console.error('Error cancelling leave request:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+const approveLeaveRequest = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const updatedLeaveRequest = await LeaveRequest.findByIdAndUpdate(id, { status: 'approved' }, { new: true });
+
+    if (updatedLeaveRequest) {
+      res.json(updatedLeaveRequest);
+    } else {
+      res.status(404).json({ message: 'Leave request not found' });
+    }
+  } catch (error) {
+    console.error('Error cancelling leave request:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+const rejectLeaveRequest = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const updatedLeaveRequest = await LeaveRequest.findByIdAndUpdate(id, { status: 'rejected' }, { new: true });
+
+    if (updatedLeaveRequest) {
+      res.json(updatedLeaveRequest);
+    } else {
+      res.status(404).json({ message: 'Leave request not found' });
+    }
+  } catch (error) {
+    console.error('Error cancelling leave request:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
 module.exports = {
   addEmployee,
   activateDeactivateJob,
@@ -825,5 +918,6 @@ module.exports = {
   shortlistApplicant,unshortlistApplicant,selectApplicant,unselectApplicant,
   getAllLeaves, deleteLeave, editLeave, addLeave, activateDeactivateLeave,
   getLeaveById,getAllLeaveTypes,
+  addLeaveRequest,getAllLeaveRequests,cancelLeaveRequest,approveLeaveRequest,rejectLeaveRequest
 };
  

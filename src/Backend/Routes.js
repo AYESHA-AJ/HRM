@@ -84,4 +84,11 @@ router.delete('/delete_leave/:id', controller.deleteLeave);
 router.put('/activate_deactivate_leave/:id', controller.activateDeactivateLeave);
 router.get('/api/get_leave/:id', controller.getLeaveById);
 
+router.post('/requests', controller.addLeaveRequest); 
+router.get('/requests', controller.getAllLeaveRequests);
+router.patch('/requests/:id', controller.cancelLeaveRequest);
+router.patch('/approve_requests/:id', controller.approveLeaveRequest);
+router.patch('/reject_requests/:id', controller.rejectLeaveRequest);
+
+
 module.exports = router;
