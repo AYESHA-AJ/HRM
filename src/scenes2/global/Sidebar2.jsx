@@ -136,7 +136,7 @@ const Sidebar2 = () => {
           
             <Item
               title="Attendance"
-              to="/attendance"
+              to="/attendance2"
               icon={<PersonSearchIcon />}
               selected={selected}
               setSelected={setSelected}
@@ -171,6 +171,7 @@ const Sidebar2 = () => {
               selected={selected}
               setSelected={setSelected}
             />
+            
             <Item
               title="FAQ Page"
               to="/faq"

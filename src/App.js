@@ -4,7 +4,7 @@ import Topbar from "./scenes/global/Topbar";
 import Topbar2 from "./scenes2/global/Topbar2";
 import JobDetails from "./scenes3/jobdetails";
 import Home from "./scenes3/pages/home";
-import Feed from "./scenes3/feed";
+import Atendence2 from "./scenes2/attendance2";
 import Sidebar2 from "./scenes2/global/Sidebar2";
 import Sidebar from "./scenes/global/Sidebar";
 import Dashboard from "./scenes/dashboard";
@@ -112,7 +112,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Dashboard2 />} />
             <Route path="/calendar" element={<Calendar2 />} />
-            <Route path="/leaves" element={<LeaveForm/>}/>
+                      <Route path="/leaves" element={<LeaveForm />} />
+                      <Route path="/attendance2" element={<Atendence2/>}/>
             <Route path="/form" element={<Form2 />} />
             
           </Routes>
