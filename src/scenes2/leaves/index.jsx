@@ -7,6 +7,7 @@ import Header from "../../components/Header";
 import { useTheme } from "@mui/material";
 import React, { useState } from "react";
 import LeaveRequest from "../requestLeave";
+import LeaveHistory from "../leaveHistroy";
 
 const LeaveForm = () => {
     const theme = useTheme();
@@ -35,7 +36,7 @@ const LeaveForm = () => {
     
           {tabValue === 1 && (
             <div>
-              
+               <LeaveHistory/>
               
             </div>
           )}

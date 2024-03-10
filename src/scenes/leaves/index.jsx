@@ -6,6 +6,8 @@ import Header from "../../components/Header";
 import { useTheme } from "@mui/material";
 import React, { useState } from "react";
 import LeaveTypes from "../leaveManagement/leaveTypes";
+import PendingLeaves from "../leaveManagement/pendingLeaves";
+import LeaveHistoryAdmin from "../leaveManagement/leaveHistoryAdmin";
 
 const Leaves = () => {
   const theme = useTheme();
@@ -38,13 +40,14 @@ const Leaves = () => {
       {tabValue === 1 && (
         <div>
           
-          
+          <PendingLeaves/>
         </div>
       )}
 
       {tabValue === 2 && (
         <div>
-        
+          <p></p>
+        <LeaveHistoryAdmin/>
         </div>
       )}
 
