@@ -33,6 +33,7 @@ import { Settings } from "@mui/icons-material";
 import Setting from "./scenes3/profile/settings";
 import Homesetting from "./scenes3/pages/homesetting";
 import HomeJoblists from "./scenes3/pages/HomeJoblists"
+import { useAuth } from "./utilis/AuthContext";
 
 
 
@@ -46,7 +47,9 @@ function App() {
   const [isSignUpClicked, setIsSignUpClicked] = useState(false);
   const navigate = useNavigate();
 
-  
+  const {currentUser} = useAuth()
+
+  console.log(currentUser)
 
   const handleLoginClick = (type) => {
     setLoggedIn(true);

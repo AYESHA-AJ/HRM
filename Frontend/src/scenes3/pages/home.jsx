@@ -12,6 +12,7 @@ import Jobs from "../jobs";
 import Sidebar from "../sidebar/Sidebar";
 import Newsletter from "../newsletter/Newsletter";
 import CreateJob from "../../scenes/postjob";
+import axiosInstance from "../../utilis/ApiRequest";
 
 
 const Home = () => {
@@ -51,17 +52,17 @@ const Home = () => {
     
     const fetchData = () => {
         setIsLoading(true);
-        fetch("http://localhost:5000/api/get_jobs")
-            .then(res => res.json())
-            .then(data => {
-                setJobs(data);
-                setIsLoading(false);
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error.message);
-                setIsLoading(false);
-            });
-    };
+        axiosInstance.get("/get_jobs")
+          .then(response => {
+            setJobs(response.data);
+            setIsLoading(false);
+          })
+          .catch(error => {
+            console.error("Error fetching data:", error.message);
+            setIsLoading(false);
+          });
+      };
+      
     //console.log(jobs)
     //filter jobs using title
     const filteredItems = jobs.filter((job) => job.jobTitle.toLowerCase().indexOf(query.toLowerCase()) !== -1);

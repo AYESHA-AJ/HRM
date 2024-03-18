@@ -9,6 +9,8 @@ import PersonIcon from '@mui/icons-material/Person';
 import upload from "../../utilis/upload.js";
 import { useNavigate } from 'react-router-dom';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import axiosInstance from '../../utilis/ApiRequest.js';
+import { useAuth } from '../../utilis/AuthContext.js';
 
 
 const Setting = () => {
@@ -16,8 +18,10 @@ const Setting = () => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const { currentUser } = useAuth()
+ 
     
-const navigate = useNavigate();
+
 
     // State variables to toggle edit mode
     const [editUsername, setEditUsername] = useState(false);
@@ -40,7 +44,7 @@ const navigate = useNavigate();
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/applicants/65cc65fc9ca228813501c49f');
+                const response = await axiosInstance.get(`http://localhost:5000/api/applicants/${currentUser._id}`);
                 const userData = response.data.applicant; // Assuming the API returns user data object with a key 'applicant'
                 setUsername(userData.name);
                 setEmail(userData.email);
@@ -92,7 +96,7 @@ const navigate = useNavigate();
                         throw new Error('Username cannot be empty');
                     }
                     setEditUsername(false);
-                    await axios.put('http://localhost:5000/api/applicants/65cc65fc9ca228813501c49f', { name: username });
+                    await axiosInstance.put(`http://localhost:5000/api/applicants/${currentUser._id}`, { name: username });
                     break;
                 case 'email':
                     // Validate email format
@@ -101,7 +105,7 @@ const navigate = useNavigate();
                     }
                     // Save email changes
                     setEditEmail(false);
-                    await axios.put('http://localhost:5000/api/applicants/65cc65fc9ca228813501c49f', { email });
+                    await axiosInstance.put(`http://localhost:5000/api/applicants/${currentUser._id}`, { email });
                     break;
                 case 'password':
                     // Save password changes
@@ -109,7 +113,7 @@ const navigate = useNavigate();
                         throw new Error('Password cannot be empty');
                     }
                     setEditPassword(false);
-                    await axios.put('http://localhost:5000/api/applicants/65cc65fc9ca228813501c49f', { password });
+                    await axiosInstance.put(`http://localhost:5000/api/applicants/${currentUser._id}`, { password});
                     break;
                 default:
                     break;
@@ -140,7 +144,7 @@ const navigate = useNavigate();
  
     try {
       const imagePath = await upload(selectedImage);
-      await axios.put(`http://localhost:5000/api/addimg/65cc65fc9ca228813501c49f`, {
+      await axiosInstance.put(`http://localhost:5000/api/addimg/${currentUser._id}`, {
         profilepic: imagePath,
       });
    
@@ -169,7 +173,7 @@ const navigate = useNavigate();
   {
     try {
       const cvPath = await upload(selectedCV);
-      await axios.put(`http://localhost:5000/api/addcv/65cc65fc9ca228813501c49f`, {
+      await axiosInstance.put(`http://localhost:5000/api/addcv/${currentUser._id}`, {
         profilecv: cvPath,
       });
 
@@ -242,21 +246,41 @@ const navigate = useNavigate();
                             <IconButton onClick={() => handleEdit('email')} style={{ color: 'blue' }}><EditIcon /></IconButton>
                         )}
                     </Grid>
-                    <Grid item xs={4}><Typography variant="body1" style={{ fontWeight: 'bold' ,marginTop:'9px'}}><LockIcon></LockIcon>     Password:</Typography></Grid>
-                    <Grid item xs={6}>
-                        {editPassword ? (
-                            <TextField type={editPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} variant="outlined" fullWidth style={{ height: '40px' }} />
-                        ) : (
-                            <Typography variant="body1" style={{ height: '40px', display: 'flex', alignItems: 'center' }}>{password}</Typography>
-                        )}
-                    </Grid>
-                    <Grid item xs={2} style={{ display: 'flex', alignItems: 'center' }}>
-                        {editPassword ? (
-                            <IconButton onClick={() => handleSave('password')} color="primary"><CheckCircleIcon /></IconButton>
-                        ) : (
-                            <IconButton onClick={() => handleEdit('password')} style={{ color: 'blue' }}><EditIcon /></IconButton>
-                        )}
-                    </Grid>
+                    <Grid item xs={4}>
+    <Typography variant="body1" style={{ fontWeight: 'bold', marginTop: '9px' }}>
+        <LockIcon />
+        Password:
+    </Typography>
+</Grid>
+<Grid item xs={6}>
+    {editPassword ? (
+        <input
+            type="text"
+            // value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter new Password"
+            style={{ height: '40px', width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }}
+        />
+    ) : (
+        <Typography variant="body1" style={{ height: '40px', display: 'flex', alignItems: 'center' }}>
+            Enter new Password
+        </Typography>
+    )}
+</Grid>
+<Grid item xs={2} style={{ display: 'flex', alignItems: 'center' }}>
+    {editPassword ? (
+        <IconButton onClick={() => handleSave('password')} color="primary">
+            <CheckCircleIcon />
+        </IconButton>
+    ) : (
+        <IconButton onClick={() => handleEdit('password')} style={{ color: 'blue' }}>
+            <EditIcon />
+        </IconButton>
+    )}
+</Grid>
+
+
+
                     
                     <Grid container spacing={2}>
                    

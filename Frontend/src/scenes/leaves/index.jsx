@@ -9,6 +9,7 @@ import LeaveTypes from "../leaveManagement/leaveTypes";
 import PendingLeaves from "../leaveManagement/pendingLeaves";
 import LeaveHistoryAdmin from "../leaveManagement/leaveHistoryAdmin";
 
+
 const Leaves = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);

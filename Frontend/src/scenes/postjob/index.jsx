@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import './index.css';
 import axios from 'axios';
 import CreatableSelect from 'react-select/creatable';
+import axiosInstance from '../../utilis/ApiRequest';
 
 const CreateJob = () => {
     const [selectedOption, setSelectedOption] = useState(null);
@@ -20,7 +21,7 @@ const CreateJob = () => {
         data.skills = selectedOption;
 
         // Make a POST request to your backend API
-        const response = await axios.post('http://localhost:5000/api/add_job', data);
+        const response = await axiosInstance.post('http://localhost:5000/api/add_job', data);
 
         // Handle the response as needed
         console.log('Job created successfully:', response.data);

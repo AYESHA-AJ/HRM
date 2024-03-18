@@ -16,6 +16,8 @@ import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 
+import { useAuth } from "../../utilis/AuthContext";
+
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -35,10 +37,16 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
 };
 
 const Sidebar2 = () => {
+
+
+  const { currentUser } = useAuth()
+
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState("Dashboard");
+
+  
 
   return (
     <Box
@@ -97,8 +105,8 @@ const Sidebar2 = () => {
                   alt="profile-user"
                   width="100px"
                   height="100px"
-                  // src={`../../assets/user.png`}
-                  style={{ cursor: "pointer", borderRadius: "50%" }}
+                 src={currentUser.profilepic}
+                style={{ cursor: "pointer", borderRadius: "50%" }}
                 />
               </Box>
               <Box textAlign="center">
@@ -108,7 +116,7 @@ const Sidebar2 = () => {
                   fontWeight="bold"
                   sx={{ m: "10px 0 0 0" }}
                 >
-                  Ayesha AJ
+                  {currentUser.firstName + " "+ currentUser.lastName}
                 </Typography>
                 <Typography variant="h5" color={colors.greenAccent[500]}>
                   Developer

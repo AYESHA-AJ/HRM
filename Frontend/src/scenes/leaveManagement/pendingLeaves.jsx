@@ -4,6 +4,7 @@ import { Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText,Bu
 import axios from 'axios'; // Assuming you're using Axios for API calls
 import { tokens } from "../../theme"; // Assuming theme integration
 import { useTheme } from "@mui/material";
+import axiosInstance from '../../utilis/ApiRequest';
 
 const PendingLeaves = () => {
   const theme = useTheme();
@@ -16,7 +17,7 @@ const PendingLeaves = () => {
   React.useEffect(() => {
     const fetchLeaveRequests = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/requests');
+        const response = await axiosInstance.get('http://localhost:5000/api/requests');
         setLeaveRequests(response.data.filter(request => request.status === 'pending')); // Filter pending requests
       } catch (error) {
         console.error('Error fetching leave requests:', error);
@@ -29,7 +30,7 @@ const PendingLeaves = () => {
 
   const handleApproveRequest = async () => {
     try {
-      const response = await axios.patch(`http://localhost:5000/api/approve_requests/${selectedRequestId}`);
+      const response = await axiosInstance.patch(`http://localhost:5000/api/approve_requests/${selectedRequestId}`);
       if (response.status === 200) {
         setLeaveRequests(
           leaveRequests.map((request) => (request._id === selectedRequestId ? { ...request, status: 'approved' } : request))
@@ -47,7 +48,7 @@ const PendingLeaves = () => {
 
   const handleRejectRequest = async () => {
     try {
-      const response = await axios.patch(`http://localhost:5000/api/reject_requests/${selectedRequestId}`);
+      const response = await axiosInstance.patch(`http://localhost:5000/api/reject_requests/${selectedRequestId}`);
       if (response.status === 200) {
         setLeaveRequests(
           leaveRequests.map((request) => (request._id === selectedRequestId ? { ...request, status: 'rejected' } : request))
@@ -71,7 +72,8 @@ const PendingLeaves = () => {
 
   const columns = [
     { field: '_id', headerName: 'ID', width: 70 },
-    { field: 'leaveType', headerName: 'Leave Type', width: 150 },
+    { field: 'username', headerName: 'name', width: 100 },
+    { field: 'leaveType', headerName: 'Leave Type', width: 100 },
     {
       field: 'startDate',
       headerName: 'Requested Start Date',

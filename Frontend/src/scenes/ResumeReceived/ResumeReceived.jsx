@@ -8,6 +8,7 @@ import { grey } from '@mui/material/colors';
 import { tokens } from "../../theme";
 import { useTheme } from "@mui/material";
 import EmailIcon from '@mui/icons-material/Email';
+import axiosInstance from '../../utilis/ApiRequest';
 
 
 const ResumeReceived = () => {
@@ -43,7 +44,7 @@ const ResumeReceived = () => {
       e.preventDefault();
   
       try {
-        const response = await axios.post('http://localhost:5000/api/send-email', emailData);
+        const response = await axiosInstance.post('http://localhost:5000/api/send-email', emailData);
         setMessage(response.data);
       } catch (error) {
         setMessage('Error sending email');
@@ -59,7 +60,7 @@ const ResumeReceived = () => {
     // Fetch applicant data based on selected job
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/applied-applicants/${selectedJob}`);
+        const response = await axiosInstance.get(`http://localhost:5000/api/applied-applicants/${selectedJob}`);
         // Add unique IDs to each row
         const formattedData = response.data.applicants.map((applicant, index) => ({
           ...applicant,
@@ -88,7 +89,7 @@ const ResumeReceived = () => {
 
   const fetchJobDetails = async (jobId) => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/get_job/${jobId}`);
+      const response = await axiosInstance.get(`http://localhost:5000/api/get_job/${jobId}`);
       setJobDetails(response.data);
     } catch (error) {
       console.error('Error fetching job details:', error);
@@ -131,7 +132,7 @@ const ResumeReceived = () => {
       // If confirmed, send the email
       try {
         // Use emailDataForConfirmation instead of emailData
-        const response = await axios.post('http://localhost:5000/api/send-email', emailDataForConfirmation);
+        const response = await axiosInstance.post('http://localhost:5000/api/send-email', emailDataForConfirmation);
         console.log('Email sent successfully:', response.data);
         setSuccessDialogOpen(true);
         // Add any success message or UI update as needed
@@ -167,10 +168,10 @@ const ResumeReceived = () => {
     try {
       if (selectedAction === 'shortlist' || selectedAction === 'unshortlist') {
         // Send API request
-        await axios.post(`http://localhost:5000/api/${selectedAction}/${selectedApplicantId}`, { jobId: selectedJob });
+        await axiosInstance.post(`http://localhost:5000/api/${selectedAction}/${selectedApplicantId}`, { jobId: selectedJob });
         
         // Update UI after successful request
-        const response = await axios.get(`http://localhost:5000/api/applied-applicants/${selectedJob}`);
+        const response = await axiosInstance.get(`http://localhost:5000/api/applied-applicants/${selectedJob}`);
         const formattedData = response.data.applicants.map((applicant, index) => ({
           ...applicant,
           id: index + 1, // Assuming index is unique

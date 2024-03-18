@@ -7,8 +7,16 @@ import { FaUser, FaBell, FaCog, FaSignOutAlt } from 'react-icons/fa'; // Import 
 import { Popover, List, ListItem, ListItemText, Divider } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Settings from '../profile/settings';
+import { useAuth } from '../../utilis/AuthContext';
+import axios from 'axios';
+
+
 
 const Navbar = () => {
+
+    const {logout} = useAuth()
+    const { currentUser } = useAuth()
+
     const [profileAnchorEl, setProfileAnchorEl] = useState(null);
 
     const handleProfileClick = (event) => {
@@ -18,9 +26,24 @@ const Navbar = () => {
     const handleProfileClose = () => {
         setProfileAnchorEl(null);
     };
+   
+  
+    const handleLogout = async () => {
+       
+        try {
+            await axios.post("http://localhost:5000/api/logout")
+            // localStorage.setItem("currentUser", null)   
+            logout()   ;  
+            
+            
+          } catch (error) {
+            console.log(error)
+          }
+    }
 
     const openProfile = Boolean(profileAnchorEl);
     const profileId = openProfile ? 'profile-popover' : undefined;
+
 
     const navItems = [
         { path: "/", title: "Start a search" },
@@ -142,7 +165,7 @@ const Navbar = () => {
                         onClick={handleProfileClick}
                         style={{ fontSize: '2.5rem', cursor: 'pointer', color: '#33363d' }}
                     />
-                    <Typography variant="body1" style={{ marginLeft: '1rem', fontFamily: 'Arial, sans-serif' }}>Username</Typography> {/* Display username */}
+                    <Typography variant="body1" style={{ marginLeft: '1rem', fontFamily: 'Arial, sans-serif' }}>{currentUser.name}</Typography> {/* Display username */}
                     <Popover
                         id={profileId}
                         open={openProfile}
@@ -166,7 +189,7 @@ const Navbar = () => {
                             <Divider />
                             <ListItem button  onClick={handleProfileClose}>
                                 <FaSignOutAlt style={{ marginRight: '0.5rem' }} /> {/* Icon for Logout */}
-                                <ListItemText primary="Logout" />
+                                <ListItemText primary="Logout" onClick={handleLogout}/>
                             </ListItem>
                         </List>
                     </Popover>

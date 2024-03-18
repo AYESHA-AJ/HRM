@@ -3,6 +3,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, B
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import axios from 'axios';
 import upload from "../../utilis/upload.js";
+import axiosInstance from '../../utilis/ApiRequest.js';
 
 const ApplyDialog = ({ open, handleClose, jobId, handleApply, jobTitle }) => {
   const [username, setUsername] = useState('');
@@ -28,7 +29,7 @@ const handleSubmit = async () => {
     const cvPath = await upload(cv);
   
     try {
-        await axios.post('http://localhost:5000/api/applied-applicants', {
+        await axiosInstance.post('http://localhost:5000/api/applied-applicants', {
           jobTitle,
           applicants: [
             {

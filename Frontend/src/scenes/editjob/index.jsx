@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import axiosInstance from '../../utilis/ApiRequest';
 import {
   Box,
   Typography,
@@ -34,7 +35,7 @@ const JobsPosted = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/get_all_jobs');
+        const response = await axiosInstance.get('http://localhost:5000/api/get_all_jobs');
         setJobs(response.data);
       } catch (error) {
         console.error('Error fetching jobs:', error);
@@ -47,7 +48,7 @@ const JobsPosted = () => {
 
   const handleEdit = async (id) => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/get_job/${id}`);
+      const response = await axiosInstance.get(`http://localhost:5000/api/get_job/${id}`);
       const existingJob = response.data;
       console.log("Fetched Job Data:", existingJob);
   
@@ -68,7 +69,7 @@ const JobsPosted = () => {
   const handleActivateDeactivate = async (id, isActive) => {
     try {
       // Send the request to the backend to update the isActive state
-      const response = await axios.put(`http://localhost:5000/api/activate_deactivate_job/${id}`, {
+      const response = await axiosInstance.put(`http://localhost:5000/api/activate_deactivate_job/${id}`, {
         isActive: !isActive,
       });
 

@@ -1,4 +1,5 @@
 import React, { useState ,useEffect} from "react";
+import axiosInstance from "../../utilis/ApiRequest.js";
 // import DatePicker from "@mui/lab/DatePicker";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -41,6 +42,7 @@ import MenuItem from "@mui/material/MenuItem";
 import axios from "axios";
 
 import upload from "../../utilis/upload.js";
+import { useAuth } from "../../utilis/AuthContext.js";
  
 const initialValues = {
   firstName: "",
@@ -87,6 +89,12 @@ const userSchema = yup.object().shape({
 });
 
 const Team = () => {
+
+  const { currentUser } = useAuth();
+
+
+  console.log(currentUser)
+
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [deleteConfirmation, setDeleteConfirmation] = useState({
@@ -124,7 +132,7 @@ const Team = () => {
   
     const handleSearch = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/search_employee/${searchQuery}`);
+        const response = await axiosInstance.get(`http://localhost:5000/api/search_employee/${searchQuery}`);
         setSearchResults(response.data);
       } catch (error) {
         console.error('Error searching employees:', error);
@@ -133,7 +141,7 @@ const Team = () => {
     };
    const handleEdit = async (id) => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/get_employee/${id}`);
+        const response = await axiosInstance.get(`http://localhost:5000/api/get_employee/${id}`);
         const existingEmployee = response.data;
         setEditedEmployee(existingEmployee);
         setEditDialogOpen(true);
@@ -149,12 +157,15 @@ const Team = () => {
    
     const handleDialogSubmit = async () => {
       try {
-        await axios.put(`http://localhost:5000/api/edit_employee/${editedEmployee._id}`, editedEmployee);
+        await axiosInstance.put(`http://localhost:5000/api/edit_employee/${editedEmployee._id}`, editedEmployee);
         // Refresh employee data after editing
-        const response = await axios.get("http://localhost:5000/api/get_employees");
+        // const response = await axios.get("http://localhost:5000/api/get_employees");
+        const response =  axiosInstance.get('/get_employees')
+        console.log()
         setEmployeeData(response.data);
         setEditDialogOpen(false);
         setEditedEmployee({});
+        
       } catch (error) {
         console.error("Error updating employee data:", error);
       }
@@ -171,7 +182,7 @@ const Team = () => {
     console.log(`Deleting employee with ID: ${id}`);
   
     // Example using axios to send a delete request to the backend
-    axios
+   axiosInstance
       .delete(`http://localhost:5000/api/delete_employee/${id}`)
       .then((response) => {
         console.log('Employee deleted successfully');
@@ -248,13 +259,13 @@ const Team = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/get_employees");
+        const response = await axiosInstance.get("/get_employees"); // Use axiosInstance here
         setEmployeeData(response.data);
       } catch (error) {
         console.error("Error fetching employee data:", error);
       }
     };
- 
+  
     fetchData(); // Call the function when the component mounts
   }, []);
  
@@ -263,7 +274,7 @@ const Team = () => {
  
     if (newValue === "viewAllEmployees") {
       try {
-        const response = await axios.get("http://localhost:5000/api/get_employees");
+        const response = await axiosInstance.get("/get_employees"); // Use axiosInstance here
         setEmployeeData(response.data);
       } catch (error) {
         console.error("Error fetching employee data:", error);
@@ -341,7 +352,7 @@ const handleSubmit = async (e) => {
   console.log(values)
   // console.log(profileCv, profilePic)
   try {
-    await axios.post("http://localhost:5000/api/add_employee", {
+    await axiosInstance.post("http://localhost:5000/api/add_employee", {
       ...values,
       profilepic: pic,
       profilecv: cv,
@@ -380,7 +391,7 @@ const [leaving, setLeaving] = useState("");
  
   const handleTest = async () => {
     try {
-      await axios.post('http://localhost:5000/api/add_employee', {
+      await axiosInstance.post('http://localhost:5000/api/add_employee', {
         firstName: fname,
       lastName: lname,
        Email: email,

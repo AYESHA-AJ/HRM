@@ -82,7 +82,7 @@ router.post('/add_leave', controller.addLeave);
 router.put('/edit_leave/:id', controller.editLeave);
 router.delete('/delete_leave/:id', controller.deleteLeave);
 router.put('/activate_deactivate_leave/:id', controller.activateDeactivateLeave);
-router.get('/api/get_leave/:id', controller.getLeaveById);
+router.get('/get_leave/:id', controller.getLeaveById);
  
 router.post('/requests', controller.addLeaveRequest);
 router.get('/requests', controller.getAllLeaveRequests);

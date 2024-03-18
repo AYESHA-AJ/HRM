@@ -5,6 +5,7 @@ import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
 import { Typography, Button } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import ApplyDialog from '../Dialog/ApplyDialog'; // Import the ApplyDialog component
+import axiosInstance from '../../utilis/ApiRequest';
 
 const JobDetails = () => {
   const { id } = useParams();
@@ -16,7 +17,7 @@ const JobDetails = () => {
   useEffect(() => {
     const fetchJob = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/get_job/${id}`);
+        const response = await axiosInstance.get(`http://localhost:5000/api/get_job/${id}`);
         const data = response.data;
         setJob(data);
         setJobTitle(data.jobTitle)

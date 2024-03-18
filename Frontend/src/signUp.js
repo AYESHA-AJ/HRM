@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import './signUp.css'; // Import SignUp.css for styling
 import SignUpPic from './src assets/pic2.jpg';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
+import axios from 'axios';
  
 const SignUp = ({handleAlreadyLogin}) => {
   const [username, setUsername] = useState('');
@@ -31,7 +32,7 @@ const SignUp = ({handleAlreadyLogin}) => {
 //     useNavigate("/")
 //   }
  
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault(); // Prevent form submission
     if (username.trim() === '') {
       setUsernameError('Username is required');
@@ -48,12 +49,21 @@ const SignUp = ({handleAlreadyLogin}) => {
       // For example, you can make an API call to register the user
  
       // Show the popup message
+      const response = await axios.post('http://localhost:5000/api/register', {
+        name: username,
+        email: email,
+        password: password
+      })
+      if(response){
+        setUsername('');
+        setPassword('');
+        setEmail('');
+        alert("you have succesfullt register now login!")
+      }
       setShowPopup(true);
  
       // Reset form fields
-      setUsername('');
-      setPassword('');
-      setEmail('');
+      
     }
   };
  

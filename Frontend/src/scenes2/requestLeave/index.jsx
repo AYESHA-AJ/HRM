@@ -18,8 +18,14 @@ import {
 } from "@mui/material";
 import axios from 'axios';
 import CloseIcon from '@mui/icons-material/Close';
+import axiosInstance from '../../utilis/ApiRequest';
+import { useAuth } from '../../utilis/AuthContext';
 
 const LeaveRequest = () => {
+
+
+  const { currentUser } = useAuth()
+
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [selectedLeaveType, setSelectedLeaveType] = useState('');
@@ -33,7 +39,7 @@ const LeaveRequest = () => {
     // Fetch only active leaves from the backend
     const fetchActiveLeaves = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/get_leaves');
+        const response = await axiosInstance.get('http://localhost:5000/api/get_leaves');
         const modifiedData = response.data
           .filter((row) => row.status === 'active')
           .map((row) => ({
@@ -72,7 +78,9 @@ const LeaveRequest = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/api/requests', {
+      const response = await axiosInstance.post('http://localhost:5000/api/requests', {
+        userID: currentUser._id,
+        username: currentUser.firstName + " "+ currentUser.lastName,
         startDate,
         endDate,
         leaveType: selectedLeaveType,

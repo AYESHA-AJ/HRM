@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axiosInstance from '../../utilis/ApiRequest';
 import {
   Box,
     useTheme,
@@ -51,7 +52,7 @@ const LeaveTypes = () => {
   const handleEditLeave = async (id) => {
   try {
     console.log('Leave ID:', id); // Log the leave ID
-    const response = await axios.get(`http://localhost:5000/api/get_leave/${id}`);
+    const response = await axiosInstance.get(`http://localhost:5000/api/get_leave/${id}`);
     const existingLeave = response.data;
     console.log("Fetched leave Data:", existingLeave);
 
@@ -87,8 +88,8 @@ const handleDialogSubmit = async () => {
     console.log('Submitting edited leave:', editedLeave);
     try {
         const response = editedLeave._id
-            ? await axios.put(`http://localhost:5000/api/update_leave/${editedLeave._id}`, editedLeave)
-            : await axios.post('http://localhost:5000/api/add_leave', editedLeave);
+            ? await axiosInstance.put(`http://localhost:5000/api/update_leave/${editedLeave._id}`, editedLeave)
+            : await axiosInstance.post('http://localhost:5000/api/add_leave', editedLeave);
 
         console.log(response.data); // Log the response data
 
@@ -100,7 +101,7 @@ const handleDialogSubmit = async () => {
     }
 };
 const fetchLeaveData = () => {
-    axios.get('http://localhost:5000/api/get_leaves')
+  axiosInstance.get('http://localhost:5000/api/get_leaves')
         .then((response) => {
             const modifiedData = response.data.map((row) => ({
                 ...row,
@@ -119,7 +120,7 @@ const fetchLeaveData = () => {
       const newStatus = status === 'active' ? 'inactive' : 'active';
   
       // Send the request to the backend to update the status
-      const response = await axios.put(
+      const response = await axiosInstance.put(
         `http://localhost:5000/api/activate_deactivate_leave/${id}`,
         { status: newStatus }
       );
@@ -197,7 +198,7 @@ const fetchLeaveData = () => {
     const { id, name } = deleteConfirmation.leaveInfo;
     console.log(`Deleting leave with ID: ${id}`);
     
-    axios
+    axiosInstance
       .delete(`http://localhost:5000/api/delete_leave/${id}`)
       .then((response) => {
         console.log('Response from backend:', response.data);

@@ -14,6 +14,7 @@ import InputBase from "@mui/material/InputBase";
 import SendIcon from '@mui/icons-material/Send';
 import DownloadIcon from '@mui/icons-material/Download';
 import SaveIcon from '@mui/icons-material/Save';
+import axiosInstance from "../../utilis/ApiRequest.js";
 import {
   Card,
   CardContent,
@@ -209,7 +210,7 @@ const [openDialog, setOpenDialog] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/get_employees");
+        const response = await axiosInstance.get("http://localhost:5000/api/get_employees");
         setEmployeeData(response.data);
       } catch (error) {
         console.error("Error fetching employee data:", error);
@@ -224,7 +225,7 @@ const [openDialog, setOpenDialog] = useState(false);
  
     if (newValue === "viewAllEmployees") {
       try {
-        const response = await axios.get("http://localhost:5000/api/get_employees");
+        const response = await axiosInstance.get("http://localhost:5000/api/get_employees");
         setEmployeeData(response.data);
       } catch (error) {
         console.error("Error fetching employee data:", error);
@@ -266,7 +267,7 @@ const [values, setValues] = useState({
  
   const fetchAllowances = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/get_allowances");
+      const response = await axiosInstance.get("http://localhost:5000/api/get_allowances");
       setAllowances(response.data);
     } catch (error) {
       console.error("Error fetching allowances:", error);
@@ -275,7 +276,7 @@ const [values, setValues] = useState({
 
   const handleAddAllowance = async () => {
     try {
-      await axios.post("http://localhost:5000/api/add_allowance", newAllowanceData);
+      await axiosInstance.post("http://localhost:5000/api/add_allowance", newAllowanceData);
       fetchAllowances();
       setOpenDialog(false);
     } catch (error) {
@@ -302,7 +303,7 @@ const handleEditedAllowanceChange = (e) => {
 
   const handleDialogSave = async () => {
     try {
-      await axios.put(`http://localhost:5000/api/edit_allowance/${editedAllowance._id}`, editedAllowance);
+      await axiosInstance.put(`http://localhost:5000/api/edit_allowance/${editedAllowance._id}`, editedAllowance);
       fetchAllowances();
       // The dialog will close automatically, no need to call handleDialogClose()
     } catch (error) {
@@ -313,7 +314,7 @@ const handleEditedAllowanceChange = (e) => {
 
   const handleDeleteAllowance = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/delete_allowance/${id}`);
+      await axiosInstance.delete(`http://localhost:5000/api/delete_allowance/${id}`);
       fetchAllowances();
     } catch (error) {
       console.error("Error deleting allowance:", error);
@@ -340,7 +341,7 @@ const handleEditedAllowanceChange = (e) => {
   
   const fetchBasicSalaries = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/get_basic_salaries");
+      const response = await axiosInstance.get("http://localhost:5000/api/get_basic_salaries");
       setDesignationsSalaries(response.data);
     } catch (error) {
       console.error("Error fetching designation salaries:", error);
@@ -349,7 +350,7 @@ const handleEditedAllowanceChange = (e) => {
   
   const handleAddBasicSalary = async () => {
     try {
-      await axios.post("http://localhost:5000/api/add_basic_salary", newDesignationSalaryData);
+      await axiosInstance.post("http://localhost:5000/api/add_basic_salary", newDesignationSalaryData);
       fetchBasicSalaries();
       setIsBasicSalaryDialogOpen(false);
     } catch (error) {
@@ -376,7 +377,7 @@ const handleEditedAllowanceChange = (e) => {
   
   const handleSaveEditedDesignationSalary = async () => {
     try {
-      await axios.put(`http://localhost:5000/api/edit_basic_salary/${editedDesignationSalary._id}`, editedDesignationSalary);
+      await axiosInstance.put(`http://localhost:5000/api/edit_basic_salary/${editedDesignationSalary._id}`, editedDesignationSalary);
       fetchBasicSalaries();
       setIsBasicSalaryEditDialogOpen(false);
     } catch (error) {
@@ -386,7 +387,7 @@ const handleEditedAllowanceChange = (e) => {
   
   const handleDeleteDesignationSalary = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/delete_basic_salary/${id}`);
+      await axiosInstance.delete(`http://localhost:5000/api/delete_basic_salary/${id}`);
       fetchBasicSalaries();
     } catch (error) {
       console.error("Error deleting designation salary:", error);
@@ -414,7 +415,7 @@ const handleEditedAllowanceChange = (e) => {
 
   const fetchDeductions = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/get_deductions");
+      const response = await axiosInstance.get("http://localhost:5000/api/get_deductions");
       setDeductions(response.data);
     } catch (error) {
       console.error("Error fetching deductions:", error);
@@ -440,7 +441,7 @@ const handleEditedAllowanceChange = (e) => {
 
   const handleAddDeduction = async () => {
     try {
-      await axios.post("http://localhost:5000/api/add_deduction", newDeductionData);
+      await axiosInstance.post("http://localhost:5000/api/add_deduction", newDeductionData);
       fetchDeductions();
       setIsDeductionDialogOpen(false);
     } catch (error) {
@@ -467,7 +468,7 @@ const handleEditedAllowanceChange = (e) => {
 
   const handleSaveEditedDeduction = async () => {
     try {
-      await axios.put(`http://localhost:5000/api/edit_deduction/${editedDeduction._id}`, editedDeduction);
+      await axiosInstance.put(`http://localhost:5000/api/edit_deduction/${editedDeduction._id}`, editedDeduction);
       fetchDeductions();
       setIsEditDeductionDialogOpen(false);
     } catch (error) {
@@ -477,7 +478,7 @@ const handleEditedAllowanceChange = (e) => {
 
   const handleDeleteDeduction = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/delete_deduction/${id}`);
+      await axiosInstance.delete(`http://localhost:5000/api/delete_deduction/${id}`);
       fetchDeductions();
     } catch (error) {
       console.error("Error deleting deduction:", error);
@@ -487,7 +488,7 @@ const handleEditedAllowanceChange = (e) => {
 
   const fetchPayslipData = async (id) => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/payslip/${id}`);
+      const response = await axiosInstance.get(`http://localhost:5000/api/payslip/${id}`);
       if (response.status === 200) {
         
         setPayslipData(response.data);

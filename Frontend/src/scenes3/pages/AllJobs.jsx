@@ -3,6 +3,7 @@ import { Box } from '@mui/material';
 import Navbar from '../navbar';
 import Card from '../../components/Card';
 import Newsletter from '../newsletter/Newsletter';
+import axiosInstance from '../../utilis/ApiRequest';
 
 const AllJobs = () => {
   const [jobs, setJobs] = useState([]);
@@ -23,18 +24,17 @@ const AllJobs = () => {
   }, []);
 
   const fetchData = () => {
-    setIsLoading(true);
-    fetch('http://localhost:5000/api/get_jobs')
-      .then((res) => res.json())
-      .then((data) => {
-        setJobs(data);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error.message);
-        setIsLoading(false);
-      });
-  };
+  setIsLoading(true);
+  axiosInstance.get('/get_jobs')
+    .then((response) => {
+      setJobs(response.data);
+      setIsLoading(false);
+    })
+    .catch((error) => {
+      console.error('Error fetching data:', error.message);
+      setIsLoading(false);
+    });
+};
 
   return (
     <Box>

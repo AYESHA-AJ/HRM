@@ -5,6 +5,7 @@ import axios from 'axios';
 import { tokens } from "../../theme";
 import { useTheme } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
+import axiosInstance from '../../utilis/ApiRequest';
 
 const LeaveHistoryAdmin = () => {
   const theme = useTheme();
@@ -16,7 +17,7 @@ const LeaveHistoryAdmin = () => {
   React.useEffect(() => {
     const fetchLeaveRequests = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/requests');
+        const response = await axiosInstance.get('http://localhost:5000/api/requests');
         setLeaveRequests(response.data.filter((request) => request.status === 'approved' || request.status === 'rejected'));
       } catch (error) {
         console.error('Error fetching leave requests:', error);
@@ -54,7 +55,8 @@ const LeaveHistoryAdmin = () => {
 
   const columns = [
     { field: '_id', headerName: 'ID', width: 70 },
-    { field: 'leaveType', headerName: 'Leave Type', width: 150 },
+    { field: 'username', headerName: 'name', width: 100 },
+    { field: 'leaveType', headerName: 'Leave Type', width: 100 },
     {
       field: 'startDate',
       headerName: 'Requested Start Date',
