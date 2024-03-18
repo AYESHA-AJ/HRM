@@ -11,6 +11,24 @@ const LeaveRequest = require('../models/LeaveRequests_DB');
 const Applicant = require('../models/Applicants_DB');
 const Admin = require("../models/Admin")
 const jwt = require("jsonwebtoken")
+const Subscription = require('../models/Subscription');
+
+const subscribe = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // Create a new subscription
+    const newSubscription = new Subscription({ email });
+
+    // Save the subscription to the database
+    await newSubscription.save();
+
+    res.status(201).json({ message: 'Subscription successful', email });
+  } catch (error) {
+    console.error('Error subscribing:', error);
+    res.status(500).json({ message: 'Subscription failed' });
+  }
+}
 
 const add_admin = async (req,res, next) => {
 
@@ -481,18 +499,38 @@ const addApplicant = async (req, res) => {
 // Function to edit an existing applicant
 const editApplicant = async (req, res) => {
   try {
-      const { id } = req.params;
-      const { name, email, password } = req.body;
-      const hashedPassword = bcrypt.hashSync(password, 5);
-      const updatedApplicant = await Applicant.findByIdAndUpdate(id, { name, email, password :hashedPassword }, { new: true });
-      if (!updatedApplicant) {
-          return res.status(404).json({ message: 'Applicant not found' });
-      }
-      res.status(200).json({ message: 'Applicant updated successfully', applicant: updatedApplicant });
+    const { id } = req.params;
+    const { name, email, password } = req.body;
+
+    // Check if the provided ID is valid
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid applicant ID' });
+    }
+
+    // Check if all required fields are provided
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: 'Please provide name, email, and password' });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Find the applicant by ID and update its data
+    const updatedApplicant = await Applicant.findByIdAndUpdate(id, { name, email, password: hashedPassword }, { new: true });
+
+    // Check if the applicant with the provided ID exists
+    if (!updatedApplicant) {
+      return res.status(404).json({ message: 'Applicant not found' });
+    }
+
+    // If the applicant is updated successfully, send a success response
+    res.status(200).json({ message: 'Applicant updated successfully', applicant: updatedApplicant });
   } catch (error) {
-      res.status(500).json({ message: 'Failed to update applicant', error: error.message });
+    console.error('Error updating applicant:', error);
+    res.status(500).json({ message: 'Failed to update applicant', error: error.message });
   }
 };
+
 
 
 
@@ -1014,7 +1052,8 @@ module.exports = {
   getEveryJob,
   shortlistApplicant,unshortlistApplicant,selectApplicant,unselectApplicant,
   getAllLeaves, deleteLeave, editLeave, addLeave, activateDeactivateLeave,
-  getLeaveById,getAllLeaveTypes,
+  getLeaveById, getAllLeaveTypes,
+  subscribe,
   addLeaveRequest,getAllLeaveRequests,cancelLeaveRequest,approveLeaveRequest,rejectLeaveRequest, getAllLeaveRequestsbyid
 };
  

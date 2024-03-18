@@ -4,8 +4,14 @@ import './index.css';
 import axios from 'axios';
 import CreatableSelect from 'react-select/creatable';
 import axiosInstance from '../../utilis/ApiRequest';
+import { Box, useTheme,button } from '@mui/material';
+import { tokens } from "../../theme";
+
+
 
 const CreateJob = () => {
+    const theme = useTheme();
+    const colors = tokens(theme.palette.mode);
     const [selectedOption, setSelectedOption] = useState(null);
     const [isSubmitSuccess, setSubmitSuccess] = useState(false);
   const {
@@ -36,7 +42,28 @@ const CreateJob = () => {
     } catch (error) {
         console.error('Error creating job:', error.message);
     }
-};
+    };
+    const handleSendEmail = async () => {
+        try {
+            // Fetch email addresses from your backend API
+            const response = await axiosInstance.get('http://localhost:5000/api/subscriptions');
+            const emails = response.data.map(subscription => subscription.email);
+    
+            // Construct the email data
+            const emailData = {
+                to: emails.join(','), // Comma-separated list of email addresses
+                subject: 'Your Subject Here',
+                text: 'Your Email Text Here',
+            };
+    
+            // Send the email
+            const sendEmailResponse = await axiosInstance.post('http://localhost:5000/api/send-email', emailData);
+            console.log('Email sent successfully:', sendEmailResponse.data);
+        } catch (error) {
+            console.error('Error sending email to subscribers:', error);
+        }
+    };
+    
 
     const options = [{ value: "JavaScipt", lable: "JavaScipt" },
         { value: "C++", label: "C++" },
@@ -53,7 +80,7 @@ const CreateJob = () => {
           };
           
     return (
-        <div style={{
+        <Box style={{
             paddingLeft: "1rem",
             paddingRight: "1rem",
             width: "100%", // Set the width to 100% to cover the entire row
@@ -61,6 +88,7 @@ const CreateJob = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            
         }}>
             {/* form */}
             <div style={{
@@ -429,6 +457,8 @@ const CreateJob = () => {
            
                         boxSizing: "border-box", // Include padding and border in the total width/height
                     }} />
+                    <button onClick={handleSendEmail} variant="contained" color="primary">Send Email to Subscribers</button>
+
                     {/* Success popup */}
                     {isSubmitSuccess && (
                 <div>
@@ -438,7 +468,7 @@ const CreateJob = () => {
             )}
                 </form>
             </div>
-        </div>
+        </Box>
     )
 };
 

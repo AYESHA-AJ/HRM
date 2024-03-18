@@ -101,7 +101,7 @@ router.patch('/requests/:id',verifyToken, controller.cancelLeaveRequest);
 //admin side
 router.patch('/approve_requests/:id', verifyToken,controller.approveLeaveRequest);
 router.patch('/reject_requests/:id', verifyToken,controller.rejectLeaveRequest);
- 
+router.post('/subscribe',verifyToken, controller.subscribe);
  
 module.exports = router;
  

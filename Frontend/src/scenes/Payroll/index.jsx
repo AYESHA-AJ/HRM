@@ -15,15 +15,7 @@ import SendIcon from '@mui/icons-material/Send';
 import DownloadIcon from '@mui/icons-material/Download';
 import SaveIcon from '@mui/icons-material/Save';
 import axiosInstance from "../../utilis/ApiRequest.js";
-import {
-  Card,
-  CardContent,
-  Typography,
-  Modal,
-  Backdrop,
-  Fade,
-} from '@mui/material';
- 
+
 import {
   Box,
   useTheme,

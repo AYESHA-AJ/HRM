@@ -1,8 +1,26 @@
 import React from 'react';
 import MailIcon from '@mui/icons-material/Mail';
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
+import { useAuth } from '../../utilis/AuthContext';
+import { useState } from 'react';
+import axiosInstance from '../../utilis/ApiRequest';
 
 const Newsletter = () => {
+  const [email, setEmail] = useState('');
+  const { currentUser } = useAuth();
+  const handleSubscribe = async () => {
+    try {
+      // Extract email from currentUser or use any other source
+      // Here, you can replace 'currentUser.email' with the actual way you fetch the current user's email
+      
+
+      // Send the email to the backend
+      const response = await axiosInstance.post('/subscribe', { email: currentUser.email });
+      console.log(response.data); // Log the response from the backend
+    } catch (error) {
+      console.error('Error subscribing:', error);
+    }
+  };
   return (
       <div>
           <div>
@@ -39,8 +57,9 @@ fontWeight: "700"
                     color: "#3f3f3f" // text-primary/72 color
                   }} /> 
                 <input
-    type="submit"
-    value={"Subscribe"}
+            type="submit"
+            onClick={handleSubscribe}
+            value={"Subscribe"}
     style={{
       display: "block",
       paddingTop: "0.5rem",
