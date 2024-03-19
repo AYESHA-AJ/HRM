@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, TextField, IconButton, Grid , Button} from '@mui/material';
+import { Box, Typography, TextField, IconButton, Grid , Button,Paper} from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import axios from 'axios';
@@ -96,7 +96,7 @@ const Setting = () => {
                         throw new Error('Username cannot be empty');
                     }
                     setEditUsername(false);
-                    await axiosInstance.put(`http://localhost:5000/api/applicants/${currentUser._id}`, { name: username });
+                    await axiosInstance.put(`/applicantsName/${currentUser._id}`, { name: username });
                     break;
                 case 'email':
                     // Validate email format
@@ -105,7 +105,7 @@ const Setting = () => {
                     }
                     // Save email changes
                     setEditEmail(false);
-                    await axiosInstance.put(`http://localhost:5000/api/applicants/${currentUser._id}`, { email });
+                    await axiosInstance.put(`/applicantsEmail/${currentUser._id}`, { email });
                     break;
                 case 'password':
                     // Save password changes
@@ -113,7 +113,7 @@ const Setting = () => {
                         throw new Error('Password cannot be empty');
                     }
                     setEditPassword(false);
-                    await axiosInstance.put(`http://localhost:5000/api/applicants/${currentUser._id}`, { password});
+                    await axiosInstance.put(`/applicantsPassword/${currentUser._id}`, { password});
                     break;
                 default:
                     break;
@@ -124,7 +124,7 @@ const Setting = () => {
         }
     };
     const validateEmail = (email) => {
-        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const regex = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/;
         return regex.test(email);
     };
 
@@ -144,7 +144,7 @@ const Setting = () => {
  
     try {
       const imagePath = await upload(selectedImage);
-      await axiosInstance.put(`http://localhost:5000/api/addimg/${currentUser._id}`, {
+      await axiosInstance.put(`/addimg/${currentUser._id}`, {
         profilepic: imagePath,
       });
    
@@ -173,7 +173,7 @@ const Setting = () => {
   {
     try {
       const cvPath = await upload(selectedCV);
-      await axiosInstance.put(`http://localhost:5000/api/addcv/${currentUser._id}`, {
+      await axiosInstance.put(`/addcv/${currentUser._id}`, {
         profilecv: cvPath,
       });
 
@@ -199,7 +199,14 @@ const Setting = () => {
   };
 
     return (
-        <Box mt={5} display="flex" justifyContent="left">
+        <Box mt={5} justifyContent="left">
+           <Box mt={5}>
+            <Paper variant="outlined" elevation={3} style={{ padding: '8px', backgroundColor: '#f0f0f0', width: 'fit-content', borderRadius: '4px' }}>
+                <Typography variant="body2" color="textSecondary">
+                    <b>NOTE:</b> Whenever you update your username, email or password, make sure to <b>logout</b> so that the changes are visible system-wide. Thank you!
+                </Typography>
+            </Paper>
+        </Box>
             <Box
                 width={500}
                 p={4}
@@ -233,7 +240,7 @@ const Setting = () => {
                                 variant="outlined"
                                 fullWidth
                                 style={{ height: '40px' }}
-                                inputProps={{ pattern: "[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$", title: "Please enter a valid email address" }}
+                                inputProps={{ pattern: /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/, title: "Please enter a valid email address" }}
                             />
                         ) : (
                             <Typography variant="body1" style={{ height: '40px', display: 'flex', alignItems: 'center' }}>{email}</Typography>

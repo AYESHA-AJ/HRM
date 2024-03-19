@@ -12,6 +12,9 @@ import { tokens } from "../../theme";
 const CreateJob = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
+    const [isEmailSent, setEmailSent] = useState(false);
+    const [dialogContent, setDialogContent] = useState('');
+    const [isDialogOpen, setDialogOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState(null);
     const [isSubmitSuccess, setSubmitSuccess] = useState(false);
   const {
@@ -32,37 +35,40 @@ const CreateJob = () => {
         // Handle the response as needed
         console.log('Job created successfully:', response.data);
 
-        // Set the submit success state to true
-        setSubmitSuccess(true);
+        // Open the dialog with success message
+        setDialogContent('Job posted successfully!');
+        setDialogOpen(true);
 
         // Reset the form after a successful submission
         reset();
-
-       
     } catch (error) {
         console.error('Error creating job:', error.message);
     }
-    };
-    const handleSendEmail = async () => {
-        try {
-            // Fetch email addresses from your backend API
-            const response = await axiosInstance.get('http://localhost:5000/api/subscriptions');
-            const emails = response.data.map(subscription => subscription.email);
-    
-            // Construct the email data
-            const emailData = {
-                to: emails.join(','), // Comma-separated list of email addresses
-                subject: 'Your Subject Here',
-                text: 'Your Email Text Here',
-            };
-    
-            // Send the email
-            const sendEmailResponse = await axiosInstance.post('http://localhost:5000/api/send-email', emailData);
-            console.log('Email sent successfully:', sendEmailResponse.data);
-        } catch (error) {
-            console.error('Error sending email to subscribers:', error);
-        }
-    };
+};
+const handleSendEmail = async () => {
+    try {
+        // Fetch email addresses from your backend API
+        const response = await axiosInstance.get('/subscribers');
+        const emails = response.data.map(subscription => subscription.email);
+
+        // Construct the email data
+        const emailData = {
+            to: emails.join(','), // Comma-separated list of email addresses
+            subject: 'Your Subject Here',
+            text: 'Your Email Text Here',
+        };
+
+        // Send the email
+        const sendEmailResponse = await axiosInstance.post('http://localhost:5000/api/send-email', emailData);
+        console.log('Email sent successfully:', sendEmailResponse.data);
+
+        // Open the dialog with success message
+        setDialogContent('Email sent to all subscribers successfully!');
+        setDialogOpen(true);
+    } catch (error) {
+        console.error('Error sending email to subscribers:', error);
+    }
+};
     
 
     const options = [{ value: "JavaScipt", lable: "JavaScipt" },
@@ -436,36 +442,64 @@ const CreateJob = () => {
                     </div>
                     {/* submit button */}
                     <input type="submit" style={{
-                        marginTop: "1.25rem",
-                        display: "block",
-                        paddingTop: "0.5rem",
-                        paddingBottom: "0.5rem",
-                        paddingLeft: "2rem",
-                        paddingRight: "2rem",
-                        marginTop: "3rem",
-                        marginBottom: "1.25rem",
-         
-                        marginRight: "6px",
-                        background: "transparent",
-                        border: "none",
-                        fontWeight: "600",
-                        fontSize: "1.2rem",
-                        borderRadius: "5px",
-                        color: "#FFFFFF",
-                        cursor: "pointer",
-                        backgroundColor: "#3575E2",
-           
-                        boxSizing: "border-box", // Include padding and border in the total width/height
-                    }} />
-                    <button onClick={handleSendEmail} variant="contained" color="primary">Send Email to Subscribers</button>
+    marginTop: "1.25rem",
+    display: "inline-block",
+    paddingTop: "0.5rem",
+    paddingBottom: "0.5rem",
+    paddingLeft: "2rem",
+    paddingRight: "2rem",
+    marginBottom: "1.25rem",
+    marginRight: "6px",
+    background: "transparent",
+    border: "none",
+    fontWeight: "600",
+    fontSize: "1.2rem",
+    borderRadius: "5px",
+    color: "#FFFFFF",
+    cursor: "pointer",
+    backgroundColor: "#3575E2",
+    boxSizing: "border-box", // Include padding and border in the total width/height
+}} />
+<button
+    style={{
+        marginTop: "1.25rem",
+        display: "inline-block",
+        paddingTop: "0.5rem",
+        paddingBottom: "0.5rem",
+        paddingLeft: "2rem",
+        paddingRight: "2rem",
+        marginBottom: "1.25rem",
+        marginRight: "6px",
+        background: "transparent",
+        border: "none",
+        fontWeight: "600",
+        fontSize: "1.2rem",
+        borderRadius: "5px",
+        color: "#FFFFFF",
+        cursor: "pointer",
+        backgroundColor: "#29529D", // Darker color
+        boxSizing: "border-box", // Include padding and border in the total width/height
+    }}
+    onClick={handleSendEmail}
+>
+    Send Email to Subscribers
+</button>
+
 
                     {/* Success popup */}
                     {isSubmitSuccess && (
-                <div>
-                    <p>Form submitted successfully!</p>
-                    <button onClick={handleClosePopup}>Close</button>
-                </div>
-            )}
+                    <div className="success-popup">
+                        <p>Job posted successfully!</p>
+                        <button onClick={handleClosePopup}>Close</button>
+                    </div>
+                )}
+                {/* Email success popup */}
+                {isEmailSent && (
+                    <div className="success-popup">
+                        <p>Email sent to all subscribers successfully!</p>
+                        <button onClick={handleClosePopup}>Close</button>
+                    </div>
+                )}
                 </form>
             </div>
         </Box>

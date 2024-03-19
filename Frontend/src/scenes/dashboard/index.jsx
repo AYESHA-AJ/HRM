@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import { mockTransactions } from "../../data/mockData";
@@ -11,10 +12,45 @@ import LineChart from "../../components/LineChart";
 import BarChart from "../../components/BarChart";
 import StatBox from "../../components/StatBox";
 import ProgressCircle from "../../components/ProgressCircle";
+import axios from 'axios';
+import axiosInstance from '../../utilis/ApiRequest';
 
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [subscribers, setSubscribers] = useState(0);
+  const [employees, setEmployees] = useState(0);
+  const [applicants, setApplicants] = useState(0);
+
+  useEffect(() => {
+    // Fetch subscribers
+    axiosInstance.get('/subscribers')
+      .then(response => {
+        const totalSubscribers = response.data.length;
+        setSubscribers(totalSubscribers);
+      })
+      .catch(error => {
+        console.error('Error fetching subscribers:', error);
+      });
+
+    // Fetch employees (applicants)
+    axiosInstance.get('/get_employees')
+      .then(response => {
+        const totalEmployees = response.data.length;
+        setEmployees(totalEmployees);
+      })
+      .catch(error => {
+        console.error('Error fetching employees:', error);
+      });
+      axiosInstance.get('/applicants')
+      .then(response => {
+        const totalApplicants = response.data.length;
+        setApplicants(totalApplicants);
+      })
+      .catch(error => {
+        console.error('Error fetching applicants:', error);
+      });
+  }, []);
 
   return (
     <Box m="10px">
@@ -54,8 +90,8 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="2,361"
-            subtitle="Emails Sent"
+            title="321"
+            subtitle="Emails"
             progress="0.75"
             increase="+14%"
             icon={
@@ -73,8 +109,8 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="4,225"
-            subtitle="Employees"
+            title={applicants}
+            subtitle="Applicants"
             progress="0.50"
             increase="+21%"
             icon={
@@ -92,8 +128,8 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="321"
-            subtitle="New Clients"
+          title={employees}
+          subtitle="Employees"
             progress="0.30"
             increase="+5%"
             icon={
@@ -111,8 +147,8 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="1,325"
-            subtitle="Projects"
+           title={subscribers}
+           subtitle="Subscribers"
             progress="0.80"
             increase="+43%"
             icon={

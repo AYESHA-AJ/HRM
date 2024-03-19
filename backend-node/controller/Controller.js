@@ -1,5 +1,6 @@
 // backend/controllers/controller.js
 const bcrypt = require("bcrypt")
+const mongoose = require('mongoose');
 const Employee = require('../models/Employee_DB');
 const Allowance = require('../models/Allowance_DB');
 const BasicSalary = require('../models/Basicsalary_DB');
@@ -29,6 +30,28 @@ const subscribe = async (req, res) => {
     res.status(500).json({ message: 'Subscription failed' });
   }
 }
+
+const getAllSubscribers = async (req, res) => {
+  try {
+    // Fetch all subscribers from the database
+    const subscribers = await Subscription.find();
+
+    // Send the list of subscribers as a response
+    res.status(200).json(subscribers);
+  } catch (error) {
+    console.error('Error fetching subscribers:', error);
+    res.status(500).json({ message: 'Failed to fetch subscribers' });
+  }
+};
+const getAllApplicants = async (req, res) => {
+  try {
+  const applicants = await Applicant.find();
+  res.status(200).json(applicants);
+  } catch (error) {
+  console.error('Error fetching applicants:', error);
+  res.status(500).json({ error: 'Internal Server Error' });
+  }
+  };
 
 const add_admin = async (req,res, next) => {
 
@@ -497,26 +520,25 @@ const addApplicant = async (req, res) => {
 };
 
 // Function to edit an existing applicant
-const editApplicant = async (req, res) => {
+
+
+const editApplicantsName = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email, password } = req.body;
+    const { name } = req.body;
 
     // Check if the provided ID is valid
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: 'Invalid applicant ID' });
     }
 
-    // Check if all required fields are provided
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: 'Please provide name, email, and password' });
+    // Check if name is provided
+    if (!name) {
+      return res.status(400).json({ message: 'Please provide the name' });
     }
 
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Find the applicant by ID and update its data
-    const updatedApplicant = await Applicant.findByIdAndUpdate(id, { name, email, password: hashedPassword }, { new: true });
+    // Find the applicant by ID and update its name
+    const updatedApplicant = await Applicant.findByIdAndUpdate(id, { name }, { new: true });
 
     // Check if the applicant with the provided ID exists
     if (!updatedApplicant) {
@@ -524,13 +546,77 @@ const editApplicant = async (req, res) => {
     }
 
     // If the applicant is updated successfully, send a success response
-    res.status(200).json({ message: 'Applicant updated successfully', applicant: updatedApplicant });
+    res.status(200).json({ message: 'Applicant name updated successfully', applicant: updatedApplicant });
   } catch (error) {
-    console.error('Error updating applicant:', error);
-    res.status(500).json({ message: 'Failed to update applicant', error: error.message });
+    console.error('Error updating applicant name:', error);
+    res.status(500).json({ message: 'Failed to update applicant name', error: error.message });
   }
 };
 
+const editApplicantsEmail = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { email } = req.body;
+
+    // Check if the provided ID is valid
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid applicant ID' });
+    }
+
+    // Check if email is provided
+    if (!email) {
+      return res.status(400).json({ message: 'Please provide the email' });
+    }
+
+    // Find the applicant by ID and update its email
+    const updatedApplicant = await Applicant.findByIdAndUpdate(id, { email }, { new: true });
+
+    // Check if the applicant with the provided ID exists
+    if (!updatedApplicant) {
+      return res.status(404).json({ message: 'Applicant not found' });
+    }
+
+    // If the applicant is updated successfully, send a success response
+    res.status(200).json({ message: 'Applicant email updated successfully', applicant: updatedApplicant });
+  } catch (error) {
+    console.error('Error updating applicant email:', error);
+    res.status(500).json({ message: 'Failed to update applicant email', error: error.message });
+  }
+};
+
+const editApplicantsPassword = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { password } = req.body;
+
+    // Check if the provided ID is valid
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid applicant ID' });
+    }
+
+    // Check if password is provided
+    if (!password) {
+      return res.status(400).json({ message: 'Please provide the password' });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 5);
+
+    // Find the applicant by ID and update its password
+    const updatedApplicant = await Applicant.findByIdAndUpdate(id, { password: hashedPassword }, { new: true });
+
+    // Check if the applicant with the provided ID exists
+    if (!updatedApplicant) {
+      return res.status(404).json({ message: 'Applicant not found' });
+    }
+
+    // If the applicant is updated successfully, send a success response
+    res.status(200).json({ message: 'Applicant password updated successfully', applicant: updatedApplicant });
+  } catch (error) {
+    console.error('Error updating applicant password:', error);
+    res.status(500).json({ message: 'Failed to update applicant password', error: error.message });
+  }
+};
 
 
 
@@ -1045,7 +1131,7 @@ module.exports = {
   editJob,
   getJobById,// Add the newly created deleteJob function here
 
-  addApplicant, editApplicant,getApplicantById,
+  addApplicant,getApplicantById,editApplicantsName,editApplicantsEmail,editApplicantsPassword,
   editProfilePic,editCV,
   addAppliedApplicants,
   getApplicantsByJobTitle,
@@ -1053,7 +1139,7 @@ module.exports = {
   shortlistApplicant,unshortlistApplicant,selectApplicant,unselectApplicant,
   getAllLeaves, deleteLeave, editLeave, addLeave, activateDeactivateLeave,
   getLeaveById, getAllLeaveTypes,
-  subscribe,
-  addLeaveRequest,getAllLeaveRequests,cancelLeaveRequest,approveLeaveRequest,rejectLeaveRequest, getAllLeaveRequestsbyid
+  subscribe,getAllSubscribers,
+  addLeaveRequest,getAllLeaveRequests,cancelLeaveRequest,approveLeaveRequest,rejectLeaveRequest, getAllLeaveRequestsbyid,getAllApplicants,
 };
  

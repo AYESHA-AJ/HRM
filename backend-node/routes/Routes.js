@@ -61,7 +61,9 @@ router.get('/payslip/:id', verifyToken,controller.generatePayslip);
  
 //Applicants add and edit
 router.post('/applicants', verifyToken,controller.addApplicant);
-router.put('/applicants/:id',verifyToken, controller.editApplicant);
+router.put('/applicantsName/:id',verifyToken, controller.editApplicantsName);
+router.put('/applicantsEmail/:id',verifyToken, controller.editApplicantsEmail);
+router.put('/applicantsPassword/:id',verifyToken, controller.editApplicantsPassword);
 router.get('/applicants/:id', verifyToken,controller.getApplicantById);
  
 router.put('/addimg/:id', verifyToken,controller.editProfilePic);
@@ -102,6 +104,9 @@ router.patch('/requests/:id',verifyToken, controller.cancelLeaveRequest);
 router.patch('/approve_requests/:id', verifyToken,controller.approveLeaveRequest);
 router.patch('/reject_requests/:id', verifyToken,controller.rejectLeaveRequest);
 router.post('/subscribe',verifyToken, controller.subscribe);
+router.get('/subscribers', verifyToken,controller.getAllSubscribers);
+
+router.get('/applicants',verifyToken,controller.getAllApplicants);
  
 module.exports = router;
  

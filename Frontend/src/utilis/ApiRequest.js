@@ -12,9 +12,9 @@ axiosInstance.interceptors.request.use(
       /(?:(?:^|.*;\s*)accessToken\s*\=\s*([^;]*).*$)|^.*$/,
       '$1'
     );
-    console.log(document.cookie);
+    // console.log(document.cookie);
     if (accessToken) {
-      console.log("Access Token:", accessToken);
+      // console.log("Access Token:", accessToken);
       // Add the access token to the request headers
       config.headers.Authorization = `Bearer ${accessToken}`;
     } else {
