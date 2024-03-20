@@ -324,25 +324,7 @@ const handlechange = (e) => {
 const [error, setError] = useState()
  
  
-// Function to handle form submission or any other action
-// const handleSubmit = async (e) => {
-//   e.preventDefault();
-//   // const url = await upload(profilePic)
-//   values.profilepic = await upload(profilePic)
-//   values.profilecv = await upload(profileCv)
-//   console.log(values)
-//   try {
-//     await axios.post("http://localhost:5000/api/add_employee", {
-//       ...values,
-//       // profilepic: url,
-//     })
-//   } catch (error) {
-//     console.log(error)
-   
-//   }
-//   // console.log(url)
-//   // You can perform any other actions like API requests here
-// };
+
 
 const handleSubmit = async (e) => {
   e.preventDefault();
@@ -443,12 +425,7 @@ const [leaving, setLeaving] = useState("");
     window.open(user.profilecv, '_blank'); // Open CV URL in a new tab
   };
 
-  const handleInputChange = (e, field) => {
-    const value = e.target.value;
-    setEditedEmployee({ ...editedEmployee, [field]: value });
-  
-    
-  };
+ 
 
 
  /////////////////////////////////////////////////////////////////////////////////
@@ -901,66 +878,62 @@ const [leaving, setLeaving] = useState("");
           <Dialog open={editDialogOpen} onClose={handleDialogClose}>
             <DialogTitle>Edit Employee</DialogTitle>
             <DialogContent sx={{ padding: '20px' }}>
+ <TextField
+  fullWidth
+  variant="filled"
+  label="First Name"
+  value={editedEmployee.firstName || ''}
+  onChange={(e) => setEditedEmployee({ ...editedEmployee, firstName: e.target.value })}
+  sx={{ marginBottom: '16px' }}
+/>
   <TextField
-    fullWidth
-    variant="filled"
-    label="First Name"
-    value={editedEmployee.firstName}
-    onChange={(e) => setEditedEmployee({ ...editedEmployee, firstName: e.target.value })}
-    sx={{ marginBottom: '16px' }}
-   
-      
-  />
-  <TextField
-    fullWidth
-    variant="filled"
-    label="Last Name"
-    value={editedEmployee.lastName}
-    onChange={(e) => setEditedEmployee({ ...editedEmployee, lastName: e.target.value })}
-    sx={{ marginBottom: '16px' }}
-  />
-  <TextField
-    fullWidth
-    variant="filled"
-    label="Email"
-    value={editedEmployee.email}
-    onChange={(e) => setEditedEmployee({ ...editedEmployee, email: e.target.value })}
-    sx={{ marginBottom: '16px' }}
-  />
-  <TextField
-    fullWidth
-    variant="filled"
-    label="Contact"
-    value={editedEmployee.contact}
-    onChange={(e) => setEditedEmployee({ ...editedEmployee, contact: e.target.value })}
-    sx={{ marginBottom: '16px' }}
-  />
- 
- 
- 
-  <TextField
-    fullWidth
-    variant="filled"
-    label="Designation"
-    value={editedEmployee.designation}
-    onChange={(e) => setEditedEmployee({ ...editedEmployee, designation: e.target.value })}
-    sx={{ marginBottom: '16px' }}
-  />
-  <TextField
-      fullWidth
-      variant="filled"
-      label="Department"
-      select
-      value={editedEmployee.department}
-      onChange={(e) => setEditedEmployee({ ...editedEmployee, department: e.target.value })}
-      sx={{ marginBottom: '16px' }}
-    >
-      <MenuItem value="Designing">Designing</MenuItem>
-      <MenuItem value="Development">Development</MenuItem>
-      <MenuItem value="Testing">Testing</MenuItem>
-      
-    </TextField>
- 
+  fullWidth
+  variant="filled"
+  label="Last Name"
+  value={editedEmployee.lastName || ''}
+  onChange={(e) => setEditedEmployee({ ...editedEmployee, lastName: e.target.value })}
+  sx={{ marginBottom: '16px' }}
+/>
+
+<TextField
+  fullWidth
+  variant="filled"
+  label="Email"
+  value={editedEmployee.email || ''}
+  onChange={(e) => setEditedEmployee({ ...editedEmployee, email: e.target.value })}
+  sx={{ marginBottom: '16px' }}
+/>
+<TextField
+  fullWidth
+  variant="filled"
+  label="Contact"
+  value={editedEmployee.contact || ''}
+  onChange={(e) => setEditedEmployee({ ...editedEmployee, contact: e.target.value })}
+  sx={{ marginBottom: '16px' }}
+/>
+
+<TextField
+  fullWidth
+  variant="filled"
+  label="Designation"
+  value={editedEmployee.designation || ''}
+  onChange={(e) => setEditedEmployee({ ...editedEmployee, designation: e.target.value })}
+  sx={{ marginBottom: '16px' }}
+/>
+
+<TextField
+  fullWidth
+  variant="filled"
+  label="Department"
+  select
+  value={editedEmployee.department || ''}
+  onChange={(e) => setEditedEmployee({ ...editedEmployee, department: e.target.value })}
+  sx={{ marginBottom: '16px' }}
+>
+  <MenuItem value="Designing">Designing</MenuItem>
+  <MenuItem value="Development">Development</MenuItem>
+  <MenuItem value="Testing">Testing</MenuItem>
+</TextField>
    
  
 </DialogContent>

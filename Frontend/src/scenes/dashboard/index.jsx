@@ -15,42 +15,65 @@ import ProgressCircle from "../../components/ProgressCircle";
 import axios from 'axios';
 import axiosInstance from '../../utilis/ApiRequest';
 
+
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [subscribers, setSubscribers] = useState(0);
   const [employees, setEmployees] = useState(0);
   const [applicants, setApplicants] = useState(0);
+  const [emailCount, setEmailCount] = useState(0);
+  const [subscribersIncrease, setSubscribersIncrease] = useState(0);
+  const [employeesIncrease, setEmployeesIncrease] = useState(0);
+  const [applicantsIncrease, setApplicantsIncrease] = useState(0);
+  const [emailCountIncrease, setEmailCountIncrease] = useState(0);
 
   useEffect(() => {
-    // Fetch subscribers
+    axiosInstance.get('/email-count')
+    .then(response => {
+      const count = response.data.count;
+      setEmailCountIncrease(calculateIncrease(emailCount, count));
+      setEmailCount(count);
+    })
+    .catch(error => {
+      console.error('Error fetching email count:', error);
+    });
+
     axiosInstance.get('/subscribers')
       .then(response => {
         const totalSubscribers = response.data.length;
+        setSubscribersIncrease(calculateIncrease(subscribers, totalSubscribers));
         setSubscribers(totalSubscribers);
       })
       .catch(error => {
         console.error('Error fetching subscribers:', error);
       });
 
-    // Fetch employees (applicants)
     axiosInstance.get('/get_employees')
       .then(response => {
         const totalEmployees = response.data.length;
+        setEmployeesIncrease(calculateIncrease(employees, totalEmployees));
         setEmployees(totalEmployees);
       })
       .catch(error => {
         console.error('Error fetching employees:', error);
       });
-      axiosInstance.get('/applicants')
+
+    axiosInstance.get('/applicants')
       .then(response => {
         const totalApplicants = response.data.length;
+        setApplicantsIncrease(calculateIncrease(applicants, totalApplicants));
         setApplicants(totalApplicants);
       })
       .catch(error => {
         console.error('Error fetching applicants:', error);
       });
-  }, []);
+  }, [subscribers, employees, applicants, emailCount]);
+
+  const calculateIncrease = (prevValue, newValue) => {
+    const increase = ((newValue - prevValue) / prevValue) * 100;
+    return increase.toFixed(2) + '%';
+  };
 
   return (
     <Box m="10px">
@@ -90,10 +113,10 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title="321"
+             title={emailCount} 
             subtitle="Emails"
-            progress="0.75"
-            increase="+14%"
+            progress={emailCount / 5}
+            increase={emailCountIncrease}
             icon={
               <EmailIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -111,8 +134,8 @@ const Dashboard = () => {
           <StatBox
             title={applicants}
             subtitle="Applicants"
-            progress="0.50"
-            increase="+21%"
+            progress={applicants / 5}
+            increase={applicantsIncrease}
             icon={
               <PointOfSaleIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -130,8 +153,8 @@ const Dashboard = () => {
           <StatBox
           title={employees}
           subtitle="Employees"
-            progress="0.30"
-            increase="+5%"
+            progress={employees / 10}
+            increase={employeesIncrease}
             icon={
               <PersonAddIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -149,8 +172,8 @@ const Dashboard = () => {
           <StatBox
            title={subscribers}
            subtitle="Subscribers"
-            progress="0.80"
-            increase="+43%"
+            progress={subscribers / 10}
+            increase={subscribersIncrease}
             icon={
               <TrafficIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}

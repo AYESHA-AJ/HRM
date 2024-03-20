@@ -14,6 +14,38 @@ const Admin = require("../models/Admin")
 const jwt = require("jsonwebtoken")
 const Subscription = require('../models/Subscription');
 
+
+const fs = require('fs');
+const path = require('path');
+
+let emailCount = 0;
+
+const emailCountFilePath = path.join(__dirname, 'emailCount.txt');
+
+// Middleware to read email count from file
+const getEmailCountFromFile = () => {
+  try {
+    const data = fs.readFileSync(emailCountFilePath, 'utf8');
+    emailCount = parseInt(data) || 0;
+  } catch (err) {
+    console.error('Error reading email count from file:', err);
+  }
+};
+
+// Middleware to save email count to file
+const saveEmailCountToFile = () => {
+  try {
+    fs.writeFileSync(emailCountFilePath, emailCount.toString(), 'utf8');
+  } catch (err) {
+    console.error('Error saving email count to file:', err);
+  }
+};
+
+const getEmailCount = async (req, res) => {
+  getEmailCountFromFile();
+  res.json({ count: emailCount });
+};
+
 const subscribe = async (req, res) => {
   try {
     const { email } = req.body;
@@ -159,6 +191,8 @@ const addJob = async (req, res) => {
     });
 
     await newJob.save();
+    emailCount++;
+    saveEmailCountToFile();
 
     res.status(201).json(newJob);
   } catch (error) {
@@ -747,7 +781,8 @@ const shortlistApplicant = async (req, res) => {
     applicant.shortlisted = true;
 
     await appliedApplicant.save();
-
+    emailCount++;
+    saveEmailCountToFile();
     res.status(200).json({ message: 'Applicant shortlisted successfully' });
   } catch (error) {
     console.error('Error shortlisting applicant:', error);
@@ -803,7 +838,8 @@ const selectApplicant = async (req, res) => {
     applicant.selected = true;
 
     await appliedApplicant.save();
-
+    emailCount++;
+    saveEmailCountToFile();
     res.status(200).json({ message: 'Applicant selected successfully' });
   } catch (error) {
     console.error('Error selecting applicant:', error);
@@ -1140,6 +1176,6 @@ module.exports = {
   getAllLeaves, deleteLeave, editLeave, addLeave, activateDeactivateLeave,
   getLeaveById, getAllLeaveTypes,
   subscribe,getAllSubscribers,
-  addLeaveRequest,getAllLeaveRequests,cancelLeaveRequest,approveLeaveRequest,rejectLeaveRequest, getAllLeaveRequestsbyid,getAllApplicants,
+  addLeaveRequest,getAllLeaveRequests,cancelLeaveRequest,approveLeaveRequest,rejectLeaveRequest, getAllLeaveRequestsbyid,getAllApplicants,getEmailCount,
 };
  

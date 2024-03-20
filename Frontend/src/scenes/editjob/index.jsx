@@ -35,7 +35,7 @@ const JobsPosted = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await axiosInstance.get('http://localhost:5000/api/get_all_jobs');
+        const response = await axiosInstance.get('/get_all_jobs');
         setJobs(response.data);
       } catch (error) {
         console.error('Error fetching jobs:', error);
@@ -48,7 +48,7 @@ const JobsPosted = () => {
 
   const handleEdit = async (id) => {
     try {
-      const response = await axiosInstance.get(`http://localhost:5000/api/get_job/${id}`);
+      const response = await axiosInstance.get(`/get_job/${id}`);
       const existingJob = response.data;
       console.log("Fetched Job Data:", existingJob);
   
@@ -69,7 +69,7 @@ const JobsPosted = () => {
   const handleActivateDeactivate = async (id, isActive) => {
     try {
       // Send the request to the backend to update the isActive state
-      const response = await axiosInstance.put(`http://localhost:5000/api/activate_deactivate_job/${id}`, {
+      const response = await axiosInstance.put(`/activate_deactivate_job/${id}`, {
         isActive: !isActive,
       });
 
@@ -103,8 +103,8 @@ const JobsPosted = () => {
   const handleDialogSubmit = async () => {
     try {
       console.log("Submitting Edited Job:", editedJob); // Add this line
-      await axios.put(`http://localhost:5000/api/edit_job/${editedJob._id}`, editedJob);
-      const response = await axios.get("http://localhost:5000/api/get_jobs");
+      await axiosInstance.put(`/edit_job/${editedJob._id}`, editedJob);
+      const response = await axiosInstance.get("http://localhost:5000/api/get_jobs");
       setJobs(response.data);
       setEditDialogOpen(false);
       setEditedJob({});
@@ -132,7 +132,7 @@ const JobsPosted = () => {
     const { id, jobTitle } = deleteConfirmation.jobInfo;
     console.log(`Deleting job with ID: ${id}`);
     
-    axios
+    axiosInstance
       .delete(`http://localhost:5000/api/delete_job/${id}`)
       .then((response) => {
         console.log('Response from backend:', response.data);

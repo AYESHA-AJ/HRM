@@ -11,7 +11,8 @@ const { verifyToken } = require("../middleware/jwt")
  
  
 // Define routes
-router.post('/send-email',verifyToken, emailController.sendEmail);
+router.post('/send-email', verifyToken, emailController.sendEmail);
+router.get('/email-count',verifyToken, emailController.getEmailCount);
 
 // admin
 router.post('/add_admin', controller.add_admin);
@@ -106,7 +107,10 @@ router.patch('/reject_requests/:id', verifyToken,controller.rejectLeaveRequest);
 router.post('/subscribe',verifyToken, controller.subscribe);
 router.get('/subscribers', verifyToken,controller.getAllSubscribers);
 
-router.get('/applicants',verifyToken,controller.getAllApplicants);
+router.get('/applicants', verifyToken, controller.getAllApplicants);
+// Add route for getting email count
+
+
  
 module.exports = router;
  
