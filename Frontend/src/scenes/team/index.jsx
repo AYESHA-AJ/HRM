@@ -139,37 +139,10 @@ const Team = () => {
         // Handle the error as needed
       }
     };
-   const handleEdit = async (id) => {
-      try {
-        const response = await axiosInstance.get(`http://localhost:5000/api/get_employee/${id}`);
-        const existingEmployee = response.data;
-        setEditedEmployee(existingEmployee);
-        setEditDialogOpen(true);
-      } catch (error) {
-        console.error("Error fetching employee data:", error);
-      }
-    };
+  
    
-    const handleDialogClose = () => {
-      setEditDialogOpen(false);
-      setEditedEmployee({});
-    };
    
-    const handleDialogSubmit = async () => {
-      try {
-        await axiosInstance.put(`http://localhost:5000/api/edit_employee/${editedEmployee._id}`, editedEmployee);
-        // Refresh employee data after editing
-        // const response = await axios.get("http://localhost:5000/api/get_employees");
-        const response =  axiosInstance.get('/get_employees')
-        console.log()
-        setEmployeeData(response.data);
-        setEditDialogOpen(false);
-        setEditedEmployee({});
-        
-      } catch (error) {
-        console.error("Error updating employee data:", error);
-      }
-    };
+   
   const handleDelete = (id, fullName, email, department, contact) => {
     setDeleteConfirmation({
       open: true,
@@ -426,6 +399,47 @@ const [leaving, setLeaving] = useState("");
   };
 
  
+
+  const fetchEmployeeById = async (id) => {
+    try {
+      const response = await axiosInstance.get(`http://localhost:5000/api/get_employee/${id}`);
+      return response.data; // Return the fetched employee data
+    } catch (error) {
+      console.error('Error fetching employee data by ID:', error);
+      throw error; // Throw the error for handling in the calling function
+    }
+  };
+  
+  // Function to handle edit employee
+  const handleEdit = async (id) => {
+    try {
+      // Fetch employee data by ID
+      const employee = await fetchEmployeeById(id);
+  
+      // Open dialog for editing
+      setEditedEmployee(employee); // Set the fetched employee data to state
+      setEditDialogOpen(true); // Open the edit dialog
+    } catch (error) {
+      console.error('Error editing employee:', error);
+      // Handle the error as needed
+    }
+  };
+
+  const handleDialogSubmit = async () => {
+    try {
+      await axiosInstance.put(`http://localhost:5000/api/edit_employee/${editedEmployee._id}`,  editedEmployee);
+      setEditDialogOpen(false); // Close the dialog after successful submission
+      // Optionally, you can refresh the employee data here
+      const response = await axiosInstance.get("/get_employees");
+    setEmployeeData(response.data); // Update the employee data in the state
+    } catch (error) {
+      console.error("Error updating employee data:", error);
+      // Handle the error as needed
+    }
+  };
+  const isValidEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
 
 
  /////////////////////////////////////////////////////////////////////////////////
@@ -872,102 +886,77 @@ const [leaving, setLeaving] = useState("");
           Department: {deleteConfirmation.employeeInfo.department}
         </Typography>
       </div>
+
+      
     </div>
+    
   }
+  
           />
-          <Dialog open={editDialogOpen} onClose={handleDialogClose}>
-            <DialogTitle>Edit Employee</DialogTitle>
-            <DialogContent sx={{ padding: '20px' }}>
- <TextField
-  fullWidth
-  variant="filled"
-  label="First Name"
-  value={editedEmployee.firstName || ''}
-  onChange={(e) => setEditedEmployee({ ...editedEmployee, firstName: e.target.value })}
-  sx={{ marginBottom: '16px' }}
-/>
-  <TextField
-  fullWidth
-  variant="filled"
-  label="Last Name"
-  value={editedEmployee.lastName || ''}
-  onChange={(e) => setEditedEmployee({ ...editedEmployee, lastName: e.target.value })}
-  sx={{ marginBottom: '16px' }}
-/>
+        <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)} width="500px">
+  <DialogTitle>Edit Employee</DialogTitle>
+  <DialogContent>
+    <TextField
+      label="First Name"
+      value={editedEmployee.firstName}
+      onChange={(e) => setEditedEmployee({ ...editedEmployee, firstName: e.target.value })}
+      fullWidth
+      margin="normal"
+    />
+    <TextField
+      label="Last Name"
+      value={editedEmployee.lastName}
+      onChange={(e) => setEditedEmployee({ ...editedEmployee, lastName: e.target.value })}
+      fullWidth
+      margin="normal"
+    />
+    <TextField
+      label="Email"
+      value={editedEmployee.email}
+      onChange={(e) => setEditedEmployee({ ...editedEmployee, email: e.target.value })}
+      fullWidth
+      margin="normal"
+      error={!isValidEmail(editedEmployee.email)}
+      helperText={!isValidEmail(editedEmployee.email) ? "Invalid email format" : ""}
+    />
+    <TextField
+      label="Contact"
+      value={editedEmployee.contact}
+      onChange={(e) => setEditedEmployee({ ...editedEmployee, contact: e.target.value })}
+      fullWidth
+      margin="normal"
+    />
+    <TextField
+      select
+      label="Department"
+      value={editedEmployee.department}
+      onChange={(e) => setEditedEmployee({ ...editedEmployee, department: e.target.value })}
+      fullWidth
+      margin="normal"
+    >
+      {["Development", "Designing", "Testing"].map((department) => (
+        <MenuItem key={department} value={department}>
+          {department}
+        </MenuItem>
+      ))}
+    </TextField>
+    <TextField
+      label="Designation"
+      value={editedEmployee.designation}
+      onChange={(e) => setEditedEmployee({ ...editedEmployee, designation: e.target.value })}
+      fullWidth
+      margin="normal"
+    />
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setEditDialogOpen(false)} style={{ color: 'red' }}>Cancel</Button>
+    <Button onClick={handleDialogSubmit} style={{ color: 'green' }}>Save Changes</Button>
+  </DialogActions>
+</Dialog>;
 
-<TextField
-  fullWidth
-  variant="filled"
-  label="Email"
-  value={editedEmployee.email || ''}
-  onChange={(e) => setEditedEmployee({ ...editedEmployee, email: e.target.value })}
-  sx={{ marginBottom: '16px' }}
-/>
-<TextField
-  fullWidth
-  variant="filled"
-  label="Contact"
-  value={editedEmployee.contact || ''}
-  onChange={(e) => setEditedEmployee({ ...editedEmployee, contact: e.target.value })}
-  sx={{ marginBottom: '16px' }}
-/>
+// Email format validation function
 
-<TextField
-  fullWidth
-  variant="filled"
-  label="Designation"
-  value={editedEmployee.designation || ''}
-  onChange={(e) => setEditedEmployee({ ...editedEmployee, designation: e.target.value })}
-  sx={{ marginBottom: '16px' }}
-/>
 
-<TextField
-  fullWidth
-  variant="filled"
-  label="Department"
-  select
-  value={editedEmployee.department || ''}
-  onChange={(e) => setEditedEmployee({ ...editedEmployee, department: e.target.value })}
-  sx={{ marginBottom: '16px' }}
->
-  <MenuItem value="Designing">Designing</MenuItem>
-  <MenuItem value="Development">Development</MenuItem>
-  <MenuItem value="Testing">Testing</MenuItem>
-</TextField>
-   
- 
-</DialogContent>
-            <DialogActions>
-            <Button
-    onClick={handleDialogClose}
-    sx={{
-      marginRight: '8px',
-     
-      backgroundColor: '#C0392B',
-      fontWeight: 'bold',
-      color: '#FFFFFF',
-      '&:hover': {
-        backgroundColor: '#E74C32', // Lighter coral red on hover
-      },
-    }}
-  >
-    Cancel
-  </Button>
-  <Button
-    onClick={handleDialogSubmit}
-    sx={{
-      backgroundColor: '#33852e',
-      fontWeight: 'bold',
-      color: '#FFFFFF',
-      '&:hover': {
-        backgroundColor: '#62a540', // Lighter warm yellow on hover
-      },
-    }}
-  >
-    Save Changes
-  </Button>
-            </DialogActions>
-          </Dialog>
 
       </Box>
       )}

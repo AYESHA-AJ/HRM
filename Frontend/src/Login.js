@@ -297,7 +297,7 @@ const Login = ({ onLoginClick, handleSignUpClick }) => {
             value={username}
             onChange={handleUsernameChange}
           />
-          <label className={`label ${username && !usernameError && 'has-content'}`}>Username*</label>
+          <label className={`label ${username && !usernameError && 'has-content'}`}>Email*</label>
           {usernameError && <p className="error-message">{usernameError}</p>}
         </div>
         <div className="input-container password-container">
