@@ -6,9 +6,9 @@ import CreatableSelect from 'react-select/creatable';
 import axiosInstance from '../../utilis/ApiRequest';
 import { Box, useTheme,button } from '@mui/material';
 import { tokens } from "../../theme";
-
-
-
+import { Dialog, DialogActions, DialogContent, DialogContentText, Button } from '@mui/material';
+ 
+ 
 const CreateJob = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
@@ -23,22 +23,22 @@ const CreateJob = () => {
       reset,
     formState: { errors },
   } = useForm()
-
+ 
   const onSubmit = async (data) => {
     try {
         // Attach the selected skills to the data object
         data.skills = selectedOption;
-
+ 
         // Make a POST request to your backend API
         const response = await axiosInstance.post('http://localhost:5000/api/add_job', data);
-
+ 
         // Handle the response as needed
         console.log('Job created successfully:', response.data);
-
+ 
         // Open the dialog with success message
         setDialogContent('Job posted successfully!');
         setDialogOpen(true);
-
+ 
         // Reset the form after a successful submission
         reset();
     } catch (error) {
@@ -50,18 +50,18 @@ const handleSendEmail = async () => {
         // Fetch email addresses from your backend API
         const response = await axiosInstance.get('/subscribers');
         const emails = response.data.map(subscription => subscription.email);
-
+ 
         // Construct the email data
         const emailData = {
             to: emails.join(','), // Comma-separated list of email addresses
             subject: 'Your Subject Here',
             text: 'Your Email Text Here',
         };
-
+ 
         // Send the email
         const sendEmailResponse = await axiosInstance.post('http://localhost:5000/api/send-email', emailData);
         console.log('Email sent successfully:', sendEmailResponse.data);
-
+ 
         // Open the dialog with success message
         setDialogContent('Email sent to all subscribers successfully!');
         setDialogOpen(true);
@@ -69,8 +69,8 @@ const handleSendEmail = async () => {
         console.error('Error sending email to subscribers:', error);
     }
 };
-    
-
+   
+ 
     const options = [{ value: "JavaScipt", lable: "JavaScipt" },
         { value: "C++", label: "C++" },
         { value: "HTML", label: "HTML" },
@@ -78,13 +78,13 @@ const handleSendEmail = async () => {
         { value: "React", label: "React" },
         { value: "Node", label: "Node" },
         {value:"MongoDB",label:"MongoDB"},]
-        
-
+       
+ 
         const handleClosePopup = () => {
             // Close the popup by setting the submit success state to false
             setSubmitSuccess(false);
           };
-          
+         
     return (
         <Box style={{
             paddingLeft: "1rem",
@@ -94,7 +94,7 @@ const handleSendEmail = async () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            
+           
         }}>
             {/* form */}
             <div style={{
@@ -205,7 +205,7 @@ const handleSendEmail = async () => {
                                 <option value="Monthly">Monthly</option>
                                 <option value="Yearly">Yearly</option>
                             </select>
-              
+             
                         </div>
                         <div style={{ width: "50%", padding: "12px 12px" }}>
                             <label style={{ marginBottom: "0.5rem", fontSize: "1.2rem", color: "#535353" }}>Job Location</label>
@@ -226,7 +226,7 @@ const handleSendEmail = async () => {
                             />
                         </div>
                     </div>
-
+ 
                     {/* row 4 */}
                     <div className='create-job-flex' style={{ flexDirection: "row", width: "100%", marginBottom: "0.5rem", marginTop: "0.5rem" }}>
                         <div style={{ width: "50%", padding: "12px 12px" }}>
@@ -265,7 +265,7 @@ const handleSendEmail = async () => {
                                 }}
                             />
                         </div>
-            
+           
                     </div>
                     {/* row 5 */}
                     <div style={{ marginTop: "1rem"}}>
@@ -276,7 +276,7 @@ const handleSendEmail = async () => {
                             options={options}
                             isMulti
                             className='create-job-input' styles={{ paddingTop: "3rem", paddingBottom: "1rem", marginTop: "3rem" }} />
-                      
+                     
                     </div>
                     {/* row 6 */}
                     <div className='create-job-flex' style={{ flexDirection: "row", width: "100%", marginBottom: "0.5rem", marginTop: "0.5rem" }}>
@@ -311,9 +311,9 @@ const handleSendEmail = async () => {
                                 <option value="Part-time">Part-Time</option>
                                 <option value="Temporary">Temporary</option>
                             </select>
-              
+             
                         </div>
-            
+           
                     </div>
                     <div style={{ width: "50%", marginRight: "2%", padding: "12px 12px" }}>
                             <label style={{ fontSize: "1.2rem", color: "#535353" }}>Experience Level</label>
@@ -328,7 +328,7 @@ const handleSendEmail = async () => {
                                 <option value="Internship">Internship</option>
                                 <option value="Work remotely">Work remotely</option>
                             </select>
-              
+             
                         </div>
                     {/* row 7 */}
                     <div style={{ width: "100%" }}>
@@ -345,14 +345,14 @@ const handleSendEmail = async () => {
                             borderRadius: "2px",
                             fontSize: "1rem",
                             color: "#4F4F4F",
-  
+ 
                         }}
                             row={6}
                             defaultValue={"Join our dynamic team and contribute to exciting projects.!"}
        
                             placeholder='Job Description' />
                     </div>
-                    
+                   
            
                    {/* row 9 - Additional Fields */}
                    <div style={{ width: "100%" }}>
@@ -369,7 +369,7 @@ const handleSendEmail = async () => {
                             borderRadius: "2px",
                             fontSize: "1rem",
                             color: "#4F4F4F",
-  
+ 
                         }}
                             row={8}
                             defaultValue={"Ex: Health Insurance, Flexible Schedule!"}
@@ -392,7 +392,7 @@ const handleSendEmail = async () => {
                             borderRadius: "2px",
                             fontSize: "1rem",
                             color: "#4F4F4F",
-  
+ 
                         }}
                             row={8}
                             defaultValue={"We put people first,drive innovation and do good in the community we live and work in."}
@@ -414,7 +414,7 @@ const handleSendEmail = async () => {
                             borderRadius: "2px",
                             fontSize: "1rem",
                             color: "#4F4F4F",
-  
+ 
                         }}
                             row={8}
                             defaultValue={"Ex: This position entails joining a web design and development team....!"}
@@ -483,27 +483,25 @@ const handleSendEmail = async () => {
     onClick={handleSendEmail}
 >
     Send Email to Subscribers
-</button>
-
-
+                    </button>
+                    <Dialog open={isDialogOpen} onClose={() => setDialogOpen(false)}>
+    <DialogContent>
+        <DialogContentText id="alert-dialog-description">
+            {dialogContent}
+        </DialogContentText>
+    </DialogContent>
+    <DialogActions>
+        <Button onClick={() => setDialogOpen(false)}>Close</Button>
+    </DialogActions>
+</Dialog>
+ 
+ 
                     {/* Success popup */}
-                    {isSubmitSuccess && (
-                    <div className="success-popup">
-                        <p>Job posted successfully!</p>
-                        <button onClick={handleClosePopup}>Close</button>
-                    </div>
-                )}
-                {/* Email success popup */}
-                {isEmailSent && (
-                    <div className="success-popup">
-                        <p>Email sent to all subscribers successfully!</p>
-                        <button onClick={handleClosePopup}>Close</button>
-                    </div>
-                )}
+                    
                 </form>
             </div>
         </Box>
     )
 };
-
+ 
 export default CreateJob;

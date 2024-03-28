@@ -8,7 +8,7 @@ const { verifyToken } = require("../middleware/jwt")
 // email routes
  
 // emailRoutes.js
- 
+router.get('/email-count',verifyToken, emailController.getEmailCount);
  
 // Define routes
 router.post('/send-email', verifyToken, emailController.sendEmail);

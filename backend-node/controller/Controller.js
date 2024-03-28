@@ -14,37 +14,10 @@ const Admin = require("../models/Admin")
 const jwt = require("jsonwebtoken")
 const Subscription = require('../models/Subscription');
 
-
+const { getIO } = require('../socket'); 
 const fs = require('fs');
 const path = require('path');
 
-let emailCount = 0;
-
-const emailCountFilePath = path.join(__dirname, 'emailCount.txt');
-
-// Middleware to read email count from file
-const getEmailCountFromFile = () => {
-  try {
-    const data = fs.readFileSync(emailCountFilePath, 'utf8');
-    emailCount = parseInt(data) || 0;
-  } catch (err) {
-    console.error('Error reading email count from file:', err);
-  }
-};
-
-// Middleware to save email count to file
-const saveEmailCountToFile = () => {
-  try {
-    fs.writeFileSync(emailCountFilePath, emailCount.toString(), 'utf8');
-  } catch (err) {
-    console.error('Error saving email count to file:', err);
-  }
-};
-
-const getEmailCount = async (req, res) => {
-  getEmailCountFromFile();
-  res.json({ count: emailCount });
-};
 
 const subscribe = async (req, res) => {
   try {
@@ -191,8 +164,6 @@ const addJob = async (req, res) => {
     });
 
     await newJob.save();
-    emailCount++;
-    saveEmailCountToFile();
 
     res.status(201).json(newJob);
   } catch (error) {
@@ -781,8 +752,7 @@ const shortlistApplicant = async (req, res) => {
     applicant.shortlisted = true;
 
     await appliedApplicant.save();
-    emailCount++;
-    saveEmailCountToFile();
+
     res.status(200).json({ message: 'Applicant shortlisted successfully' });
   } catch (error) {
     console.error('Error shortlisting applicant:', error);
@@ -838,8 +808,7 @@ const selectApplicant = async (req, res) => {
     applicant.selected = true;
 
     await appliedApplicant.save();
-    emailCount++;
-    saveEmailCountToFile();
+
     res.status(200).json({ message: 'Applicant selected successfully' });
   } catch (error) {
     console.error('Error selecting applicant:', error);
@@ -1034,7 +1003,6 @@ const getAllLeaveTypes = async (req, res) => {
   }
 };
 
-
 const addLeaveRequest = async (req, res) => {
   try {
     // Extract data from request body
@@ -1042,6 +1010,7 @@ const addLeaveRequest = async (req, res) => {
 
     // Validate required fields (example)
     if (!startDate || !endDate || !leaveType) {
+      console.log("Missing required fields for leave request");
       return res.status(400).json({ message: 'Please fill in all required fields.' });
     }
 
@@ -1057,14 +1026,23 @@ const addLeaveRequest = async (req, res) => {
 
     // Save the new leave request to the database
     await newLeaveRequest.save();
+    console.log("Leave request saved:", newLeaveRequest);
 
-    // Send a successful response with the created request data
+    // Emitting event to all connected clients
+    console.log(`Emitting newLeaveRequestNotification event for user ${username}`);
+    getIO().emit('newLeaveRequestNotification', {
+      message: `New leave request from ${username}`,
+      leaveRequestID: newLeaveRequest._id,
+    });
+
     res.status(201).json(newLeaveRequest);
   } catch (error) {
     console.error('Error adding leave request:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
+
 
 const getAllLeaveRequests = async (req, res) => {
   try {
@@ -1105,17 +1083,18 @@ const cancelLeaveRequest = async (req, res) => {
 
 const approveLeaveRequest = async (req, res) => {
   const { id } = req.params;
-
   try {
     const updatedLeaveRequest = await LeaveRequest.findByIdAndUpdate(id, { status: 'approved' }, { new: true });
-
     if (updatedLeaveRequest) {
+      console.log(`Leave request ${id} approved, emitting leaveStatusChanged event`);
+      getIO().emit('leaveStatusChanged', { leaveRequestId: id, status: 'approved' });
       res.json(updatedLeaveRequest);
     } else {
+      console.log(`Leave request ${id} not found for approval`);
       res.status(404).json({ message: 'Leave request not found' });
     }
   } catch (error) {
-    console.error('Error cancelling leave request:', error);
+    console.error('Error approving leave request:', error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
@@ -1125,14 +1104,16 @@ const rejectLeaveRequest = async (req, res) => {
 
   try {
     const updatedLeaveRequest = await LeaveRequest.findByIdAndUpdate(id, { status: 'rejected' }, { new: true });
-
     if (updatedLeaveRequest) {
+      console.log(`Leave request ${id} rejected, emitting leaveStatusChanged event`);
+      getIO().emit('leaveStatusChanged', { leaveRequestId: id, status: 'rejected' });
       res.json(updatedLeaveRequest);
     } else {
+      console.log(`Leave request ${id} not found for rejection`);
       res.status(404).json({ message: 'Leave request not found' });
     }
   } catch (error) {
-    console.error('Error cancelling leave request:', error);
+    console.error('Error rejecting leave request:', error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
@@ -1176,6 +1157,6 @@ module.exports = {
   getAllLeaves, deleteLeave, editLeave, addLeave, activateDeactivateLeave,
   getLeaveById, getAllLeaveTypes,
   subscribe,getAllSubscribers,
-  addLeaveRequest,getAllLeaveRequests,cancelLeaveRequest,approveLeaveRequest,rejectLeaveRequest, getAllLeaveRequestsbyid,getAllApplicants,getEmailCount,
+  addLeaveRequest,getAllLeaveRequests,cancelLeaveRequest,approveLeaveRequest,rejectLeaveRequest, getAllLeaveRequestsbyid,getAllApplicants,
 };
  
