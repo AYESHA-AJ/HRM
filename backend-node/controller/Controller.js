@@ -1118,6 +1118,297 @@ const rejectLeaveRequest = async (req, res) => {
   }
 };
 
+
+const editEmployeeName = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name } = req.body;
+
+    // Check if the provided ID is valid
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid applicant ID' });
+    }
+
+    // Check if name is provided
+    if (!name) {
+      return res.status(400).json({ message: 'Please provide the name' });
+    }
+
+    // Find the applicant by ID and update its name
+    const updatedApplicant = await Employee.findByIdAndUpdate(id, { name }, { new: true });
+
+    // Check if the applicant with the provided ID exists
+    if (!updatedApplicant) {
+      return res.status(404).json({ message: 'Applicant not found' });
+    }
+
+    // If the applicant is updated successfully, send a success response
+    res.status(200).json({ message: 'Applicant name updated successfully', employee: updatedApplicant });
+  } catch (error) {
+    console.error('Error updating applicant name:', error);
+    res.status(500).json({ message: 'Failed to update applicant name', error: error.message });
+  }
+};
+
+const editEmployeeEmail = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { email } = req.body;
+
+    // Check if the provided ID is valid
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid applicant ID' });
+    }
+
+    // Check if email is provided
+    if (!email) {
+      return res.status(400).json({ message: 'Please provide the email' });
+    }
+
+    // Find the applicant by ID and update its email
+    const updatedApplicant = await Employee.findByIdAndUpdate(id, { email }, { new: true });
+
+    // Check if the applicant with the provided ID exists
+    if (!updatedApplicant) {
+      return res.status(404).json({ message: 'Applicant not found' });
+    }
+
+    // If the applicant is updated successfully, send a success response
+    res.status(200).json({ message: 'Applicant email updated successfully', employee: updatedApplicant });
+  } catch (error) {
+    console.error('Error updating applicant email:', error);
+    res.status(500).json({ message: 'Failed to update applicant email', error: error.message });
+  }
+};
+
+const editEmployeePassword = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { password } = req.body;
+
+    // Check if the provided ID is valid
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid applicant ID' });
+    }
+
+    // Check if password is provided
+    if (!password) {
+      return res.status(400).json({ message: 'Please provide the password' });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 5);
+
+    // Find the applicant by ID and update its password
+    const updatedApplicant = await Employee.findByIdAndUpdate(id, { password: hashedPassword }, { new: true });
+
+    // Check if the applicant with the provided ID exists
+    if (!updatedApplicant) {
+      return res.status(404).json({ message: 'Applicant not found' });
+    }
+
+    // If the applicant is updated successfully, send a success response
+    res.status(200).json({ message: 'Applicant password updated successfully', employee: updatedApplicant });
+  } catch (error) {
+    console.error('Error updating applicant password:', error);
+    res.status(500).json({ message: 'Failed to update applicant password', error: error.message });
+  }
+};
+
+
+
+
+
+
+const editEProfilePic = async (req, res) => {
+  const { id } = req.params;
+  const { profilepic } = req.body; // Assuming the file path is in req.body
+
+  try {
+    const updatedApplicant = await Employee.findByIdAndUpdate(id, { profilepic }, { new: true });
+    if (!updatedApplicant) {
+      return res.status(404).json({ error: 'Applicant not found' });
+    }
+
+    res.status(200).json(updatedApplicant);
+  } catch (error) {
+    console.error('Error updating profile picture:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+const editECV = async (req, res) => {
+  const { id } = req.params;
+  const { profilecv } = req.body; // Assuming profilecv path is in req.body if uploaded
+
+  try {
+    const updatedApplicant = await Employee.findByIdAndUpdate(
+      id,
+      profilecv ? { profilecv } : {}, // Update only if profilecv exists
+      { new: true }
+    );
+    if (!updatedApplicant) {
+      return res.status(404).json({ error: 'Applicant not found' });
+    }
+
+    res.status(200).json(updatedApplicant);
+  } catch (error) {
+    console.error('Error updating CV:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+
+const editAdminName = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name } = req.body;
+
+    // Check if the provided ID is valid
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid applicant ID' });
+    }
+
+    // Check if name is provided
+    if (!name) {
+      return res.status(400).json({ message: 'Please provide the name' });
+    }
+
+    // Find the applicant by ID and update its name
+    const updatedAdmin = await Admin.findByIdAndUpdate(id, { name }, { new: true });
+
+    // Check if the applicant with the provided ID exists
+    if (!updatedAdmin) {
+      return res.status(404).json({ message: 'Applicant not found' });
+    }
+
+    // If the applicant is updated successfully, send a success response
+    res.status(200).json({ message: 'Applicant name updated successfully', admin: updatedAdmin });
+  } catch (error) {
+    console.error('Error updating applicant name:', error);
+    res.status(500).json({ message: 'Failed to update applicant name', error: error.message });
+  }
+};
+
+const editAdminEmail = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { email } = req.body;
+
+    // Check if the provided ID is valid
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid applicant ID' });
+    }
+
+    // Check if email is provided
+    if (!email) {
+      return res.status(400).json({ message: 'Please provide the email' });
+    }
+
+    // Find the applicant by ID and update its email
+    const updatedAdmin = await Admin.findByIdAndUpdate(id, { email }, { new: true });
+
+    // Check if the applicant with the provided ID exists
+    if (!updatedAdmin) {
+      return res.status(404).json({ message: 'Applicant not found' });
+    }
+
+    // If the applicant is updated successfully, send a success response
+    res.status(200).json({ message: 'Applicant email updated successfully', admin: updatedAdmin });
+  } catch (error) {
+    console.error('Error updating applicant email:', error);
+    res.status(500).json({ message: 'Failed to update applicant email', error: error.message });
+  }
+};
+
+const editAdminPassword = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { password } = req.body;
+
+    // Check if the provided ID is valid
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid applicant ID' });
+    }
+
+    // Check if password is provided
+    if (!password) {
+      return res.status(400).json({ message: 'Please provide the password' });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 5);
+
+    // Find the applicant by ID and update its password
+    const updatedAdmin = await Admin.findByIdAndUpdate(id, { password: hashedPassword }, { new: true });
+
+    // Check if the applicant with the provided ID exists
+    if (!updatedAdmin) {
+      return res.status(404).json({ message: 'Applicant not found' });
+    }
+
+    // If the applicant is updated successfully, send a success response
+    res.status(200).json({ message: 'Applicant password updated successfully', admin: updatedAdmin });
+  } catch (error) {
+    console.error('Error updating applicant password:', error);
+    res.status(500).json({ message: 'Failed to update applicant password', error: error.message });
+  }
+};
+
+
+
+
+const getAdminById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const admin = await Admin.findById(id);
+    if (!admin) {
+      return res.status(404).json({ message: 'Applicant not found' });
+    }
+    res.status(200).json({ admin: admin });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch applicant', error: error.message });
+  }
+};
+
+const editAdminProfilePic = async (req, res) => {
+  const { id } = req.params;
+  const { profilepic } = req.body; // Assuming the file path is in req.body
+
+  try {
+    const updatedAdmin = await Admin.findByIdAndUpdate(id, { profilepic }, { new: true });
+    if (!updatedAdmin) {
+      return res.status(404).json({ error: 'Applicant not found' });
+    }
+
+    res.status(200).json(updatedAdmin);
+  } catch (error) {
+    console.error('Error updating profile picture:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+const editAdminCV = async (req, res) => {
+  const { id } = req.params;
+  const { profilecv } = req.body; // Assuming profilecv path is in req.body if uploaded
+
+  try {
+    const updatedAdmin = await Admin.findByIdAndUpdate(
+      id,
+      profilecv ? { profilecv } : {}, // Update only if profilecv exists
+      { new: true }
+    );
+    if (!updatedAdmin) {
+      return res.status(404).json({ error: 'Applicant not found' });
+    }
+
+    res.status(200).json(updatedAdmin);
+  } catch (error) {
+    console.error('Error updating CV:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 module.exports = {
   add_admin,
   login_admin,
@@ -1128,6 +1419,7 @@ module.exports = {
   deleteEmployee,
   editEmployee,
   getEmployeeById,
+  editEmployeeName,editEmployeeEmail,editEmployeePassword, editECV, editEProfilePic,
   searchEmployee,
   addAllowance,
   getAllAllowances,
@@ -1147,7 +1439,7 @@ module.exports = {
   deleteJob,
   editJob,
   getJobById,// Add the newly created deleteJob function here
-
+  getAdminById,editAdminName,editAdminEmail,editAdminPassword,editAdminCV,editAdminProfilePic,
   addApplicant,getApplicantById,editApplicantsName,editApplicantsEmail,editApplicantsPassword,
   editProfilePic,editCV,
   addAppliedApplicants,

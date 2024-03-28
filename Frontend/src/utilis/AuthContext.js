@@ -53,20 +53,21 @@ export const useAuth = () => {
 const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
 
-  useEffect(() => {
-    const storedUser = Cookies.get('currentUser');
-    if (storedUser) {
-      setCurrentUser(JSON.parse(storedUser));
-    }
-  }, []);
+  // useEffect(() => {
+  //   const storedUser = Cookies.get('currentUser');
+  //   if (storedUser) {
+  //     setCurrentUser(JSON.parse(storedUser));
+  //   }
+  // }, []);
 
   const login = (user) => {
-    if (user) {
-      setCurrentUser(user);
-      Cookies.set('currentUser', JSON.stringify(user), { expires: 7 });
-    } else {
-      console.error("No user data received.");
-    }
+    setCurrentUser(user);
+    // if (user) {
+      
+    //   Cookies.set('currentUser', JSON.stringify(user), { expires: 7 });
+    // } else {
+    //   console.error("No user data received.");
+    // }
   };
 
   const logout = () => {

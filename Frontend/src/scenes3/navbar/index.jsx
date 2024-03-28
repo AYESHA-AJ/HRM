@@ -9,6 +9,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Settings from '../profile/settings';
 import { useAuth } from '../../utilis/AuthContext';
 import axios from 'axios';
+import axiosInstance from '../../utilis/ApiRequest';
 
 
 
@@ -27,18 +28,23 @@ const Navbar = () => {
         setProfileAnchorEl(null);
     };
    
+
   
     const handleLogout = async () => {
        
-        try {
-            await axios.post("http://localhost:5000/api/logout")
-            // localStorage.setItem("currentUser", null)   
-            logout()   ;  
-            
-            
-          } catch (error) {
-            console.log(error)
-          }
+          // Make a POST request to the "/logout" endpoint with credentials set to true
+          axiosInstance.post('/logout', {}, { withCredentials: true })
+            .then(response => {
+              // If the logout request is successful, reload the page
+              
+              
+              window.location.reload();
+            })
+            .catch(error => {
+              // Handle any errors here
+              console.error('Logout failed:', error);
+            });
+        
     }
 
     const openProfile = Boolean(profileAnchorEl);

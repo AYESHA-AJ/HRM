@@ -28,6 +28,20 @@ router.put('/edit_employee/:id',verifyToken, controller.editEmployee);
 router.get('/get_employee/:id',verifyToken, controller.getEmployeeById);
 router.delete('/delete_employee/:id',verifyToken, controller.deleteEmployee);
 router.get('/search_employee/:query',verifyToken, controller.searchEmployee);
+
+router.put('/employeeName/:id',verifyToken, controller.editEmployeeName);
+router.put('/employeeEmail/:id',verifyToken, controller.editEmployeeEmail);
+router.put('/employeePassword/:id',verifyToken, controller.editEmployeePassword);
+router.put('/addEmployeeimg/:id', verifyToken,controller.editEProfilePic);
+router.put('/addEmployeecv/:id', verifyToken,controller.editECV);
+
+router.get('/get_admin/:id',verifyToken, controller.getAdminById);
+router.put('/adminName/:id',verifyToken, controller.editAdminName);
+router.put('/adminEmail/:id',verifyToken, controller.editAdminEmail);
+router.put('/adminPassword/:id',verifyToken, controller.editAdminPassword);
+router.put('/addAdminimg/:id', verifyToken,controller.editAdminProfilePic);
+router.put('/addAdmincv/:id', verifyToken,controller.editAdminCV);
+
  
  
 // Job routes
