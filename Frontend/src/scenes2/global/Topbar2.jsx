@@ -11,19 +11,40 @@ import SearchIcon from "@mui/icons-material/Search";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
+import LogoutIcon from '@mui/icons-material/Logout';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from "../../utilis/AuthContext";
+import axiosInstance from "../../utilis/ApiRequest";
+
+
 
 const Topbar2 = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext);
-  const [openProfileDialog, setOpenProfileDialog] = useState(false);
+  const navigate = useNavigate();
+ 
+  
 
   const handleProfileIconClick = () => {
-    setOpenProfileDialog(true);
+    navigate("/form");
   };
 
-  const handleDialogClose = () => {
-    setOpenProfileDialog(false);
+  const  { logout, currentUser } = useAuth()
+
+  const onLogout = () => {
+    // Make a POST request to the "/logout" endpoint with credentials set to true
+    axiosInstance.post('/logout', {}, { withCredentials: true })
+      .then(response => {
+        // If the logout request is successful, reload the page
+        
+        
+        window.location.reload();
+      })
+      .catch(error => {
+        // Handle any errors here
+        console.error('Logout failed:', error);
+      });
   };
 
   return (
@@ -53,21 +74,14 @@ const Topbar2 = () => {
           <NotificationsOutlinedIcon />
         </IconButton>
         <IconButton>
-          <SettingsOutlinedIcon />
+          <SettingsOutlinedIcon onClick={handleProfileIconClick} />
         </IconButton>
-        <IconButton onClick={handleProfileIconClick}>
-          <PersonOutlinedIcon />
+        <IconButton >
+          <LogoutIcon onClick={onLogout} />
         </IconButton>
       </Box>
 
-      <Dialog open={openProfileDialog} onClose={handleDialogClose}>
-        <DialogTitle sx={{ backgroundColor: "greyishBlack" }}>
-          Profile Settings
-        </DialogTitle>
-        <DialogContent sx={{ width: 500, height: 500, bgcolor: "greyishBlack",right:10 }}>
-          {/* Add your profile settings content here */}
-        </DialogContent>
-      </Dialog>
+      
     </Box>
   );
 };

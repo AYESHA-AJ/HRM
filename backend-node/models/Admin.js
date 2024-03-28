@@ -8,6 +8,10 @@ const adminSchema = new mongoose.Schema({
     type: String,
     require: false,
   },
+  profilecv: {
+    type: String,
+    require: false,
+  },
 
 });
 

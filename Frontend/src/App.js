@@ -64,6 +64,8 @@ function App() {
     navigate('/signUp');// Set the state to true when sign-up button is clicked
     };
 
+    
+  
     useEffect(() => {
       // Redirect to the default route or login page when the component mounts
       navigate('/');
@@ -111,13 +113,15 @@ function App() {
       <div className="app">
         <Sidebar2 isSidebar2={isSidebar2} />
                   <main className="content">
-                  <Topbar2 setIsSidebar2={setIsSidebar2} />
+                  <Topbar2 setIsSidebar2={setIsSidebar2}  />
           <Routes>
             <Route path="/" element={<Dashboard2 />} />
             <Route path="/calendar" element={<Calendar2 />} />
                       <Route path="/leaves" element={<LeaveForm />} />
                       <Route path="/attendance2" element={<Atendence2/>}/>
             <Route path="/form" element={<Form2 />} />
+
+            
             
           </Routes>
         </main>
