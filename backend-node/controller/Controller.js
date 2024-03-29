@@ -18,6 +18,23 @@ const { getIO } = require('../socket');
 const fs = require('fs');
 const path = require('path');
 
+// Add this function to your existing controller.js file
+const countEmployeesByDesignation = async (req, res) => {
+  try {
+    const count = await Employee.aggregate([
+      {
+        $group: {
+          _id: "$designation",
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+
+    res.json(count.map(item => ({ designation: item._id, count: item.count })));
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 const subscribe = async (req, res) => {
   try {
@@ -1448,7 +1465,8 @@ module.exports = {
   shortlistApplicant,unshortlistApplicant,selectApplicant,unselectApplicant,
   getAllLeaves, deleteLeave, editLeave, addLeave, activateDeactivateLeave,
   getLeaveById, getAllLeaveTypes,
-  subscribe,getAllSubscribers,
+  subscribe, getAllSubscribers,
+  countEmployeesByDesignation,
   addLeaveRequest,getAllLeaveRequests,cancelLeaveRequest,approveLeaveRequest,rejectLeaveRequest, getAllLeaveRequestsbyid,getAllApplicants,
 };
  

@@ -2,11 +2,38 @@ import { ResponsiveLine } from "@nivo/line";
 import { useTheme } from "@mui/material";
 import { tokens } from "../theme";
 import { mockLineData as data } from "../data/mockData";
+import React, { useState, useEffect } from 'react';
+import axios from "axios";
 
 const LineChart = ({ isCustomLineColors = false, isDashboard = false }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [data, setData] = useState([]);
+  useEffect(() => {
+    // Function to fetch employee count by designation
+    const fetchEmployeeDesignationCount = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/employee/designation-count');
+ // Adjust the URL based on your setup
+        const fetchedData = response.data;
 
+        // Transform fetched data to match chart's format
+        const chartData = [{
+          id: "Designations",
+          data: fetchedData.map(item => ({
+            x: item.designation,
+            y: item.count
+          }))
+        }];
+
+        setData(chartData);
+      } catch (error) {
+        console.error('Failed to fetch employee designation count:', error);
+      }
+    };
+
+    fetchEmployeeDesignationCount();
+  }, []);
   return (
     <ResponsiveLine
       data={data}
@@ -43,7 +70,8 @@ const LineChart = ({ isCustomLineColors = false, isDashboard = false }) => {
           },
         },
       }}
-      colors={isDashboard ? { datum: "color" } : { scheme: "nivo" }} // added
+      // colors={isDashboard ? { datum: "color" } : { scheme: "nivo" }} // added
+      colors={{ scheme: 'nivo' }}
       margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
       xScale={{ type: "point" }}
       yScale={{
@@ -62,7 +90,7 @@ const LineChart = ({ isCustomLineColors = false, isDashboard = false }) => {
         tickSize: 0,
         tickPadding: 5,
         tickRotation: 0,
-        legend: isDashboard ? undefined : "transportation", // added
+        legend: isDashboard ? undefined : "Designation", // added
         legendOffset: 36,
         legendPosition: "middle",
       }}
