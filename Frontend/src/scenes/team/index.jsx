@@ -139,37 +139,7 @@ const Team = () => {
         // Handle the error as needed
       }
     };
-   const handleEdit = async (id) => {
-      try {
-        const response = await axiosInstance.get(`http://localhost:5000/api/get_employee/${id}`);
-        const existingEmployee = response.data;
-        setEditedEmployee(existingEmployee);
-        setEditDialogOpen(true);
-      } catch (error) {
-        console.error("Error fetching employee data:", error);
-      }
-    };
    
-    const handleDialogClose = () => {
-      setEditDialogOpen(false);
-      setEditedEmployee({});
-    };
-   
-    const handleDialogSubmit = async () => {
-      try {
-        await axiosInstance.put(`http://localhost:5000/api/edit_employee/${editedEmployee._id}`, editedEmployee);
-        // Refresh employee data after editing
-        // const response = await axios.get("http://localhost:5000/api/get_employees");
-        const response =  axiosInstance.get('/get_employees')
-        console.log()
-        setEmployeeData(response.data);
-        setEditDialogOpen(false);
-        setEditedEmployee({});
-        
-      } catch (error) {
-        console.error("Error updating employee data:", error);
-      }
-    };
   const handleDelete = (id, fullName, email, department, contact) => {
     setDeleteConfirmation({
       open: true,
@@ -256,18 +226,18 @@ const Team = () => {
  
   const [employeeData, setEmployeeData] = useState([]);
  
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axiosInstance.get("/get_employees"); // Use axiosInstance here
-        setEmployeeData(response.data);
-      } catch (error) {
-        console.error("Error fetching employee data:", error);
-      }
-    };
+  const fetchData = async () => {
+    try {
+      const response = await axiosInstance.get("/get_employees");
+      setEmployeeData(response.data);
+    } catch (error) {
+      console.error("Error fetching employee data:", error);
+    }
+  };
   
-    fetchData(); // Call the function when the component mounts
-  }, []);
+  useEffect(() => {
+    fetchData();
+  }, [])
  
   const handleTabChange = async (event, newValue) => {
     setActiveTab(newValue);
@@ -477,6 +447,41 @@ const [leaving, setLeaving] = useState("");
   
   const handleViewCV = (user) => {
     window.open(user.profilecv, '_blank'); // Open CV URL in a new tab
+  };
+
+  const [employeeId, setEmployeeId] = useState("");
+
+  const handleEdit = async (id) => {
+    try {
+      // Fetch employee data by id
+      const response = await axiosInstance.get(`/get_employee/${id}`);
+      setEditedEmployee(response.data); // Set employee data in state
+      setEmployeeId(id); // Set employee id
+      setEditDialogOpen(true); // Open edit dialog
+    } catch (error) {
+      console.error("Error fetching employee data:", error);
+      // Handle error as needed
+    }
+  };
+
+  // Function to close edit dialog
+  const handleDialogClose = () => {
+    setEditDialogOpen(false); // Close edit dialog
+  };
+
+  // Function to handle edit form submission
+  const handleDialogSubmit = async () => {
+    try {
+      // Send updated employee data to API for editing
+      const response = await axiosInstance.put(`/edit_employee/${employeeId}`, editedEmployee);
+      console.log("Employee updated:", response.data);
+      setEditDialogOpen(false); // Close edit dialog
+      fetchData();
+      // Optionally, you can handle success feedback or perform additional actions
+    } catch (error) {
+      console.error("Error updating employee:", error);
+      // Handle error as needed
+    }
   };
 
  
