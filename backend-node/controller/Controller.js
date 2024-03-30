@@ -24,13 +24,13 @@ const countEmployeesByDesignation = async (req, res) => {
     const count = await Employee.aggregate([
       {
         $group: {
-          _id: "$designation",
+          _id: "$department",
           count: { $sum: 1 }
         }
       }
     ]);
 
-    res.json(count.map(item => ({ designation: item._id, count: item.count })));
+    res.json(count.map(item => ({ department: item._id, count: item.count })));
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

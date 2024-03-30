@@ -219,8 +219,11 @@ const Dashboard = () => {
               </IconButton>
             </Box>
           </Box>
-          <Box height="250px" m="-20px 0 0 0">
+          {/* <Box height="250px" m="-20px 0 0 0">
             <LineChart isDashboard={true} />
+          </Box> */}
+          <Box height="300px" m="-20px 0 0 0">
+            <BarChart isDashboard={true} />
           </Box>
         </Box>
         
