@@ -20,6 +20,8 @@ router.post('/login_admin', controller.login_admin);
  
  
 // Employee routes
+// Add this line inside your routes configuration
+router.get('/employee/designation-count', controller.countEmployeesByDesignation);
 router.post('/add_employee',verifyToken, controller.addEmployee);
 router.post('/login_employee', controller.login_employee);
 
