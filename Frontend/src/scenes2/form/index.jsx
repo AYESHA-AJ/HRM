@@ -13,9 +13,9 @@ import axiosInstance from '../../utilis/ApiRequest.js';
 import { useAuth } from '../../utilis/AuthContext.js';
 
 
+
 const Setting = () => {
-    // State variables to store user data
-    const [username, setUsername] = useState('');
+    const[username,setUsername]=useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { currentUser } = useAuth()
