@@ -12,6 +12,7 @@ import LineChart from '../../components/LineChart';
 import ProgressCircle from "../../components/ProgressCircle";
 import axiosInstance from '../../utilis/ApiRequest';
 import PieChart from '../../components/PieChart';
+import { tokens } from '../../theme';
 
 
 const Dashboard = () => {
