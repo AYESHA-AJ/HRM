@@ -1,79 +1,91 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
-import { tokens } from "../../theme";
-import { mockTransactions } from "../../data/mockData";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import EmailIcon from "@mui/icons-material/Email";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import TrafficIcon from "@mui/icons-material/Traffic";
 import Header from "../../components/Header";
-import LineChart from "../../components/LineChart";
 import BarChart from "../../components/BarChart";
 import StatBox from "../../components/StatBox";
+import LineChart from '../../components/LineChart';
 import ProgressCircle from "../../components/ProgressCircle";
-import axios from 'axios';
 import axiosInstance from '../../utilis/ApiRequest';
-
+import { tokens } from "../../theme"; // Ensure this path is correct according to your project structure
 
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
+  // State Hooks
   const [subscribers, setSubscribers] = useState(0);
   const [employees, setEmployees] = useState(0);
   const [applicants, setApplicants] = useState(0);
   const [emailCount, setEmailCount] = useState(0);
-  const [subscribersIncrease, setSubscribersIncrease] = useState(0);
-  const [employeesIncrease, setEmployeesIncrease] = useState(0);
-  const [applicantsIncrease, setApplicantsIncrease] = useState(0);
-  const [emailCountIncrease, setEmailCountIncrease] = useState(0);
+  const [subscribersIncrease, setSubscribersIncrease] = useState('0.00%');
+  const [employeesIncrease, setEmployeesIncrease] = useState('0.00%');
+  const [applicantsIncrease, setApplicantsIncrease] = useState('0.00%');
+  const [emailCountIncrease, setEmailCountIncrease] = useState('0.00%');
+
+  // Ref Hooks for previous values
+  const prevEmailCount = useRef(emailCount);
+  const prevSubscribers = useRef(subscribers);
+  const prevEmployees = useRef(employees);
+  const prevApplicants = useRef(applicants);
 
   useEffect(() => {
-    axiosInstance.get('/email-count')
-    .then(response => {
-      const count = response.data.count;
-      setEmailCountIncrease(calculateIncrease(emailCount, count));
-      setEmailCount(count);
-    })
-    .catch(error => {
-      console.error('Error fetching email count:', error);
-    });
+    const fetchData = async () => {
+      try {
+        const emailResponse = await axiosInstance.get('/email-count');
+        const newEmailCount = emailResponse.data.count;
+        if (newEmailCount !== prevEmailCount.current) {
+          setEmailCount(newEmailCount);
+          setEmailCountIncrease(calculateIncrease(prevEmailCount.current, newEmailCount));
+          prevEmailCount.current = newEmailCount;
+        }
 
-    axiosInstance.get('/subscribers')
-      .then(response => {
-        const totalSubscribers = response.data.length;
-        setSubscribersIncrease(calculateIncrease(subscribers, totalSubscribers));
-        setSubscribers(totalSubscribers);
-      })
-      .catch(error => {
-        console.error('Error fetching subscribers:', error);
-      });
+        const subscribersResponse = await axiosInstance.get('/subscribers');
+        const newSubscribers = subscribersResponse.data.length;
+        if (newSubscribers !== prevSubscribers.current) {
+          setSubscribers(newSubscribers);
+          setSubscribersIncrease(calculateIncrease(prevSubscribers.current, newSubscribers));
+          prevSubscribers.current = newSubscribers;
+        }
 
-    axiosInstance.get('/get_employees')
-      .then(response => {
-        const totalEmployees = response.data.length;
-        setEmployeesIncrease(calculateIncrease(employees, totalEmployees));
-        setEmployees(totalEmployees);
-      })
-      .catch(error => {
-        console.error('Error fetching employees:', error);
-      });
+        const employeesResponse = await axiosInstance.get('/get_employees');
+        const newEmployees = employeesResponse.data.length;
+        if (newEmployees !== prevEmployees.current) {
+          setEmployees(newEmployees);
+          setEmployeesIncrease(calculateIncrease(prevEmployees.current, newEmployees));
+          prevEmployees.current = newEmployees;
+        }
 
-    axiosInstance.get('/applicants')
-      .then(response => {
-        const totalApplicants = response.data.length;
-        setApplicantsIncrease(calculateIncrease(applicants, totalApplicants));
-        setApplicants(totalApplicants);
-      })
-      .catch(error => {
-        console.error('Error fetching applicants:', error);
-      });
-  }, [subscribers, employees, applicants, emailCount]);
+        const applicantsResponse = await axiosInstance.get('/applicants');
+        const newApplicants = applicantsResponse.data.length;
+        if (newApplicants !== prevApplicants.current) {
+          setApplicants(newApplicants);
+          setApplicantsIncrease(calculateIncrease(prevApplicants.current, newApplicants));
+          prevApplicants.current = newApplicants;
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const calculateIncrease = (prevValue, newValue) => {
-    const increase = ((newValue - prevValue) / prevValue) * 100;
-    return increase.toFixed(2) + '%';
+    if (prevValue === 0 && newValue === 0) {
+      return '0.00%';
+    } else if (prevValue === 0 && newValue > 0) {
+      return '0.00%'; // Adjust this based on how you want to treat initial values
+    } else {
+      const increase = ((newValue - prevValue) / prevValue) * 100;
+      return `${increase.toFixed(2)}%`;
+    }
   };
+  
 
   return (
     <Box m="10px">
@@ -134,7 +146,7 @@ const Dashboard = () => {
           <StatBox
             title={applicants}
             subtitle="Applicants"
-            progress={applicants / 5}
+            progress={applicants / 10}
             increase={applicantsIncrease}
             icon={
               <PointOfSaleIcon
@@ -153,7 +165,7 @@ const Dashboard = () => {
           <StatBox
           title={employees}
           subtitle="Employees"
-            progress={employees / 10}
+            progress={employees / 5}
             increase={employeesIncrease}
             icon={
               <PersonAddIcon
@@ -172,7 +184,7 @@ const Dashboard = () => {
           <StatBox
            title={subscribers}
            subtitle="Subscribers"
-            progress={subscribers / 10}
+            progress={subscribers / 5}
             increase={subscribersIncrease}
             icon={
               <TrafficIcon
@@ -228,8 +240,6 @@ const Dashboard = () => {
         </Box>
         
         
-
-        {/* ROW 3 */}
         <Box
           gridColumn="span 4"
           gridRow="span 2"
@@ -256,23 +266,50 @@ const Dashboard = () => {
             <Typography>Includes extra misc expenditures and costs</Typography>
           </Box>
         </Box>
-        {/* <Box
-          gridColumn="span 6"
+        {/* ROW 4 */}
+        <Box
+          gridColumn="span 8"
           gridRow="span 2"
           backgroundColor={colors.primary[400]}
         >
-          <Typography
-            variant="h5"
-            fontWeight="600"
-            sx={{ padding: "30px 30px 0 30px" }}
+          <Box
+            mt="65px"
+            p="0 30px"
+            display="flex "
+            justifyContent="space-between"
+            alignItems="center"
           >
-            Sales Quantity
-          </Typography>
-          <Box height="250px" mt="-20px">
-            <BarChart isDashboard={true} />
+            <Box>
+              <Typography
+                variant="h5"
+                fontWeight="600"
+                color={colors.grey[100]}
+              >
+               Employee Counts  Across 
+              </Typography>
+              <Typography
+                variant="h3"
+                fontWeight="bold"
+                color={colors.greenAccent[500]}
+              >
+                Departments
+              </Typography>
+            </Box>
+            <Box>
+              <IconButton>
+                <DownloadOutlinedIcon
+                  sx={{ fontSize: "26px", color: colors.greenAccent[500] }}
+                />
+              </IconButton>
+            </Box>
           </Box>
-        </Box> */}
-        
+          <Box height="250px" m="-20px 0 0 0">
+            <LineChart isDashboard={true} />
+          </Box>
+          {/* <Box height="300px" m="-20px 0 0 0">
+            <BarChart isDashboard={true} />
+          </Box> */}
+        </Box>
       </Box>
     </Box>
   );

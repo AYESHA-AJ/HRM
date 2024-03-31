@@ -48,25 +48,33 @@ const Sidebar = () => {
 
   return (
     <Box
-     height="100vh"
-      sx={{
-        "& .pro-sidebar-inner": {
-          background: `${colors.primary[400]} !important`,
-        },
-        "& .pro-icon-wrapper": {
-          backgroundColor: "transparent !important",
-        },
-        "& .pro-inner-item": {
-          padding: "5px 35px 5px 20px !important",
-        },
-        "& .pro-inner-item:hover": {
-          color: "#868dfb !important",
-        },
-        "& .pro-menu-item.active": {
-          color: "#6870fa !important",
-        },
-      }}
-    >
+  sx={{
+        ".pro-sidebar": {
+      
+      height: 'auto', // Adjust based on content
+      minHeight: '120vh', // At least full viewport height
+      position:'sticky',
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    "& .pro-sidebar-inner": {
+      flexGrow: 1, // Allow the sidebar to grow as needed
+      background: `${colors.primary[400]} !important`,
+    },
+    "& .pro-icon-wrapper": {
+      backgroundColor: "transparent !important",
+    },
+    "& .pro-inner-item": {
+      padding: "5px 35px 5px 20px !important",
+    },
+    "& .pro-inner-item:hover": {
+      color: "#868dfb !important",
+    },
+    "& .pro-menu-item.active": {
+      color: "#6870fa !important",
+    },
+  }}
+>
       <ProSidebar collapsed={isCollapsed}>
         <Menu iconShape="square">
           {/* LOGO AND MENU ICON */}
