@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
+import { tokens } from "../../theme";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import EmailIcon from "@mui/icons-material/Email";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
@@ -8,87 +9,93 @@ import TrafficIcon from "@mui/icons-material/Traffic";
 import Header from "../../components/Header";
 import BarChart from "../../components/BarChart";
 import StatBox from "../../components/StatBox";
-import LineChart from '../../components/LineChart';
 import ProgressCircle from "../../components/ProgressCircle";
 import axiosInstance from '../../utilis/ApiRequest';
-import PieChart from '../../components/PieChart';
-import { tokens } from '../../theme';
-
+import LineChart from '../../components/LineChart';
 
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  // State Hooks
   const [subscribers, setSubscribers] = useState(0);
+  const [newSubscribers, setNewSubscribers] = useState(0);
   const [employees, setEmployees] = useState(0);
+  const [newEmployees, setNewEmployees] = useState(0);
   const [applicants, setApplicants] = useState(0);
+  const [newApplicants, setNewApplicants] = useState(0);
   const [emailCount, setEmailCount] = useState(0);
-  const [subscribersIncrease, setSubscribersIncrease] = useState('0.00%');
-  const [employeesIncrease, setEmployeesIncrease] = useState('0.00%');
-  const [applicantsIncrease, setApplicantsIncrease] = useState('0.00%');
-  const [emailCountIncrease, setEmailCountIncrease] = useState('0.00%');
-
-  // Ref Hooks for previous values
-  const prevEmailCount = useRef(emailCount);
-  const prevSubscribers = useRef(subscribers);
-  const prevEmployees = useRef(employees);
-  const prevApplicants = useRef(applicants);
+  const [newEmailCount, setNewEmailCount] = useState(0);
+  const [subscribersIncrease, setSubscribersIncrease] = useState(0);
+  const [employeesIncrease, setEmployeesIncrease] = useState(0);
+  const [applicantsIncrease, setApplicantsIncrease] = useState(0);
+  const [emailCountIncrease, setEmailCountIncrease] = useState(0);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const emailResponse = await axiosInstance.get('/email-count');
-        const newEmailCount = emailResponse.data.count;
-        if (newEmailCount !== prevEmailCount.current) {
-          setEmailCount(newEmailCount);
-          setEmailCountIncrease(calculateIncrease(prevEmailCount.current, newEmailCount));
-          prevEmailCount.current = newEmailCount;
-        }
-
-        const subscribersResponse = await axiosInstance.get('/subscribers');
-        const newSubscribers = subscribersResponse.data.length;
-        if (newSubscribers !== prevSubscribers.current) {
-          setSubscribers(newSubscribers);
-          setSubscribersIncrease(calculateIncrease(prevSubscribers.current, newSubscribers));
-          prevSubscribers.current = newSubscribers;
-        }
-
-        const employeesResponse = await axiosInstance.get('/get_employees');
-        const newEmployees = employeesResponse.data.length;
-        if (newEmployees !== prevEmployees.current) {
-          setEmployees(newEmployees);
-          setEmployeesIncrease(calculateIncrease(prevEmployees.current, newEmployees));
-          prevEmployees.current = newEmployees;
-        }
-
-        const applicantsResponse = await axiosInstance.get('/applicants');
-        const newApplicants = applicantsResponse.data.length;
-        if (newApplicants !== prevApplicants.current) {
-          setApplicants(newApplicants);
-          setApplicantsIncrease(calculateIncrease(prevApplicants.current, newApplicants));
-          prevApplicants.current = newApplicants;
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
+    const calculateIncrease = (prevValue, newValue, key) => {
+      const increaseKey = `${key}Increase`;
+      if (prevValue === newValue) {
+        return sessionStorage.getItem(increaseKey) || '-';
       }
-    };
-
-    fetchData();
-  }, []);
-
-  const calculateIncrease = (prevValue, newValue) => {
-    if (prevValue === 0 && newValue === 0) {
-      return '0.00%';
-    } else if (prevValue === 0 && newValue > 0) {
-      return '0.00%'; // Adjust this based on how you want to treat initial values
-    } else {
       const increase = ((newValue - prevValue) / prevValue) * 100;
-      return `${increase.toFixed(2)}%`;
-    }
-  };
+      const increaseString = increase.toFixed(2) + '%';
+      sessionStorage.setItem(increaseKey, increaseString);
+      return increaseString;
+    };
   
+    const prevEmails = parseInt(sessionStorage.getItem('prevEmails')) || 0;
+    const prevSubscribers = parseInt(sessionStorage.getItem('prevSubscribers')) || 0;
+    const prevEmployees = parseInt(sessionStorage.getItem('prevEmployees')) || 0;
+    const prevApplicants = parseInt(sessionStorage.getItem('prevApplicants')) || 0;
+  
+    setEmailCount(prevEmails);
+    setSubscribers(prevSubscribers);
+    setEmployees(prevEmployees);
+    setApplicants(prevApplicants);
+    axiosInstance.get('/email-count')
+    .then(response => {
+      const count = response.data.count;
+      sessionStorage.setItem('prevEmails', count);
+      setNewEmailCount(count);
+      setEmailCountIncrease(calculateIncrease(prevEmails, count, 'emailCount'));
+    })
+    .catch(error => {
+      console.error('Error fetching email count:', error);
+    });
 
+  axiosInstance.get('/subscribers')
+    .then(response => {
+      const totalSubscribers = response.data.length;
+      setNewSubscribers(totalSubscribers);
+      setSubscribersIncrease(calculateIncrease(prevSubscribers, totalSubscribers, 'subscribers'));
+      sessionStorage.setItem('prevSubscribers', totalSubscribers);
+    })
+    .catch(error => {
+      console.error('Error fetching subscribers:', error);
+    });
+
+  axiosInstance.get('/get_employees')
+    .then(response => {
+      const totalEmployees = response.data.length;
+      setNewEmployees(totalEmployees);
+      setEmployeesIncrease(calculateIncrease(prevEmployees, totalEmployees, 'employees'));
+      sessionStorage.setItem('prevEmployees', totalEmployees);
+    })
+    .catch(error => {
+      console.error('Error fetching employees:', error);
+    });
+
+  axiosInstance.get('/applicants')
+    .then(response => {
+      const totalApplicants = response.data.length;
+      setNewApplicants(totalApplicants);
+      setApplicantsIncrease(calculateIncrease(prevApplicants, totalApplicants, 'applicants'));
+      sessionStorage.setItem('prevApplicants', totalApplicants);
+    })
+    .catch(error => {
+      console.error('Error fetching applicants:', error);
+    });
+}, []);
+  
   return (
     <Box m="10px">
       {/* HEADER */}
@@ -127,9 +134,9 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-             title={emailCount} 
+            title={newEmailCount} 
             subtitle="Emails"
-            progress={emailCount / 5}
+            progress={newEmailCount / 100}
             increase={emailCountIncrease}
             icon={
               <EmailIcon
@@ -146,9 +153,9 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-            title={applicants}
+            title={newApplicants}
             subtitle="Applicants"
-            progress={applicants / 10}
+            progress={newApplicants / 10}
             increase={applicantsIncrease}
             icon={
               <PointOfSaleIcon
@@ -165,9 +172,9 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-          title={employees}
-          subtitle="Employees"
-            progress={employees / 5}
+            title={newEmployees}
+            subtitle="Employees"
+            progress={newEmployees / 50}
             increase={employeesIncrease}
             icon={
               <PersonAddIcon
@@ -184,9 +191,9 @@ const Dashboard = () => {
           justifyContent="center"
         >
           <StatBox
-           title={subscribers}
-           subtitle="Subscribers"
-            progress={subscribers / 5}
+            title={newSubscribers}
+            subtitle="Subscribers"
+            progress={newSubscribers / 25}
             increase={subscribersIncrease}
             icon={
               <TrafficIcon
