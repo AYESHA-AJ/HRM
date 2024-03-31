@@ -11,7 +11,8 @@ import StatBox from "../../components/StatBox";
 import LineChart from '../../components/LineChart';
 import ProgressCircle from "../../components/ProgressCircle";
 import axiosInstance from '../../utilis/ApiRequest';
-import { tokens } from "../../theme"; // Ensure this path is correct according to your project structure
+import PieChart from '../../components/PieChart';
+
 
 const Dashboard = () => {
   const theme = useTheme();
