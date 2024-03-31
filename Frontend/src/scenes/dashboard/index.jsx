@@ -14,6 +14,7 @@ import StatBox from "../../components/StatBox";
 import ProgressCircle from "../../components/ProgressCircle";
 import axios from 'axios';
 import axiosInstance from '../../utilis/ApiRequest';
+import PieChart from '../../components/PieChart';
 
 
 const Dashboard = () => {
