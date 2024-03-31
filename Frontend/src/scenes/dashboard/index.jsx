@@ -268,14 +268,14 @@ const Dashboard = () => {
                 fontWeight="600"
                 color={colors.grey[100]}
               >
-               Employee Counts  Across 
+               Applied Applicants Counts  Across 
               </Typography>
               <Typography
                 variant="h3"
                 fontWeight="bold"
                 color={colors.greenAccent[500]}
               >
-                Departments
+                Job Posts
               </Typography>
             </Box>
             <Box>
