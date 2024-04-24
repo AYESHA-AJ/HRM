@@ -1,18 +1,61 @@
+import React from 'react';
 import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
-import { mockTransactions } from "../../data/mockData";
+import Header from "../../components/Header";
+import StatBox from "../../components/StatBox";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import EmailIcon from "@mui/icons-material/Email";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import TrafficIcon from "@mui/icons-material/Traffic";
-import Header from "../../components/Header";
-import StatBox from "../../components/StatBox";
-
+import { useAuth } from '../../utilis/AuthContext';
+import axiosInstance from '../../utilis/ApiRequest';
 
 const Dashboard2 = () => {
+  const { currentUser } = useAuth();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [leaveStats, setLeaveStats] = React.useState({
+    totalRequested: 0,
+    totalAccepted: 0,
+    totalRejected: 0,
+    totalPending: 0,
+    progress: 0, // Add default progress value
+  });
+
+  React.useEffect(() => {
+    fetchLeaveStats();
+  }, []);
+
+  const fetchLeaveStats = async () => {
+    try {
+      const response = await axiosInstance.get(`/requestsbyid/${currentUser._id}`);
+      const leaveRequests = response.data;
+  
+      // Filter out canceled status leaves
+      const nonCanceledLeaves = leaveRequests.filter(req => req.status !== 'cancelled');
+  
+      const totalRequested = nonCanceledLeaves.length;
+      const totalAccepted = nonCanceledLeaves.filter(req => req.status === 'approved').length;
+      const totalRejected = nonCanceledLeaves.filter(req => req.status === 'rejected').length;
+      const totalPending = nonCanceledLeaves.filter(req => req.status === 'pending').length;
+  
+      // Calculate the progress based on the monthly limit (5 leaves)
+      const monthlyLimit = 5;
+      const progress = totalRequested <= monthlyLimit ? totalRequested / monthlyLimit : 1;
+  
+      setLeaveStats({
+        totalRequested,
+        totalAccepted,
+        totalRejected,
+        totalPending,
+        progress,
+      });
+    } catch (error) {
+      console.error('Error fetching leave statistics:', error);
+    }
+  };
+  
 
   return (
     <Box m="10px">
@@ -52,10 +95,10 @@ const Dashboard2 = () => {
           justifyContent="center"
         >
           <StatBox
-            title="2,361"
-            subtitle="Emails Sent"
-            progress="0.75"
-            increase="+14%"
+            title={leaveStats.totalRequested.toString()}
+            subtitle="Total Leaves Requested"
+            progress={leaveStats.progress.toFixed(2)} // Use progress from state
+            increase={`+${((leaveStats.totalRequested ) /5 * 100).toFixed(0)}%`}
             icon={
               <EmailIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -71,10 +114,10 @@ const Dashboard2 = () => {
           justifyContent="center"
         >
           <StatBox
-            title="4,225"
-            subtitle="Employees"
+            title={leaveStats.totalAccepted.toString()}
+            subtitle="Leaves Accepted"
             progress="0.50"
-            increase="+21%"
+            increase={`+${((leaveStats.totalAccepted ) / leaveStats.totalRequested * 100).toFixed(0)}%`}
             icon={
               <PointOfSaleIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -90,10 +133,10 @@ const Dashboard2 = () => {
           justifyContent="center"
         >
           <StatBox
-            title="321"
-            subtitle="New Clients"
+            title={leaveStats.totalRejected.toString()}
+            subtitle="Leaves Rejected"
             progress="0.30"
-            increase="+5%"
+            increase={`+${(leaveStats.totalRejected / leaveStats.totalRequested * 100).toFixed(0)}%`}
             icon={
               <PersonAddIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -109,10 +152,10 @@ const Dashboard2 = () => {
           justifyContent="center"
         >
           <StatBox
-            title="1,325"
-            subtitle="Projects"
+            title={leaveStats.totalPending.toString()}
+            subtitle="Pending Leaves"
             progress="0.80"
-            increase="+43%"
+            increase={`+${((leaveStats.totalPending ) / leaveStats.totalRequested * 100).toFixed(0)}%`}
             icon={
               <TrafficIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -140,21 +183,21 @@ const Dashboard2 = () => {
                 fontWeight="600"
                 color={colors.grey[100]}
               >
-                Revenue Generated
+                {/* Revenue Generated */}
               </Typography>
               <Typography
                 variant="h3"
                 fontWeight="bold"
                 color={colors.greenAccent[500]}
               >
-                $59,342.32
+                {/* $59,342.32 */}
               </Typography>
             </Box>
             <Box>
               <IconButton>
-                <DownloadOutlinedIcon
+                {/* <DownloadOutlinedIcon
                   sx={{ fontSize: "26px", color: colors.greenAccent[500] }}
-                />
+                /> */}
               </IconButton>
             </Box>
           </Box>
@@ -171,7 +214,7 @@ const Dashboard2 = () => {
           p="30px"
         >
           <Typography variant="h5" fontWeight="600">
-            Campaign
+            
           </Typography>
          
         </Box>

@@ -85,6 +85,7 @@ router.get('/applicants/:id', verifyToken,controller.getApplicantById);
  
 router.put('/addimg/:id', verifyToken,controller.editProfilePic);
 router.put('/addcv/:id', verifyToken,controller.editCV);
+router.get('/piechartdata', controller.getPieChartData);
  
 //for applicantsapplied
 router.post('/applied-applicants',verifyToken, controller.addAppliedApplicants);

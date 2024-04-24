@@ -18,6 +18,30 @@ const { getIO } = require('../socket');
 const fs = require('fs');
 const path = require('path');
 
+const getPieChartData = async (req, res) => {
+  try {
+    // Retrieve data from the database
+    const applicantsByJobTitle = await AppliedApplicant.aggregate([
+      { $unwind: "$applicants" }, // Split applicants array into separate documents
+      { $group: { _id: "$jobTitle", count: { $sum: 1 } } }, // Count applicants for each job title
+    ]);
+
+    // Format data for the pie chart
+    const pieChartData = applicantsByJobTitle.map(({ _id, count }) => ({
+      id: _id,
+      label: _id,
+      value: count,
+    }));
+
+    // Send formatted data as response
+    res.status(200).json(pieChartData);
+  } catch (error) {
+    console.error('Error fetching pie chart data:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+
 // Add this function to your existing controller.js file
 const countEmployeesByDesignation = async (req, res) => {
   try {
@@ -1467,6 +1491,7 @@ module.exports = {
   getLeaveById, getAllLeaveTypes,
   subscribe, getAllSubscribers,
   countEmployeesByDesignation,
-  addLeaveRequest,getAllLeaveRequests,cancelLeaveRequest,approveLeaveRequest,rejectLeaveRequest, getAllLeaveRequestsbyid,getAllApplicants,
+  addLeaveRequest,getAllLeaveRequests,cancelLeaveRequest,
+  approveLeaveRequest,rejectLeaveRequest, getAllLeaveRequestsbyid,getAllApplicants, getPieChartData,
 };
  

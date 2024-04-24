@@ -1,11 +1,25 @@
 import { ResponsivePie } from "@nivo/pie";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { tokens } from "../theme";
 import { useTheme } from "@mui/material";
-import { mockPieData as data } from "../data/mockData";
+// import { mockPieData as data } from "../data/mockData";
 
 const PieChart = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    // Fetch pie chart data from backend
+    axios.get('http://localhost:5000/api/piechartdata')
+      .then(response => {
+        setData(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching pie chart data:', error);
+      });
+  }, []);
   return (
     <ResponsivePie
       data={data}
